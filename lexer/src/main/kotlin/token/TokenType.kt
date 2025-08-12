@@ -1,4 +1,4 @@
-package org.example.lexer.token
+package org.printscript.token
 
 enum class TokenType {
     LET,

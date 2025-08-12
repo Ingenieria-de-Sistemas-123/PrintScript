@@ -1,11 +1,11 @@
-package org.example.lexer
+package org.printscript.lexer
 
-import org.example.lexer.token.Token
-import org.example.lexer.token.TokenType
+import org.printscript.token.Token
+import org.printscript.token.TokenType
 
 class Lexer {
     // OJO: el orden importa (keywords antes que IDENTIFIER)
-    private val tokenSpecs: List<Pair<TokenType, Regex>> = listOf(
+    /*private val tokenSpecs: List<Pair<TokenType, Regex>> = listOf(
         TokenType.LET           to Regex("""\blet\b"""),
         TokenType.PRINTLN       to Regex("""\bprintln\b"""),
         TokenType.NUMBER_TYPE   to Regex("""\bnumber\b"""),
@@ -29,7 +29,7 @@ class Lexer {
 
         // identificadores (al final)
         TokenType.IDENTIFIER    to Regex("""[A-Za-z_][A-Za-z0-9_]*""")
-    )
+    )*/
 
     private val wsRegex = Regex("""[ \t\r]+""")
     private val nlRegex = Regex("""\n""")
