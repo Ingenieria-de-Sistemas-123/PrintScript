@@ -2,7 +2,6 @@ package org.printscript.lexer
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.printscript.lexer.Lexer
 import org.printscript.token.TokenType
 
 class LexerPositionsTest {

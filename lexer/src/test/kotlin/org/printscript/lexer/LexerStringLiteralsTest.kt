@@ -3,7 +3,6 @@ package org.printscript.lexer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.printscript.lexer.exception.LexicalException
-import org.printscript.lexer.Lexer
 import org.printscript.token.TokenType
 
 class LexerStringLiteralsTest {

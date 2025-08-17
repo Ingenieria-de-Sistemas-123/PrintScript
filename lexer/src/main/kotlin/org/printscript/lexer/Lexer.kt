@@ -52,7 +52,7 @@ class Lexer {
             for ((type, rx) in TokenPattern.tokenSpecs) {
                 val m = rx.matchAt(input, i)
                 if (m != null) {
-                    if (matched == null || m.value.length > matched!!.second.value.length) {
+                    if (matched == null || m.value.length > matched.second.value.length) {
                         matched = type to m
                     }
                 }
