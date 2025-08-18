@@ -14,8 +14,8 @@ enum class TokenType {
     STAR,
     SLASH,
     SEMICOLON,
-    WHITESPACE,
-    SEPARATOR,
+    COLON,
     OPEN_PAREN,
-    CLOSE_PAREN
+    CLOSE_PAREN,
+    EOF //esto nos indica que llegamos al final del archivo
 }
