@@ -1,7 +1,7 @@
-package nodes
+package node
 
 class AssignationNode(
     val name: String,
-    val type: String? = null,
+    val type: ASTNode,
 ) : ASTNode {
 }

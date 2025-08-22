@@ -11,8 +11,9 @@ repositories {
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    implementation project(':lexer')
     implementation project(':token')
+
+    testImplementation project(':lexer')
 }
 
 test {

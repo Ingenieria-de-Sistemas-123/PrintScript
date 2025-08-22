@@ -1,4 +1,4 @@
-package nodes
+package node
 
 class PrintNode(
     val expression: ASTNode,

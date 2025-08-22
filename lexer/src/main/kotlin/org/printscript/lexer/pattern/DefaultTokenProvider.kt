@@ -14,7 +14,7 @@ data object DefaultTokenProvider : TokenProvider {
 
    private val literals = TokenProvider.builder(
       mapOf(
-         """"(?:\\.|[^"\\\n])*"""""" to TokenType.STRING,
+         """"(?:\\.|[^"\\\n])*"""" to TokenType.STRING,
          """'(?:\\.|[^'\\\n])*'""" to TokenType.STRING,
          """\d+(?:\.\d+)?""" to TokenType.NUMBER))
 
