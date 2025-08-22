@@ -1,4 +1,4 @@
-package nodes
+package node
 
 class LiteralNode<T>(
     val value: T,

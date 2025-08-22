@@ -1,4 +1,4 @@
-package nodes
+package node
 
 class DoubleExpressionNode(
     val left: ASTNode,

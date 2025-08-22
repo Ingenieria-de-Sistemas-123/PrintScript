@@ -1,6 +1,4 @@
-package org.printscript.parser
-
-import nodes.ASTNode
+import node.ASTNode
 import org.printscript.token.Token
 
 interface Parser{
