@@ -8,6 +8,7 @@ import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.testutil.*
 
 class EvaluatorTest {
+    //expresiones - num, str, id, binary
 
     @Test
     fun `suma y precedencia`() {
