@@ -14,8 +14,6 @@ class LexerHappyPathTest {
         """.trimIndent()
 
         val tokens = Lexer().lex(code)
-
-        // ⚠️ Si en tu enum usás SEPARATOR en vez de COLON, cambiá COLON -> SEPARATOR aquí.
         val tiposEsperados = listOf(
             TokenType.LET,
             TokenType.IDENTIFIER,

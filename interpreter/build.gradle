@@ -11,11 +11,18 @@ repositories {
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation project(':parser')
 }
 
 test {
     useJUnitPlatform()
+    // Limita heap para detectar leaks mas facil
+    minHeapSize = "64m"
+    maxHeapSize = "128m"
+    // Dump si hay OOM (debug)
+    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
 }
+
 kotlin {
     jvmToolchain(21)
 }
