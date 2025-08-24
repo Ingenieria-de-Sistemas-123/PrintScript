@@ -13,7 +13,7 @@ import org.printscript.interpreter.transform.AstToIr
  * - ejecuta las sentencias con visitors (Executor/Evaluator)
  */
 class Interpreter(
-    private val output: OutputProvider = DefaultOutputProvider()
+    output: OutputProvider = DefaultOutputProvider()
 ) {
     private val env = Environment()
     private val exec = Executor(env, output)

@@ -55,7 +55,7 @@ class ExecutorTest {
     @Test
     fun `string + number en println falla (tipado estricto en '+')`() {
         val env = Environment()
-        val exec = Executor(env, OutputProvider { /* no-op */ })
+        val exec = Executor(env) { /* no-op */ }
 
         val prog = listOf<StmtIR>(
             decl("s", RType.STRING, str("hola")),
@@ -71,7 +71,7 @@ class ExecutorTest {
     @Test
     fun `type mismatch en declaracion - falla`() {
         val env = Environment()
-        val exec = Executor(env, OutputProvider { /* no-op */ })
+        val exec = Executor(env) { /* no-op */ }
 
         val prog = listOf<StmtIR>(
             decl("s", RType.STRING, num(10.0))
@@ -86,7 +86,7 @@ class ExecutorTest {
     @Test
     fun `variable no definida - falla al asignar`() {
         val env = Environment()
-        val exec = Executor(env, OutputProvider { /* no-op */ })
+        val exec = Executor(env) { }
 
         val prog = listOf(assign("x", num(3.0)))
 
