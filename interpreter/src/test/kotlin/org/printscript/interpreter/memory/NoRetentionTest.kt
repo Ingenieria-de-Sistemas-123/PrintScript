@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.printscript.interpreter.eval.Executor
-import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
 import org.printscript.interpreter.ir.*
@@ -30,7 +29,7 @@ class NoRetentionTest {
 
     @Test
     fun `IR queda elegible para GC luego de ejecutar (phantom)`() {
-        val exec = Executor(Environment(), OutputProvider { })
+        val exec = Executor(Environment()) {}
 
         val (queue, phantom) = buildAndRunProgramPhantom(exec)
         keepAlive = phantom  // referencia fuerte para que no se GC la phantom

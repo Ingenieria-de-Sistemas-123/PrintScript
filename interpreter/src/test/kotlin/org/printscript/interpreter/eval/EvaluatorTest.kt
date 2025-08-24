@@ -21,13 +21,16 @@ class EvaluatorTest {
     }
 
     @Test
-    fun `concatenacion con string - hola + 2025 = hola2025`() {
-        val env = Environment()
-        val ev = Evaluator(env)
-        val expr = plus(str("hola"), num(2025.0))
-
-        val v = expr.accept(ev)
+    fun `string + string concatena - hola + 2025 = hola2025`() {
+        val v = plus(str("hola"), str("2025")).accept(Evaluator(Environment()))
         assertEquals(Value.Str("hola2025"), v)
+    }
+
+    @Test
+    fun `string + number lanza error en '+' estricto`() {
+        assertThrows(RuntimeError::class.java) {
+            plus(str("hola"), num(2025.0)).accept(Evaluator(Environment()))
+        }
     }
 
     @Test

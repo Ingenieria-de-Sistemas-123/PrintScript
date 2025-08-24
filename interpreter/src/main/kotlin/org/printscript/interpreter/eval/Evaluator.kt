@@ -3,7 +3,6 @@ package org.printscript.interpreter.eval
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.Value.Num
 import org.printscript.interpreter.runtime.Value.Str
-import org.printscript.interpreter.runtime.asString
 import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.ir.*
@@ -19,8 +18,13 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
         val l = b.left.accept(this)
         val r = b.right.accept(this)
         return when (b.op) {
-            Op.PLUS  -> if (l is Str || r is Str) Str(l.asString() + r.asString())
-            else Num(reqNum(l, "+") + reqNum(r, "+"))
+            Op.PLUS  -> when {
+                l is Num && r is Num -> Num(l.v + r.v)             // suma
+                l is Str && r is Str -> Str(l.v + r.v)             // concat
+                else -> throw RuntimeError(
+                    "Operador '+' no definido para ${typeName(l)} y ${typeName(r)}"
+                )
+            }
             Op.MINUS -> Num(reqNum(l, "-") - reqNum(r, "-"))
             Op.STAR  -> Num(reqNum(l, "*") * reqNum(r, "*"))
             Op.SLASH -> {
@@ -33,4 +37,9 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
 
     private fun reqNum(v: Value, ctx: String): Double =
         (v as? Num)?.v ?: throw RuntimeError("Operador '$ctx' requiere números")
+
+    private fun typeName(v: Value) = when (v) {
+        is Num -> "number"
+        is Str -> "string"
+    }
 }
