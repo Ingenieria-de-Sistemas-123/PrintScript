@@ -5,13 +5,17 @@ import node.ASTNode
 import node.DeclarationNode
 import node.LiteralNode
 import helpers.TokenHandler
+import org.printscript.common.Position
 import org.printscript.token.TokenType
 
 class VariableDeclarationBuilder(private val h: TokenHandler) {
 
     fun build(): ASTNode {
         h.expect(TokenType.LET, "Se esperaba 'let'")
-        val name = h.expect(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable").value
+        val id = h.expect(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable")
+        val name = id.value
+        val pos = Position(id.line, id.column)
+
         h.expect(TokenType.COLON, "Se esperaba ':' después del nombre")
 
         val typeTok = h.current()
@@ -23,9 +27,9 @@ class VariableDeclarationBuilder(private val h: TokenHandler) {
 
         val value: ASTNode =
             if (h.match(TokenType.EQUAL)) ExpressionBuilder(h).build()
-            else LiteralNode("empty", type)
+            else LiteralNode("empty", type, pos)
 
         h.expect(TokenType.SEMICOLON, "Se esperaba ';' al final de la declaración")
-        return DeclarationNode(name, type, value)
+        return DeclarationNode(name, type, value, pos)
     }
 }

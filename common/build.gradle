@@ -11,15 +11,11 @@ repositories {
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    implementation project(':token')
-    implementation project(':common')
-
-    testImplementation project(':lexer')
 }
 
 test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(18)
 }
