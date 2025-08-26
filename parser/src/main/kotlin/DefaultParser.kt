@@ -17,14 +17,13 @@ class DefaultParser : Parser {
             val node = when (h.current().type) {
                 TokenType.LET      -> VariableDeclarationBuilder(h).build()
                 TokenType.PRINTLN  -> PrintBuilder(h).build()
-                TokenType.IDENTIFIER -> {
-                    if (list.getOrNull(h.pos + 1)?.type == TokenType.EQUAL) {
+                TokenType.IDENTIFIER ->
+                    if (list.getOrNull(h.pos + 1)?.type == TokenType.EQUAL)
                         AssignationBuilder(h).build()
-                    } else {
+                    else {
                         val t = h.current()
                         throw ParseException("Se esperaba una asignación o declaración", t.line, t.column)
                     }
-                }
                 else -> {
                     val t = h.current()
                     throw ParseException("Token inesperado en inicio de sentencia: ${t.type}", t.line, t.column)
@@ -32,7 +31,6 @@ class DefaultParser : Parser {
             }
             out += node
         }
-
         return out
     }
 }
