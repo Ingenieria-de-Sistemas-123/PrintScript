@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [ "${SKIP_HOOKS:-}" = "1" ]; then
+  echo "[HOOK] SKIP_HOOKS=1 → salteando hooks"
+  exit 0
+fi
+set -euo pipefail
+echo "[HOOK] Running pre-push..."
+./gradlew -q check
+
