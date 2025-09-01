@@ -18,6 +18,7 @@ fun main() {
     val tokens = lexer.lex(code)
     val ast = parser.parse(tokens)
     val issues = linter.analyze(ast)
+    println("Linter")
     issues.forEach {
         println("Issue: ${it.ruleId} at ${it.severity}: ${it.message}")
     }
