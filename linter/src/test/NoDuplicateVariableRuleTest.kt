@@ -19,4 +19,3 @@ class NoDuplicateVariableRuleTest {
     }
 }
 
-// ESTO LO HIZO CHATTTTTTTTTTTTTT AYUDAAAAAAAAAAAAAAAAAAAAAAAAaa
