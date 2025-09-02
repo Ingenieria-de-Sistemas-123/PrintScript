@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-if [ "${SKIP_HOOKS:-}" = "1" ]; then
-  echo "[HOOK] SKIP_HOOKS=1 → salteando hooks"
+if [ "${skip:-}" = "1" ]; then
+  echo "[HOOK] skip=1 → salteando hooks"
   exit 0
 fi
 set -euo pipefail
