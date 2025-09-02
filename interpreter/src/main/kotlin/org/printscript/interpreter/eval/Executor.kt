@@ -1,9 +1,13 @@
 package org.printscript.interpreter.eval
 
 import org.printscript.interpreter.io.OutputProvider
+import org.printscript.interpreter.ir.AssignIR
+import org.printscript.interpreter.ir.DeclIR
+import org.printscript.interpreter.ir.PrintIR
+import org.printscript.interpreter.ir.StmtVisitor
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.runtimeTypeOf
-import org.printscript.interpreter.ir.*
+
 import org.printscript.interpreter.runtime.asString
 
 // visitor que ejecuta sentencias usando el Evaluator para expressions

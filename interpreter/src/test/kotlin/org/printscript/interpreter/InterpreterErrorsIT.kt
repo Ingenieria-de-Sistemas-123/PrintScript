@@ -1,10 +1,13 @@
 package org.printscript.interpreter
 
-import node.*
-import org.junit.jupiter.api.Assertions.*
+import node.AssignationNode
+import node.DeclarationNode
+import node.PrintNode
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.printscript.interpreter.runtime.RuntimeError
 
 @Tag("integration")

@@ -1,6 +1,8 @@
 package org.printscript.interpreter
 
-import node.*
+import node.AssignationNode
+import node.DeclarationNode
+import node.PrintNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
