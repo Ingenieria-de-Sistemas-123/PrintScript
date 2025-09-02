@@ -21,5 +21,6 @@ include("linter",
     "interpreter",
     "lexer",
     "parser",
-    "token"
+    "token",
+    "common"
 )

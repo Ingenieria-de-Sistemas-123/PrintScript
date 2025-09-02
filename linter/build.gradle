@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
+    id 'org.printscript.conventions'
 }
 
 group = 'org.printscript'
@@ -16,11 +16,4 @@ dependencies {
 
     testImplementation(project(":lexer"))
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-}
-
-test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(17)
 }
