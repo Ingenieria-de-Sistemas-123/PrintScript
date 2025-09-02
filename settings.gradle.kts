@@ -15,8 +15,7 @@ plugins {
 
 rootProject.name = "PrintScript2"
 
-include(
-    "analyzer",
+include("linter",
     "cli",
     "formatter",
     "interpreter",
