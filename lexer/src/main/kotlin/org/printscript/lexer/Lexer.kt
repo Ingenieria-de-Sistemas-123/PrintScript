@@ -9,6 +9,14 @@ import org.printscript.token.Token
 class Lexer(
     private val provider: TokenProvider = DefaultTokenProvider
 ) {
+    companion object {
+        infix fun builder(block: LexerBuilder.() -> Unit): Lexer {
+            val builder = LexerBuilder()
+            builder.block()
+            return builder.build(Lexer())
+        }
+    }
+
     private val ws = Regex("""[ \t\r]+""")
     private val nl = Regex("""\n""")
 

@@ -7,7 +7,7 @@ sealed interface TokenProvider {
     operator fun plus(other: TokenProvider): TokenProvider
 
     companion object {
-        fun builder(tokenMap: Map<String, TokenType>): TokenProvider =
+        infix fun builder(tokenMap: Map<String, TokenType>): TokenProvider =
             Impl(tokenMap.entries.map { (pat, type) -> type to Regex(pat) })
     }
 
