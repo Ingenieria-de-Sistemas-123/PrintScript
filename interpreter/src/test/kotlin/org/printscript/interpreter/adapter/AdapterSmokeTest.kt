@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.printscript.common.Position
 import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.io.OutputProvider
 import kotlin.test.assertEquals
 
 class AdapterSmokeTest {
