@@ -43,7 +43,7 @@ class AdapterSmokeTest {
         val ir = AstToIr().transform(progAst)
 
         val out = StringBuilder()
-        val exec = Executor(Environment(), OutputProvider { s -> out.appendLine(s) })
+        val exec = Executor(Environment()) { s -> out.appendLine(s) }
         ir.forEach { it.accept(exec) }
 
         assertEquals("3\n", out.toString())
