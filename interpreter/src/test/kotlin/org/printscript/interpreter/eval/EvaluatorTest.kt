@@ -1,11 +1,17 @@
 package org.printscript.interpreter.eval
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.RuntimeError
-import org.printscript.interpreter.testutil.*
+import org.printscript.interpreter.util.num
+import org.printscript.interpreter.util.plus
+import org.printscript.interpreter.util.slash
+import org.printscript.interpreter.util.star
+import org.printscript.interpreter.util.str
+
 
 class EvaluatorTest {
     //expresiones - num, str, id, binary

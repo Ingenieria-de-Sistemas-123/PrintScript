@@ -13,10 +13,8 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     @Test
     fun `render de enteros sin ,0`() {
         val ast = listOf(
-            PrintNode(
-                num(2), 2
-            ),
-            PrintNode(num(4), 4)  // 4
+            PrintNode(num(2), pos()),
+            PrintNode(num(4), pos())
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -28,7 +26,9 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
         // println( (1 + 2) * 3 ) => 9  (forzamos el AST a anidar (1+2) como left)
         val ast = listOf(
             PrintNode(
-                star(plus(num(1.0), num(2.0)), num(3.0)), 9)
+                star(plus(num(1.0), num(2.0)), num(3.0)),
+                pos()
+            )
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)

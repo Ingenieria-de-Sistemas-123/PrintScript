@@ -15,12 +15,12 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     @Test
     fun `declara number con precedencia, imprime, concatena string, reasigna y vuelve a imprimir`() {
         val ast = listOf(
-            DeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0)))), // 7
-            PrintNode(id("x")),
-            DeclarationNode("s", "string", str("hola")),
-            PrintNode(plus(id("s"), str("2025"))), // hola2025
-            AssignationNode("x", plus(id("x"), num(1.0))), // 8
-            PrintNode(id("x"))
+            DeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()), // 7
+            PrintNode(id("x"), pos()),
+            DeclarationNode("s", "string", str("hola"), pos()),
+            PrintNode(plus(id("s"), str("2025")), pos()), // hola2025
+            AssignationNode("x", plus(id("x"), num(1.0)), pos()), // 8
+            PrintNode(id("x"), pos())
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -30,10 +30,10 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     @Test
     fun `aritmetica basica y formateo de enteros sin coma`() {
         val ast = listOf(
-            PrintNode(minus(num(3.0), num(1.0))), // 2
-            PrintNode(star(num(2.0), num(5.0))),  // 10
-            PrintNode(slash(num(8.0), num(2.0))), // 4
-            PrintNode(plus(num(2.0), num(0.0)))   // 2
+            PrintNode(minus(num(3.0), num(1.0)), pos()), // 2
+            PrintNode(star(num(2.0), num(5.0)),  pos()), // 10
+            PrintNode(slash(num(8.0), num(2.0)), pos()), // 4
+            PrintNode(plus(num(2.0), num(0.0)),  pos())  // 2
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -43,9 +43,9 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     @Test
     fun `concatena string+string`() {
         val ast = listOf(
-            DeclarationNode("a", "string", str("ab")),
-            DeclarationNode("b", "string", str("cd")),
-            PrintNode(plus(id("a"), id("b"))) // abcd
+            DeclarationNode("a", "string", str("ab"), pos()),
+            DeclarationNode("b", "string", str("cd"), pos()),
+            PrintNode(plus(id("a"), id("b")), pos()) // abcd
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
