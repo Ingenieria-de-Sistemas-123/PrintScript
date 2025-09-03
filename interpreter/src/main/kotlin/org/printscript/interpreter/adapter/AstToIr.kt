@@ -98,8 +98,7 @@ class AstToIr {
 
     private fun numberFromAny(v: Any?): Double = when (v) {
         is Number -> v.toDouble()
-        is String -> v.toDoubleOrNull()
-            ?: error("Literal number inválido: '$v'")
+        is String -> v.toDoubleOrNull() ?: error("Literal number inválido: '$v'")
         else      -> error("Literal number inválido: $v")
     }
 }
