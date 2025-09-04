@@ -3,7 +3,8 @@ package org.printscript.interpreter.memory
 import org.junit.jupiter.api.Test
 import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.ir.*
+import org.printscript.interpreter.ir.NumLit
+import org.printscript.interpreter.ir.PrintIR
 
 class BigProgramSmokeTest {
 

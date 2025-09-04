@@ -1,6 +1,6 @@
 package org.printscript.interpreter
 
-import node.*
+import node.PrintNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
@@ -13,8 +13,7 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     @Test
     fun `render de enteros sin ,0`() {
         val ast = listOf(
-            PrintNode(num(2.0)),
-            PrintNode(plus(num(2.0), num(2.0)))
+            PrintNode(plus(num(2.0), num(2.0)), pos())
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -25,7 +24,10 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     fun `precedencia via AST anidado`() {
         // println( (1 + 2) * 3 ) => 9  (forzamos el AST a anidar (1+2) como left)
         val ast = listOf(
-            PrintNode(star(plus(num(1.0), num(2.0)), num(3.0)))
+            PrintNode(
+                star(plus(num(1.0), num(2.0)), num(3.0)),
+                pos()
+            )
         )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)

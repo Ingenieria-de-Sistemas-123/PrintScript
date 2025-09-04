@@ -1,4 +1,4 @@
-package org.printscript.interpreter.testutil
+package org.printscript.interpreter.util
 
 import org.printscript.interpreter.io.OutputProvider
 

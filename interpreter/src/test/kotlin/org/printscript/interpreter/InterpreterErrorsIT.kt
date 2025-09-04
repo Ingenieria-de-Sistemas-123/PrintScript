@@ -1,7 +1,10 @@
 package org.printscript.interpreter
 
-import node.*
-import org.junit.jupiter.api.Assertions.*
+import node.AssignationNode
+import node.DeclarationNode
+import node.PrintNode
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -14,8 +17,8 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
     @Test
     fun `string + number falla ( '+' estricto )`() {
         val ast = listOf(
-            DeclarationNode("s", "string", str("hola")),
-            PrintNode(plus(id("s"), num(2025.0)))
+            DeclarationNode("s", "string", str("hola"), pos()),
+            PrintNode(plus(id("s"), num(2025.0)), pos())
         )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
@@ -24,7 +27,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `division por cero`() {
-        val ast = listOf(PrintNode(slash(num(1.0), num(0.0))))
+        val ast = listOf(PrintNode(slash(num(1.0), num(0.0)), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("División por cero"))
@@ -32,7 +35,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `identificador no declarado`() {
-        val ast = listOf(PrintNode(id("x")))
+        val ast = listOf(PrintNode(id("x"), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Variable 'x' no definida"))
@@ -40,7 +43,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `asignar a variable no declarada`() {
-        val ast = listOf(AssignationNode("x", num(3.0)))
+        val ast = listOf(AssignationNode("x", num(3.0), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Variable 'x' no definida"))
@@ -48,7 +51,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `type mismatch en declaracion`() {
-        val ast = listOf(DeclarationNode("s", "string", num(10.0)))
+        val ast = listOf(DeclarationNode("s", "string", num(10.0), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(IllegalArgumentException::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Inicialización incompatible"))
@@ -57,8 +60,8 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
     @Test
     fun `type mismatch en asignacion`() {
         val ast = listOf(
-            DeclarationNode("x","number", num(1.0)),
-            AssignationNode("x", str("hola"))
+            DeclarationNode("x","number", num(1.0), pos()),
+            AssignationNode("x", str("hola"), pos())
         )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }

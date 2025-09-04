@@ -1,12 +1,14 @@
 package org.printscript.interpreter.eval
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
 import org.printscript.interpreter.runtime.RuntimeError
-import org.printscript.interpreter.testutil.*
+import org.printscript.interpreter.util.*
 import org.printscript.interpreter.ir.*
 
 class ExecutorTest {
