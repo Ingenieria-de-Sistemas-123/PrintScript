@@ -1,5 +1,6 @@
 package org.printscript.formatter
 
+import node.ASTNode
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.formatter.emit.AstEmitter
 import org.printscript.formatter.render.RuleApplier
