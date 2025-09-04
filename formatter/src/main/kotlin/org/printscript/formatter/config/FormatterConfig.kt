@@ -1,8 +1,15 @@
 package org.printscript.formatter.config
 
+/**
+ * Flags de estilo (no nullables) con defaults razonables.
+ * Se pueden cargar desde JSON con Gson (los campos ausentes toman el default).
+ */
 data class FormatterConfig(
-    val maxLineLength: Int = 100,
-    val spacesAroundBinaryOps: Boolean = true,
-    val spaceAfterColonInType: Boolean = true,
-    val normalizeStringQuotes: Boolean = false, // si true: forzamos comillas dobles
+    val spaceBeforeColon: Boolean = false,
+    val spaceAfterColon: Boolean = true,
+    val spaceAroundEquals: Boolean = true,
+    val lineJumpBeforePrintln: Int = 0,
+    val lineJumpAfterSemicolon: Boolean = true,
+    val spaceAroundOperators: Boolean = true,
+    val indentSize: Int = 4
 )

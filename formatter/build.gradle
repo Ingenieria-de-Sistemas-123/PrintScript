@@ -12,11 +12,5 @@ repositories {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation project(':parser')
-}
-
-test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
+    implementation project(':common')
 }
