@@ -6,11 +6,15 @@ data class ApplyContext(
     val prev: FormatToken?,
     val next: FormatToken?,
     val cfg: FormatterConfig,
-    val out: StringBuilder
+    val out: StringBuilder,
 )
 
 /** Regla de formateo: decide cómo renderizar un token con su contexto. */
 interface CodeFormatRule {
     fun matches(t: FormatToken): Boolean
-    fun apply(t: FormatToken, ctx: ApplyContext)
+
+    fun apply(
+        t: FormatToken,
+        ctx: ApplyContext,
+    )
 }

@@ -3,6 +3,8 @@ package org.printscript.formatter.emit
 import node.ASTNode
 import node.AssignationNode
 import node.DeclarationNode
+import node.DoubleExpressionNode
+import node.LiteralNode
 import node.PrintNode
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.formatter.rules.FormatToken
@@ -16,24 +18,18 @@ import org.printscript.formatter.rules.FormatToken.OpKind
 import org.printscript.formatter.rules.FormatToken.OpenParen
 import org.printscript.formatter.rules.FormatToken.Semicolon
 import org.printscript.formatter.rules.FormatToken.StringLit
-import node.DoubleExpressionNode
-import node.LiteralNode
 
-
-/**
- * Recorre el AST del PARSER y emite tokens de formateo.
- * No escribe strings finales; sólo describe la estructura semántica.
- * (Luego RuleApplier decide spacing/saltos).
- */
 class AstEmitter(private val cfg: FormatterConfig) {
-
     fun emitProgram(program: List<ASTNode>): List<FormatToken> {
         val out = mutableListOf<FormatToken>()
         program.forEach { emitStmt(it, out) }
         return out
     }
 
-    private fun emitStmt(n: ASTNode, sink: MutableList<FormatToken>) {
+    private fun emitStmt(
+        n: ASTNode,
+        sink: MutableList<FormatToken>,
+    ) {
         when (n) {
             is DeclarationNode -> {
                 // let <name> : <type> = <expr> ;
@@ -68,28 +64,32 @@ class AstEmitter(private val cfg: FormatterConfig) {
         }
     }
 
-    private fun emitExpr(n: ASTNode, sink: MutableList<FormatToken>) {
+    private fun emitExpr(
+        n: ASTNode,
+        sink: MutableList<FormatToken>,
+    ) {
         when (n) {
             is DoubleExpressionNode -> {
                 emitExpr(n.left, sink)
-                sink += Op(
-                    when (n.operator.trim()) {
-                        "+" -> OpKind.PLUS
-                        "-" -> OpKind.MINUS
-                        "*" -> OpKind.STAR
-                        "/" -> OpKind.SLASH
-                        else -> error("Operador no soportado: '${n.operator}'")
-                    }
-                )
+                sink +=
+                    Op(
+                        when (n.operator.trim()) {
+                            "+" -> OpKind.PLUS
+                            "-" -> OpKind.MINUS
+                            "*" -> OpKind.STAR
+                            "/" -> OpKind.SLASH
+                            else -> error("Operador no soportado: '${n.operator}'")
+                        },
+                    )
                 emitExpr(n.right, sink)
             }
 
             is LiteralNode<*> -> {
                 when (n.type.lowercase()) {
-                    "number"     -> sink += NumberLit(n.value.toString())
-                    "string"     -> sink += StringLit(n.value.toString())
+                    "number" -> sink += NumberLit(n.value.toString())
+                    "string" -> sink += StringLit(n.value.toString())
                     "identifier" -> sink += Ident(n.value.toString())
-                    else         -> error("Literal no soportado: type='${n.type}' value='${n.value}'")
+                    else -> error("Literal no soportado: type='${n.type}' value='${n.value}'")
                 }
             }
 
