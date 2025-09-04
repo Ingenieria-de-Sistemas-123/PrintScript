@@ -1,16 +1,7 @@
 package org.printscript.formatter.rules
 
 import org.printscript.formatter.config.FormatterConfig
-import org.printscript.formatter.interfaces.FormatToken
 
-/**
- * Regla de formateo:
- * - matches(t) indica si la regla se aplica a ese token (ej: es Colon, Equals, Op, ...).
- * - apply(t, ctx) escribe el texto al StringBuilder con el spacing que corresponda.
- *
- * IMPORTANTE: Las reglas NO ven el AST, sólo reciben el TOKEN y el CONTEXTO prev/next.
- * El AST ya fue recorrido por el visitor y convertido a tokens semánticos.
- */
 data class ApplyContext(
     val prev: FormatToken?,
     val next: FormatToken?,
@@ -18,6 +9,7 @@ data class ApplyContext(
     val out: StringBuilder
 )
 
+/** Regla de formateo: decide cómo renderizar un token con su contexto. */
 interface CodeFormatRule {
     fun matches(t: FormatToken): Boolean
     fun apply(t: FormatToken, ctx: ApplyContext)

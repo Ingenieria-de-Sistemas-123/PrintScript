@@ -5,7 +5,7 @@ import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.io.DefaultOutputProvider
 import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.transform.AstToIr
+import org.printscript.interpreter.adapter.AstToIr
 
 /**
  * - Recibe el AST del parser

@@ -5,6 +5,7 @@ class SpaceAroundOperator : CodeFormatRule {
 
     override fun apply(t: FormatToken, ctx: ApplyContext) {
         t as FormatToken.Op
+        // Heurística simple: "-" unario si prev es apertura/otro op/igual/coma/nulo
         val unaryMinus =
             t.kind == FormatToken.OpKind.MINUS &&
                     (ctx.prev == null ||
@@ -22,7 +23,7 @@ class SpaceAroundOperator : CodeFormatRule {
         }
 
         if (!ctx.cfg.spaceAroundOperators || unaryMinus) {
-            ctx.out.append(symbol) // sin espacios en unario o si la regla está off
+            ctx.out.append(symbol)
             return
         }
 

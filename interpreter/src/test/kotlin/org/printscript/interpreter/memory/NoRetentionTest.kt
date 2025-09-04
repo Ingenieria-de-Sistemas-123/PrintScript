@@ -6,7 +6,11 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
-import org.printscript.interpreter.ir.*
+import org.printscript.interpreter.ir.PrintIR
+import org.printscript.interpreter.ir.DeclIR
+import org.printscript.interpreter.ir.StmtIR
+import org.printscript.interpreter.ir.IdRef
+import org.printscript.interpreter.ir.NumLit
 import java.lang.ref.PhantomReference
 import java.lang.ref.ReferenceQueue
 

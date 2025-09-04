@@ -1,6 +1,14 @@
-package org.printscript.interpreter.testutil
+package org.printscript.interpreter.util
 
-import org.printscript.interpreter.ir.*
+import org.printscript.interpreter.ir.PrintIR
+import org.printscript.interpreter.ir.DeclIR
+import org.printscript.interpreter.ir.ExprIR
+import org.printscript.interpreter.ir.AssignIR
+import org.printscript.interpreter.ir.IdRef
+import org.printscript.interpreter.ir.StrLit
+import org.printscript.interpreter.ir.NumLit
+import org.printscript.interpreter.ir.Binary
+import org.printscript.interpreter.ir.Op
 import org.printscript.interpreter.runtime.RType
 
 fun num(v: Double) = NumLit(v)

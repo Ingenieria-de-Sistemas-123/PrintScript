@@ -1,19 +1,26 @@
 package org.printscript.interpreter
 
-import node.*
+import node.ASTNode
+import node.DoubleExpressionNode
+import node.LiteralNode
 import org.junit.jupiter.api.Tag
-import org.printscript.interpreter.testutil.BufferOutput
+import org.printscript.common.Position
+import org.printscript.interpreter.util.BufferOutput
 
 @Tag("integration")
 abstract class BaseInterpreterIT {
+    // Posición dummy para todos los nodos de prueba
+    protected fun pos() = Position(1, 1)
+
     // Helpers AST (parser)
-    protected fun num(n: Double) = LiteralNode(n, "number")
-    protected fun str(s: String) = LiteralNode(s, "string")
-    protected fun id(name: String) = LiteralNode(name, "identifier")
-    protected fun plus(l: ASTNode, r: ASTNode)  = DoubleExpressionNode(l, "+", r)
-    protected fun minus(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "-", r)
-    protected fun star(l: ASTNode, r: ASTNode)  = DoubleExpressionNode(l, "*", r)
-    protected fun slash(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "/", r)
+    protected fun num(n: Double) = LiteralNode(n, "number", pos())
+    protected fun num(n: Int) = LiteralNode(n.toDouble(), "number", pos())
+    protected fun str(s: String) = LiteralNode(s, "string", pos())
+    protected fun id(name: String) = LiteralNode(name, "identifier", pos())
+    protected fun plus(l: ASTNode, r: ASTNode)  = DoubleExpressionNode(l, "+", r, pos())
+    protected fun minus(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "-", r, pos())
+    protected fun star(l: ASTNode, r: ASTNode)  = DoubleExpressionNode(l, "*", r, pos())
+    protected fun slash(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "/", r, pos())
 
     protected fun newInterpreterWithBuffer(): Pair<Interpreter, BufferOutput> {
         val out = BufferOutput()

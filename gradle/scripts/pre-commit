@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+if [ "${skip:-}" = "1" ]; then
+  echo "[HOOK] skip=1 → salteando hooks"
+  exit 0
+fi
+set -euo pipefail
+echo "[HOOK] Running pre-commit..."
+./gradlew -q spotlessApply
+./gradlew -q test
+

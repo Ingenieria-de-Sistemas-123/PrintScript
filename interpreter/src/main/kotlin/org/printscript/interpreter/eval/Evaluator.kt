@@ -1,11 +1,16 @@
 package org.printscript.interpreter.eval
 
+import org.printscript.interpreter.ir.Binary
+import org.printscript.interpreter.ir.ExprVisitor
+import org.printscript.interpreter.ir.IdRef
+import org.printscript.interpreter.ir.NumLit
+import org.printscript.interpreter.ir.Op
+import org.printscript.interpreter.ir.StrLit
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.Value.Num
 import org.printscript.interpreter.runtime.Value.Str
 import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.ir.*
 
 // usamos visitor, evalua expresiones a valores en runtime
 internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
