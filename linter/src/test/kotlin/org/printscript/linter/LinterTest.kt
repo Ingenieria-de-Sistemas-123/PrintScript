@@ -2,29 +2,38 @@ package org.printscript.linter
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.printscript.common.Position
 import org.printscript.linter.issue.Issue
 import org.printscript.linter.rules.LintContext
 import org.printscript.linter.rules.Rule
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.common.Position
 import kotlin.test.Test
 
 class LinterTest {
     class AlwaysIssueRule : Rule {
-        override fun check(node: ASTNode, ctx: LintContext): List<Issue> =
+        override fun check(
+            node: ASTNode,
+            ctx: LintContext,
+        ): List<Issue> =
             listOf(
                 Issue(
                     ruleId = "always",
                     message = "Siempre issue",
-                    startLine = 1, startCol = 1, endLine = 1, endCol = 2
-                )
+                    startLine = 1,
+                    startCol = 1,
+                    endLine = 1,
+                    endCol = 2,
+                ),
             )
     }
 
     class NeverIssueRule : Rule {
-        override fun check(node: ASTNode, ctx: LintContext): List<Issue> = emptyList()
+        override fun check(
+            node: ASTNode,
+            ctx: LintContext,
+        ): List<Issue> = emptyList()
     }
 
     @Test
