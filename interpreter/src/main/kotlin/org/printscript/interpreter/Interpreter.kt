@@ -1,19 +1,14 @@
 package org.printscript.interpreter
 
-import node.ASTNode
+import org.printscript.interpreter.adapter.AstToIr
 import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.io.DefaultOutputProvider
 import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.adapter.AstToIr
+import org.printscript.parser.node.ASTNode
 
-/**
- * - Recibe el AST del parser
- * - Lo transforma a IR (interna del intérprete) intermediate representation
- * - ejecuta las sentencias con visitors (Executor/Evaluator)
- */
 class Interpreter(
-    output: OutputProvider = DefaultOutputProvider()
+    output: OutputProvider = DefaultOutputProvider(),
 ) {
     private val env = Environment()
     private val exec = Executor(env, output)
@@ -21,7 +16,7 @@ class Interpreter(
 
     // Entrada publica mas tipica: AST del parser--> ejecuta
     fun execute(ast: List<ASTNode>) {
-        val irProgram = adapter.transform(ast)    // List<StmtIR>
+        val irProgram = adapter.transform(ast) // List<StmtIR>
         irProgram.forEach { stmt -> stmt.accept(exec) }
     }
 

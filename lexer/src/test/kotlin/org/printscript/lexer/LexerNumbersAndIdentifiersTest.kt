@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.printscript.token.TokenType
 
 class LexerNumbersAndIdentifiersTest {
-
     @Test
     fun `tokeniza numeros - entero y decimal conservan valor textual`() {
         val code = "3 3.14;"

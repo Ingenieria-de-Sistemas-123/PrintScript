@@ -1,26 +1,25 @@
 package org.printscript.interpreter.memory
 
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.printscript.interpreter.eval.Executor
-import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.runtime.RType
-import org.printscript.interpreter.ir.PrintIR
 import org.printscript.interpreter.ir.DeclIR
-import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.ir.IdRef
 import org.printscript.interpreter.ir.NumLit
+import org.printscript.interpreter.ir.PrintIR
+import org.printscript.interpreter.ir.StmtIR
+import org.printscript.interpreter.runtime.Environment
+import org.printscript.interpreter.runtime.RType
 import java.lang.ref.PhantomReference
 import java.lang.ref.ReferenceQueue
 
 @Tag("memory")
 class NoRetentionTest {
-
     // Mantiene viva la PhantomReference hasta el fin del test (evita GC de la referencia misma)
     private var keepAlive: Any? = null
 
-    //en resumen, este test verifica que el IR no tenga referencias retenidas
+    // en resumen, este test verifica que el IR no tenga referencias retenidas
     // Verifica que el IR usado en una ejecución grande sea recolectado
     // usando PhantomReference y ReferenceQueue.
 
@@ -36,30 +35,29 @@ class NoRetentionTest {
         val exec = Executor(Environment()) {}
 
         val (queue, phantom) = buildAndRunProgramPhantom(exec)
-        keepAlive = phantom  // referencia fuerte para que no se GC la phantom
+        keepAlive = phantom // referencia fuerte para que no se GC la phantom
 
         val collected = waitEnqueued(queue) // usa valor por defecto (3s)
         assertTrue(collected, "El IR sigue referenciado; posible retención")
     }
 
-    private fun buildAndRunProgramPhantom(
-        exec: Executor
-    ): Pair<ReferenceQueue<Any>, PhantomReference<Any>> {
+    private fun buildAndRunProgramPhantom(exec: Executor): Pair<ReferenceQueue<Any>, PhantomReference<Any>> {
         val queue = ReferenceQueue<Any>()
         lateinit var phantom: PhantomReference<Any>
 
         // Aisla 'prog' en este stack frame: al salir, no quedan refs fuertes
         run {
-            val prog = ArrayList<StmtIR>(4000).apply {
-                // let v<i>: number = i;
-                repeat(2000) { i ->
-                    add(DeclIR("v$i", RType.NUMBER, NumLit(i.toDouble())))
+            val prog =
+                ArrayList<StmtIR>(4000).apply {
+                    // let v<i>: number = i;
+                    repeat(2000) { i ->
+                        add(DeclIR("v$i", RType.NUMBER, NumLit(i.toDouble())))
+                    }
+                    // println(v<i>);
+                    repeat(2000) { i ->
+                        add(PrintIR(IdRef("v$i")))
+                    }
                 }
-                // println(v<i>);
-                repeat(2000) { i ->
-                    add(PrintIR(IdRef("v$i")))
-                }
-            }
 
             // Ejecutar el programa
             prog.forEach { it.accept(exec) }
@@ -78,7 +76,7 @@ class NoRetentionTest {
      */
     private fun waitEnqueued(
         queue: ReferenceQueue<Any>,
-        timeoutMs: Long = 3_000
+        timeoutMs: Long = 3_000,
     ): Boolean {
         val deadline = System.nanoTime() + timeoutMs * 1_000_000
         while (System.nanoTime() < deadline) {

@@ -25,11 +25,9 @@ class RuleApplier(
             val ctx = ApplyContext(tokens.getOrNull(i - 1), tokens.getOrNull(i + 1), config, out)
 
             when (t) {
-                // layout
                 is FormatToken.NewLine -> repeat(t.count) { out.append('\n') }
                 is FormatToken.Indent -> out.append(" ".repeat(t.spaces))
 
-                // estructura
                 is FormatToken.OpenParen -> out.append('(')
                 is FormatToken.CloseParen -> out.append(')')
                 is FormatToken.Comma -> out.append(", ")
@@ -38,17 +36,14 @@ class RuleApplier(
                     if (config.lineJumpAfterSemicolon) out.append('\n')
                 }
 
-                // contenido literal
                 is FormatToken.Keyword -> {
                     out.append(t.text)
-                    // Si despues del keyword viene un token "de palabra", agregamos espacio
-                    // Esto cubre: "let x", "if (", "println(" NO agrega espacio porque next no es "wordish"
                     val next = ctx.next
                     val needsSpaceAfterKeyword =
                         next is FormatToken.Ident ||
-                                next is FormatToken.TypeName ||
-                                next is FormatToken.NumberLit ||
-                                next is FormatToken.StringLit
+                            next is FormatToken.TypeName ||
+                            next is FormatToken.NumberLit ||
+                            next is FormatToken.StringLit
 
                     if (needsSpaceAfterKeyword) {
                         if (out.isEmpty() || out.last() != ' ') out.append(' ')
@@ -60,7 +55,6 @@ class RuleApplier(
                 is FormatToken.NumberLit -> out.append(t.raw)
                 is FormatToken.StringLit -> out.append('"').append(t.raw).append('"')
 
-                // tokens con reglas
                 is FormatToken.Equals, is FormatToken.Colon, is FormatToken.Op -> {
                     val rule = rules.firstOrNull { it.matches(t) }
                     if (rule != null) rule.apply(t, ctx) else out.append(renderRaw(t))

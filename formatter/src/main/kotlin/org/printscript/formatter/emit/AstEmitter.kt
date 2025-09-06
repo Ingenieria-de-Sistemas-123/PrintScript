@@ -1,11 +1,5 @@
 package org.printscript.formatter.emit
 
-import node.ASTNode
-import node.AssignationNode
-import node.DeclarationNode
-import node.DoubleExpressionNode
-import node.LiteralNode
-import node.PrintNode
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.formatter.rules.FormatToken
 import org.printscript.formatter.rules.FormatToken.CloseParen
@@ -18,6 +12,12 @@ import org.printscript.formatter.rules.FormatToken.OpKind
 import org.printscript.formatter.rules.FormatToken.OpenParen
 import org.printscript.formatter.rules.FormatToken.Semicolon
 import org.printscript.formatter.rules.FormatToken.StringLit
+import org.printscript.parser.node.ASTNode
+import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.PrintNode
 
 class AstEmitter(private val cfg: FormatterConfig) {
     fun emitProgram(program: List<ASTNode>): List<FormatToken> {
