@@ -1,24 +1,26 @@
-import org.printscript.lexer.Lexer
-import node.AssignationNode
-import node.DeclarationNode
-import node.LiteralNode
-import node.PrintNode
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.printscript.lexer.Lexer
+import org.printscript.parser.DefaultParser
+import org.printscript.parser.Parser
+import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.PrintNode
 import kotlin.test.Test
 
 private val AssignationNode.value get() = this.type
 
 class ParserHappyPathTest {
-
     private val lexer = Lexer()
     private val parser: Parser = DefaultParser()
 
     @Test
     fun `declaracion y println`() {
-        val code = """
+        val code =
+            """
             let name: string = "Joe";
             println(name);
-        """.trimIndent()
+            """.trimIndent()
 
         val tokens = lexer.lex(code)
         val ast = parser.parse(tokens)

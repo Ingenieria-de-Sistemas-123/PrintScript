@@ -1,25 +1,25 @@
 package org.printscript.interpreter
 
-import node.AssignationNode
-import node.DeclarationNode
-import node.PrintNode
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.printscript.interpreter.runtime.RuntimeError
+import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.PrintNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Errores")
 class InterpreterErrorsIT : BaseInterpreterIT() {
-
     @Test
     fun `string + number falla ( '+' estricto )`() {
-        val ast = listOf(
-            DeclarationNode("s", "string", str("hola"), pos()),
-            PrintNode(plus(id("s"), num(2025.0)), pos())
-        )
+        val ast =
+            listOf(
+                DeclarationNode("s", "string", str("hola"), pos()),
+                PrintNode(plus(id("s"), num(2025.0)), pos()),
+            )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Operador '+' no definido"))
@@ -59,10 +59,11 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `type mismatch en asignacion`() {
-        val ast = listOf(
-            DeclarationNode("x","number", num(1.0), pos()),
-            AssignationNode("x", str("hola"), pos())
-        )
+        val ast =
+            listOf(
+                DeclarationNode("x", "number", num(1.0), pos()),
+                AssignationNode("x", str("hola"), pos()),
+            )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Asignación incompatible"))

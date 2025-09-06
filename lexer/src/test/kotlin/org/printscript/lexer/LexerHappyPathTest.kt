@@ -5,31 +5,31 @@ import org.junit.jupiter.api.Test
 import org.printscript.token.TokenType
 
 class LexerHappyPathTest {
-
     @Test
     fun `tokeniza declaracion y println - retorna tipos en orden y finaliza en EOF`() {
-        val code = """
+        val code =
+            """
             let name: string = "Joe";
             println(name);
-        """.trimIndent()
+            """.trimIndent()
 
         val tokens = Lexer().lex(code)
-        val tiposEsperados = listOf(
-            TokenType.LET,
-            TokenType.IDENTIFIER,
-            TokenType.COLON,
-            TokenType.STRING_TYPE,
-            TokenType.EQUAL,
-            TokenType.STRING,
-            TokenType.SEMICOLON,
-
-            TokenType.PRINTLN,
-            TokenType.OPEN_PAREN,
-            TokenType.IDENTIFIER,
-            TokenType.CLOSE_PAREN,
-            TokenType.SEMICOLON,
-            TokenType.EOF
-        )
+        val tiposEsperados =
+            listOf(
+                TokenType.LET,
+                TokenType.IDENTIFIER,
+                TokenType.COLON,
+                TokenType.STRING_TYPE,
+                TokenType.EQUAL,
+                TokenType.STRING,
+                TokenType.SEMICOLON,
+                TokenType.PRINTLN,
+                TokenType.OPEN_PAREN,
+                TokenType.IDENTIFIER,
+                TokenType.CLOSE_PAREN,
+                TokenType.SEMICOLON,
+                TokenType.EOF,
+            )
 
         assertEquals(tiposEsperados, tokens.map { it.type })
 

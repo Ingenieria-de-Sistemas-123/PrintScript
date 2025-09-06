@@ -11,13 +11,16 @@ class EnvironmentTest {
         env.declare("a", RType.NUMBER, Value.Num(1.5))
         assertEquals(Value.Num(1.5), env.read("a"))
     }
+
     @Test fun `asignar no crea nuevas entradas`() {
         val env = Environment()
         env.declare("a", RType.NUMBER, Value.Num(1.0))
-        env.assign("a", Value.Num(2.0)); env.assign("a", Value.Num(3.0))
+        env.assign("a", Value.Num(2.0))
+        env.assign("a", Value.Num(3.0))
         assertEquals(setOf("a"), env.snapshot().keys)
         assertEquals("3", env.snapshot()["a"])
     }
+
     @Test fun `usar antes de inicializar falla`() {
         val env = Environment()
         env.declare("x", RType.STRING, null)

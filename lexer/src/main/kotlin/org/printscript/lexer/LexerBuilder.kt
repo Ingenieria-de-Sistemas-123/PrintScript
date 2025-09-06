@@ -6,15 +6,19 @@ import org.printscript.token.TokenType
 class LexerBuilder {
     private val tokens = mutableListOf<Pair<String, TokenType>>()
 
-    fun with(string: String, block: () -> TokenType) {
+    fun with(
+        string: String,
+        block: () -> TokenType,
+    ) {
         tokens += string to block()
     }
 
     fun build(lexer: Lexer): Lexer {
         return Lexer(
-            provider = TokenProvider builder (
+            provider =
+                TokenProvider builder (
                     tokens.toMap()
-                    )
+                ),
         )
     }
 }

@@ -1,20 +1,23 @@
 package org.printscript.interpreter.runtime
 
-/* los valores en tiempo de ejecucion d el lenguaje */
+// los valores en tiempo de ejecucion d el lenguaje
 sealed interface Value {
     data class Num(val v: Double) : Value
+
     data class Str(val v: String) : Value
 }
 
 enum class RType { NUMBER, STRING }
 
-//helpers internos
-internal fun Value.asString(): String = when (this) {
-    is Value.Num -> if (v % 1.0 == 0.0) v.toLong().toString() else v.toString()
-    is Value.Str -> v
-}
+// helpers internos
+internal fun Value.asString(): String =
+    when (this) {
+        is Value.Num -> if (v % 1.0 == 0.0) v.toLong().toString() else v.toString()
+        is Value.Str -> v
+    }
 
-internal fun runtimeTypeOf(v: Value): RType = when (v) {
-    is Value.Num -> RType.NUMBER
-    is Value.Str -> RType.STRING
-}
+internal fun runtimeTypeOf(v: Value): RType =
+    when (v) {
+        is Value.Num -> RType.NUMBER
+        is Value.Str -> RType.STRING
+    }

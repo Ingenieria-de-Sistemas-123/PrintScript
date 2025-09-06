@@ -1,8 +1,10 @@
-import org.printscript.lexer.Lexer
-import node.DoubleExpressionNode
-import node.LiteralNode
-import node.PrintNode
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.printscript.lexer.Lexer
+import org.printscript.parser.DefaultParser
+import org.printscript.parser.Parser
+import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.PrintNode
 import kotlin.test.Test
 
 class ParserPrintTest {

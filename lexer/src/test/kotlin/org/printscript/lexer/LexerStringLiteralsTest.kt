@@ -1,12 +1,13 @@
 package org.printscript.lexer
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.printscript.lexer.exception.LexicalException
 import org.printscript.token.TokenType
 
 class LexerStringLiteralsTest {
-
     @Test
     fun `string con comillas dobles - recorta comillas y conserva contenido`() {
         val code = """"hola""""

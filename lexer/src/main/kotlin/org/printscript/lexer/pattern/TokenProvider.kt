@@ -3,7 +3,11 @@ package org.printscript.lexer.pattern
 import org.printscript.token.TokenType
 
 sealed interface TokenProvider {
-    fun matchAt(input: CharSequence, pos: Int): Pair<String, TokenType>?
+    fun matchAt(
+        input: CharSequence,
+        pos: Int,
+    ): Pair<String, TokenType>?
+
     operator fun plus(other: TokenProvider): TokenProvider
 
     companion object {
@@ -12,9 +16,12 @@ sealed interface TokenProvider {
     }
 
     private class Impl(
-        private val specs: List<Pair<TokenType, Regex>>
+        private val specs: List<Pair<TokenType, Regex>>,
     ) : TokenProvider {
-        override fun matchAt(input: CharSequence, pos: Int): Pair<String, TokenType>? {
+        override fun matchAt(
+            input: CharSequence,
+            pos: Int,
+        ): Pair<String, TokenType>? {
             var best: Pair<TokenType, MatchResult>? = null
             for ((type, rx) in specs) {
                 val m = rx.find(input, pos)
@@ -27,7 +34,6 @@ sealed interface TokenProvider {
             return best?.let { it.second.value to it.first }
         }
 
-        override fun plus(other: TokenProvider): TokenProvider =
-            Impl(this.specs + (other as Impl).specs)
+        override fun plus(other: TokenProvider): TokenProvider = Impl(this.specs + (other as Impl).specs)
     }
 }

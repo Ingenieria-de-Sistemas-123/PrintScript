@@ -1,13 +1,13 @@
 package org.printscript.lexer
 
-import org.printscript.token.TokenType
 import org.printscript.lexer.exception.LexicalException
 import org.printscript.lexer.pattern.DefaultTokenProvider
 import org.printscript.lexer.pattern.TokenProvider
 import org.printscript.token.Token
+import org.printscript.token.TokenType
 
 class Lexer(
-    private val provider: TokenProvider = DefaultTokenProvider
+    private val provider: TokenProvider = DefaultTokenProvider,
 ) {
     companion object {
         infix fun builder(block: LexerBuilder.() -> Unit): Lexer {
@@ -28,7 +28,12 @@ class Lexer(
 
         fun advance(by: Int) {
             for (k in 0 until by) {
-                if (input[pos + k] == '\n') { line++; col = 1 } else col++
+                if (input[pos + k] == '\n') {
+                    line++
+                    col = 1
+                } else {
+                    col++
+                }
             }
             pos += by
         }
@@ -46,15 +51,20 @@ class Lexer(
                 continue
             }
 
-            val hit = provider.matchAt(input, pos)
-                ?: throw LexicalException("Caracter inesperado '${input[pos]}' en línea $line, columna $col", line, col)
+            val hit =
+                provider.matchAt(input, pos)
+                    ?: throw LexicalException("Caracter inesperado '${input[pos]}' en línea $line, columna $col", line, col)
 
             val (lexeme, type) = hit
             val value =
                 if (type == TokenType.STRING && lexeme.length >= 2 &&
                     (lexeme.first() == '"' || lexeme.first() == '\'') &&
                     lexeme.last() == lexeme.first()
-                ) lexeme.substring(1, lexeme.length - 1) else lexeme
+                ) {
+                    lexeme.substring(1, lexeme.length - 1)
+                } else {
+                    lexeme
+                }
 
             out += Token(type, value, line, col)
             advance(lexeme.length)
