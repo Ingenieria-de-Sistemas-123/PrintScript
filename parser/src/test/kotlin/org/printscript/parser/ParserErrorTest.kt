@@ -1,10 +1,9 @@
+package org.printscript.parser
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
 import org.printscript.lexer.Lexer
-import org.printscript.parser.DefaultParser
-import org.printscript.parser.ParseException
-import org.printscript.parser.Parser
 import kotlin.test.Test
 
 class ParserErrorTest {

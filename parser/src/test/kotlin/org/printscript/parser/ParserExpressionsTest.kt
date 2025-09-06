@@ -1,7 +1,7 @@
+package org.printscript.parser
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.printscript.lexer.Lexer
-import org.printscript.parser.DefaultParser
-import org.printscript.parser.Parser
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
