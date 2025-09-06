@@ -1,32 +1,42 @@
 package org.printscript.interpreter.eval
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.printscript.interpreter.io.OutputProvider
+import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
 import org.printscript.interpreter.runtime.RuntimeError
-import org.printscript.interpreter.util.*
-import org.printscript.interpreter.ir.*
+import org.printscript.interpreter.util.assign
+import org.printscript.interpreter.util.decl
+import org.printscript.interpreter.util.id
+import org.printscript.interpreter.util.num
+import org.printscript.interpreter.util.plus
+import org.printscript.interpreter.util.print
+import org.printscript.interpreter.util.star
+import org.printscript.interpreter.util.str
 
 class ExecutorTest {
-
     @Test
     fun `declara x y lo imprime`() {
         val env = Environment()
-        val out = object : OutputProvider {
-            val lines = mutableListOf<String>()
-            override fun println(text: String) { lines += text }
-        }
+        val out =
+            object : OutputProvider {
+                val lines = mutableListOf<String>()
+
+                override fun println(text: String) {
+                    lines += text
+                }
+            }
         val exec = Executor(env, out)
 
-        //x=1+2*3
-        val prog = listOf<StmtIR>(
-            decl("x", RType.NUMBER, plus(num(1.0), star(num(2.0), num(3.0)))), // 7
-            print(id("x"))
-        )
+        val prog =
+            listOf<StmtIR>(
+                decl("x", RType.NUMBER, plus(num(1.0), star(num(2.0), num(3.0)))),
+                print(id("x")),
+            )
 
         prog.forEach { it.accept(exec) }
 
@@ -37,16 +47,21 @@ class ExecutorTest {
     @Test
     fun `concatena string+string en println`() {
         val env = Environment()
-        val out = object : OutputProvider {
-            val lines = mutableListOf<String>()
-            override fun println(text: String) { lines += text }
-        }
+        val out =
+            object : OutputProvider {
+                val lines = mutableListOf<String>()
+
+                override fun println(text: String) {
+                    lines += text
+                }
+            }
         val exec = Executor(env, out)
 
-        val prog = listOf<StmtIR>(
-            decl("s", RType.STRING, str("hola")),
-            print(plus(id("s"), str("2025")))
-        )
+        val prog =
+            listOf<StmtIR>(
+                decl("s", RType.STRING, str("hola")),
+                print(plus(id("s"), str("2025"))),
+            )
 
         prog.forEach { it.accept(exec) }
 
@@ -59,14 +74,16 @@ class ExecutorTest {
         val env = Environment()
         val exec = Executor(env) { /* no-op */ }
 
-        val prog = listOf<StmtIR>(
-            decl("s", RType.STRING, str("hola")),
-            print(plus(id("s"), num(2025.0)))
-        )
+        val prog =
+            listOf<StmtIR>(
+                decl("s", RType.STRING, str("hola")),
+                print(plus(id("s"), num(2025.0))),
+            )
 
-        val ex = assertThrows(RuntimeError::class.java) {
-            prog.forEach { it.accept(exec) }
-        }
+        val ex =
+            assertThrows(RuntimeError::class.java) {
+                prog.forEach { it.accept(exec) }
+            }
         assertTrue(ex.message!!.contains("Operador '+' no definido"))
     }
 
@@ -75,13 +92,15 @@ class ExecutorTest {
         val env = Environment()
         val exec = Executor(env) { /* no-op */ }
 
-        val prog = listOf<StmtIR>(
-            decl("s", RType.STRING, num(10.0))
-        )
+        val prog =
+            listOf<StmtIR>(
+                decl("s", RType.STRING, num(10.0)),
+            )
 
-        val ex = assertThrows(IllegalArgumentException::class.java) {
-            prog.forEach { it.accept(exec) }
-        }
+        val ex =
+            assertThrows(IllegalArgumentException::class.java) {
+                prog.forEach { it.accept(exec) }
+            }
         assertTrue(ex.message!!.contains("Inicialización incompatible"))
     }
 
@@ -92,9 +111,10 @@ class ExecutorTest {
 
         val prog = listOf(assign("x", num(3.0)))
 
-        val ex = assertThrows(RuntimeError::class.java) {
-            prog.forEach { it.accept(exec) }
-        }
+        val ex =
+            assertThrows(RuntimeError::class.java) {
+                prog.forEach { it.accept(exec) }
+            }
         assertTrue(ex.message!!.contains("Variable 'x' no definida"))
     }
 }

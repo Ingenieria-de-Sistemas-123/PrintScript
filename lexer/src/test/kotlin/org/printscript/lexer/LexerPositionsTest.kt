@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.printscript.token.TokenType
 
 class LexerPositionsTest {
-
     @Test
     fun `posicion LET - comienza en linea 1 columna 1`() {
         val code = "let x: number = 5;"
@@ -28,10 +27,11 @@ class LexerPositionsTest {
 
     @Test
     fun `posicion PRINTLN en segunda linea - luego de salto de linea`() {
-        val code = """
+        val code =
+            """
             let x: number = 5;
             println(x);
-        """.trimIndent()
+            """.trimIndent()
 
         val tokens = Lexer().lex(code)
         val idxPrintln = tokens.indexOfFirst { it.type == TokenType.PRINTLN }

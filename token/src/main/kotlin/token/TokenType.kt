@@ -17,5 +17,5 @@ enum class TokenType {
     COLON,
     OPEN_PAREN,
     CLOSE_PAREN,
-    EOF //esto nos indica que llegamos al final del archivo
+    EOF, // esto nos indica que llegamos al final del archivo
 }
