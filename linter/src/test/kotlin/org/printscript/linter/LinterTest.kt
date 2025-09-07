@@ -2,69 +2,43 @@ package org.printscript.linter
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.printscript.common.Position
-import org.printscript.linter.issue.Issue
-import org.printscript.linter.rules.LintContext
+import org.junit.jupiter.api.Test
+import org.printscript.linter.rules.NoDuplicateVariableRule
+import org.printscript.linter.rules.PrintlnRestrictionRule
 import org.printscript.linter.rules.Rule
-import org.printscript.parser.node.ASTNode
-import org.printscript.parser.node.DeclarationNode
-import org.printscript.parser.node.LiteralNode
-import kotlin.test.Test
+import org.printscript.linter.rules.StringNumberConcatRule
+import org.printscript.linter.testutil.AstFactory
 
 class LinterTest {
-    class AlwaysIssueRule : Rule {
-        override fun check(
-            node: ASTNode,
-            ctx: LintContext,
-        ): List<Issue> =
+    @Test
+    fun orquesta_reglas_y_reutiliza_contexto() {
+        val rules: List<Rule> =
             listOf(
-                Issue(
-                    ruleId = "always",
-                    message = "Siempre issue",
-                    startLine = 1,
-                    startCol = 1,
-                    endLine = 1,
-                    endCol = 2,
-                ),
+                NoDuplicateVariableRule(),
+                PrintlnRestrictionRule(),
+                StringNumberConcatRule(),
             )
-    }
+        val linter = Linter(rules, LintConfig())
 
-    class NeverIssueRule : Rule {
-        override fun check(
-            node: ASTNode,
-            ctx: LintContext,
-        ): List<Issue> = emptyList()
-    }
+        val program =
+            listOf(
+                // declara x
+                AstFactory.decl("x", "number", AstFactory.litNumber("0"), 1, 1),
+                // println( "ok" ) -> permitido
+                AstFactory.print(AstFactory.litString("\"ok\""), 2, 1),
+                // x = 1 + "s" -> concat mixta -> warning
+                AstFactory.assign("x", AstFactory.bin(AstFactory.litNumber("1"), "+", AstFactory.litString("\"s\""), 3, 5), 3, 1),
+                // redeclaracion x -> error
+                AstFactory.decl("x", "number", AstFactory.litNumber("1"), 4, 2),
+                // println(1) -> no permitido
+                AstFactory.print(AstFactory.litNumber("1"), 5, 1),
+            )
 
-    @Test
-    fun `sin reglas no devuelve issues`() {
-        val node = DeclarationNode("x", "number", LiteralNode(1, "number", Position(1, 1)), Position(1, 1))
-        val linter = Linter(emptyList())
-        val result = linter.analyze(listOf(node))
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `con regla que siempre devuelve issue`() {
-        val node = DeclarationNode("x", "number", LiteralNode(1, "number", Position(1, 1)), Position(1, 1))
-        val linter = Linter(listOf(AlwaysIssueRule()))
-        val result = linter.analyze(listOf(node))
-        assertEquals(1, result.size)
-        assertEquals("always", result[0].ruleId)
-    }
-
-    @Test
-    fun `con varias reglas, suma issues`() {
-        val node = DeclarationNode("x", "number", LiteralNode(1, "number", Position(1, 1)), Position(1, 1))
-        val linter = Linter(listOf(AlwaysIssueRule(), AlwaysIssueRule()))
-        val result = linter.analyze(listOf(node))
-        assertEquals(2, result.size)
-    }
-
-    @Test
-    fun `sin nodos no devuelve issues`() {
-        val linter = Linter(listOf(AlwaysIssueRule()))
-        val result = linter.analyze(emptyList())
-        assertTrue(result.isEmpty())
+        val issues = linter.analyze(program)
+        // Esperamos: 1 warning por concat mixta, 1 error por duplicado, 1 warning por println inválido = 3
+        assertEquals(3, issues.size)
+        assertTrue(issues.any { it.ruleId == "string-number-concat" })
+        assertTrue(issues.any { it.ruleId == "no-duplicate-var" && it.severity.name == "ERROR" })
+        assertTrue(issues.any { it.ruleId == "println-restriction" })
     }
 }
