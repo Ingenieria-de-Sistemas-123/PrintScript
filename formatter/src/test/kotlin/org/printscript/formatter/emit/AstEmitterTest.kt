@@ -1,15 +1,15 @@
 package org.printscript.formatter.emit
 
-import node.ASTNode
-import node.AssignationNode
-import node.DeclarationNode
-import node.LiteralNode
-import node.PrintNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.printscript.common.Position
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.formatter.rules.FormatToken
+import org.printscript.parser.node.ASTNode
+import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.PrintNode
 
 class AstEmitterTest {
     private fun pos() = Position(1, 1)
