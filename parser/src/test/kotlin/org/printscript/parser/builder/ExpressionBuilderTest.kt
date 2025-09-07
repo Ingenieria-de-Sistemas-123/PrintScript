@@ -35,8 +35,9 @@ class ExpressionBuilderTest {
         assertEquals("x", id.value)
     }
 
+    // el operador * tiene mayor precedencia que + si hay parentesis
     @Test
-    fun `parentesis y precedencia + - vs * _ _`() {
+    fun `parenthesis y precedencia`() {
         // (1 + 2) * 3 -> fuerza que * tenga mayor precedencia que +
         val ast =
             build(
