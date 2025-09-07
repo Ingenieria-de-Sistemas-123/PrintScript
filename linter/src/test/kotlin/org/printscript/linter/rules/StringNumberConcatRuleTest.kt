@@ -3,13 +3,14 @@ package org.printscript.linter.rules
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.printscript.linter.LintConfig
 import org.printscript.linter.issue.Severity
 import org.printscript.linter.testutil.AstFactory
 
 class StringNumberConcatRuleTest {
     @Test
     fun reporta_en_concatenacion_mixta_y_no_en_homogeneas() {
-        val ctx = LintContext(org.printscript.linter.LintConfig())
+        val ctx = LintContext(LintConfig())
         val rule = StringNumberConcatRule()
 
         val sn = AstFactory.bin(AstFactory.litString("\"a\""), "+", AstFactory.litNumber("1"), 2, 2)
@@ -28,7 +29,7 @@ class StringNumberConcatRuleTest {
 
     @Test
     fun no_reporta_cuando_inferType_no_puede_determinar() {
-        val ctx = LintContext(org.printscript.linter.LintConfig())
+        val ctx = LintContext(LintConfig())
         // "id" no está en symbols => inferType(identifier) == null -> la regla retorna vacío
         val unknown = AstFactory.bin(AstFactory.litIdentifier("id"), "+", AstFactory.litNumber("1"), 6, 1)
         assertTrue(StringNumberConcatRule().check(unknown, ctx).isEmpty())

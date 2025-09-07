@@ -3,13 +3,14 @@ package org.printscript.linter.rules
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.printscript.linter.LintConfig
 import org.printscript.linter.issue.Severity
 import org.printscript.linter.testutil.AstFactory
 
 class PrintlnRestrictionRuleTest {
     @Test
     fun acepta_literal_string_y_identificador() {
-        val ctx = LintContext(org.printscript.linter.LintConfig())
+        val ctx = LintContext(LintConfig())
         val rule = PrintlnRestrictionRule()
 
         val okString = AstFactory.print(AstFactory.litString("\"hola\""), 4, 2)
@@ -21,7 +22,7 @@ class PrintlnRestrictionRuleTest {
 
     @Test
     fun rechaza_literal_number_y_expresiones_compuestas() {
-        val ctx = LintContext(org.printscript.linter.LintConfig())
+        val ctx = LintContext(LintConfig())
         val rule = PrintlnRestrictionRule()
 
         val badNumber = AstFactory.print(AstFactory.litNumber("7"), 6, 1)

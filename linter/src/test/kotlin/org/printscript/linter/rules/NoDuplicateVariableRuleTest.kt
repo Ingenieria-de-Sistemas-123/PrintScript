@@ -3,13 +3,14 @@ package org.printscript.linter.rules
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.printscript.linter.LintConfig
 import org.printscript.linter.issue.Severity
 import org.printscript.linter.testutil.AstFactory
 
 class NoDuplicateVariableRuleTest {
     @Test
     fun primera_declaracion_no_reporta_y_segunda_iguales_si() {
-        val ctx = LintContext(org.printscript.linter.LintConfig())
+        val ctx = LintContext(LintConfig())
         val rule = NoDuplicateVariableRule()
 
         val d1 = AstFactory.decl("x", "number", AstFactory.litNumber("0"), 2, 5)
@@ -33,7 +34,7 @@ class NoDuplicateVariableRuleTest {
 
     @Test
     fun declaracion_con_nombre_distinto_no_reporta() {
-        val ctx = LintContext(org.printscript.linter.LintConfig())
+        val ctx = LintContext(LintConfig())
         val rule = NoDuplicateVariableRule()
         rule.check(AstFactory.decl("a", "number", AstFactory.litNumber("0"), 1, 1), ctx)
         val issues = rule.check(AstFactory.decl("b", "number", AstFactory.litNumber("1"), 1, 5), ctx)
