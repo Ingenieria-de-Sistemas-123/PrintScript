@@ -62,7 +62,7 @@ class AstEmitterTest {
     }
 
     @Test
-    fun `println emite keyword y paréntesis`() {
+    fun `println emite keyword y parentesis`() {
         val ast =
             listOf<ASTNode>(
                 PrintNode(LiteralNode("x", "identifier", pos()), pos()),
