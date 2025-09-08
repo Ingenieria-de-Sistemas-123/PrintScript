@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm")
     jacoco
     id("com.diffplug.spotless")
+    `maven-publish`
 }
 
 repositories { mavenCentral() }
@@ -103,4 +104,28 @@ if (!tasks.names.contains("jacocoTestCoverageVerification")) {
 // ---- check orquesta calidad
 tasks.named("check") {
     dependsOn("spotlessCheck", "jacocoTestReport", "jacocoTestCoverageVerification")
+}
+
+// === Publicación Maven para todos los módulos ===
+plugins.withId("maven-publish") {
+    extensions.configure<org.gradle.api.publish.PublishingExtension> {
+        publications {
+            create("maven", org.gradle.api.publish.maven.MavenPublication::class.java) {
+                from(components["java"])
+                groupId = project.group.toString()
+                artifactId = project.name
+                version = project.version.toString()
+            }
+        }
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/Ingenieria-de-Sistemas-123/PrintScript")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR") ?: ""
+                    password = System.getenv("GITHUB_TOKEN") ?: ""
+                }
+            }
+        }
+    }
 }
