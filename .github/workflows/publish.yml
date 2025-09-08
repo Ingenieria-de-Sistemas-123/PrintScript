@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to Github Packages
+      - name: Publish to GitHub Packages
         run: ./gradlew publish
         env:
           GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
