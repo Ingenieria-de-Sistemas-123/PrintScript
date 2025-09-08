@@ -23,6 +23,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build and Test
         run: ./gradlew build
+      - name: Run Lint (Spotless)
+        run: ./gradlew spotlessCheck
       - name: Run Lint
         run: ./gradlew lint
       - name: Check coverage
