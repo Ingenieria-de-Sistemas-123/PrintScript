@@ -3,7 +3,6 @@ package org.printscript.formatter
 import org.junit.jupiter.api.Test
 import org.printscript.common.Position
 import org.printscript.formatter.config.FormatterConfig
-import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
@@ -17,7 +16,7 @@ class CodeFormatterIT {
     @Test
     fun `declara, imprime, reasigna, imprime (happy path)`() {
         val ast =
-            listOf<ASTNode>(
+            listOf(
                 DeclarationNode(
                     name = "x",
                     type = "number",
@@ -73,7 +72,7 @@ class CodeFormatterIT {
     @Test
     fun `config sin salto post-semicolon (pero newline final)`() {
         val ast =
-            listOf<ASTNode>(
+            listOf(
                 DeclarationNode("a", "number", LiteralNode(5.0, "number", pos()), pos()),
                 PrintNode(LiteralNode("a", "identifier", pos()), pos()),
             )
@@ -90,7 +89,7 @@ class CodeFormatterIT {
     @Test
     fun `idempotencia (mismo AST, mismo output)`() {
         val ast =
-            listOf<ASTNode>(
+            listOf(
                 DeclarationNode("s", "string", LiteralNode("hola", "string", pos()), pos()),
                 PrintNode(
                     DoubleExpressionNode(
