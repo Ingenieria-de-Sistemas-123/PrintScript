@@ -1,10 +1,19 @@
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-plugins { }
+plugins {
+    id("pl.allegro.tech.build.axion-release") version "1.15.4"
+}
 
 group = "org.printscript"
-version = "1.0-SNAPSHOT"
+
+scmVersion {
+    tag {
+        prefix = "v"
+    }
+}
+
+project.version = scmVersion.version
 
 allprojects {
     repositories { mavenCentral() }
