@@ -106,7 +106,7 @@ tasks.named("check") {
     dependsOn("spotlessCheck", "jacocoTestReport", "jacocoTestCoverageVerification")
 }
 
-// === Publicación Maven para todos los módulos ===
+// === Maven publication for all modules ===
 plugins.withId("maven-publish") {
     extensions.configure<PublishingExtension> {
         publications {
