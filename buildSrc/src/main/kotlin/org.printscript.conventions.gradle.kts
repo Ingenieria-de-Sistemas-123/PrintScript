@@ -108,9 +108,9 @@ tasks.named("check") {
 
 // === Publicación Maven para todos los módulos ===
 plugins.withId("maven-publish") {
-    extensions.configure<org.gradle.api.publish.PublishingExtension> {
+    extensions.configure<PublishingExtension> {
         publications {
-            create("maven", org.gradle.api.publish.maven.MavenPublication::class.java) {
+            create("maven", MavenPublication::class.java) {
                 from(components["java"])
                 groupId = project.group.toString()
                 artifactId = project.name
