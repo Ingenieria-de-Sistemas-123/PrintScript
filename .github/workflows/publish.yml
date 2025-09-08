@@ -19,8 +19,8 @@ jobs:
             distribution: 'temurin'
             java-version: '21'
 
-      -   name: Build with Gradle
-          run: ./gradlew build
+      - name: Build with Gradle
+        run: ./gradlew build
 
       - name: Set up Git user
         run: |
