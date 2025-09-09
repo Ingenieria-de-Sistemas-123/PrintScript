@@ -112,9 +112,6 @@ plugins.withId("maven-publish") {
         publications {
             create("maven", MavenPublication::class.java) {
                 from(components["java"])
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
             }
         }
         repositories {

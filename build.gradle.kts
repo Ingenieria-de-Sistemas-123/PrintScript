@@ -1,24 +1,6 @@
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-plugins {
-    id("pl.allegro.tech.build.axion-release") version "1.15.4"
-}
-
-group = "org.printscript"
-
-scmVersion {
-    tag {
-        prefix = "v"
-    }
-}
-
-project.version = scmVersion.version
-
-allprojects {
-    repositories { mavenCentral() }
-}
-
 tasks.register("installGitHooks") {
     group = "git"
     description = "Genera (si faltan) y copia los hooks pre-commit y pre-push a .git/hooks"
