@@ -1,6 +1,6 @@
 plugins {
     id 'org.printscript.conventions'
-    // id 'application'
+    id 'application'
 }
 
 group = 'org.printscript'
@@ -11,17 +11,19 @@ repositories {
 }
 
 dependencies {
+    implementation 'info.picocli:picocli:4.7.6'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    // implementation project(':lexer')
-    // implementation project(':parser')
-    // implementation project(':interpreter')
-    // implementation project(':formatter')
-    // implementation project(':analyzer')
-    // implementation 'org.jetbrains.kotlinx:kotlinx-cli:0.3.6'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
+    implementation project(':lexer')
+    implementation project(':parser')
+    implementation project(':interpreter')
+    implementation project(':formatter')
+    implementation project(':linter')
+    implementation project(':common')
+    implementation project(':token')
 }
 
-/*
+
 application {
     mainClass = 'org.printscript.cli.MainKt'
 }
-*/
