@@ -1,25 +1,47 @@
 package org.printscript.interpreter
 
 import org.printscript.interpreter.adapter.AstToIr
+import org.printscript.interpreter.adapter.AstToIrMapper
 import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.io.DefaultOutputProvider
+import org.printscript.interpreter.io.IOContext
 import org.printscript.interpreter.io.OutputProvider
+import org.printscript.interpreter.io.StdinInputProvider
+import org.printscript.interpreter.io.SystemEnvProvider
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.parser.node.ASTNode
 
 class Interpreter(
-    output: OutputProvider = DefaultOutputProvider(),
+    private val output: OutputProvider = DefaultOutputProvider(),
 ) {
     private val env = Environment()
-    private val exec = Executor(env, output)
-    private val adapter = AstToIr()
+    private val defaultMapper: AstToIrMapper = AstToIr()
 
-    // Entrada publica mas tipica: AST del parser--> ejecuta
     fun execute(ast: List<ASTNode>) {
-        val irProgram = adapter.transform(ast) // List<StmtIR>
-        irProgram.forEach { stmt -> stmt.accept(exec) }
+        val defaultIo =
+            IOContext(
+                input = StdinInputProvider(),
+                env = SystemEnvProvider(),
+            )
+        execute(ast, defaultIo, defaultMapper)
     }
 
-    /** a futuro: si queremos exponer un snapshot del entorno para tests/CLI */
+    fun execute(
+        ast: List<ASTNode>,
+        io: IOContext,
+    ) {
+        execute(ast, io, defaultMapper)
+    }
+
+    fun execute(
+        ast: List<ASTNode>,
+        io: IOContext,
+        mapper: AstToIrMapper,
+    ) {
+        val irProgram = mapper.transform(ast) // List<StmtIR>
+        val exec = Executor(env, output, io)
+        exec.exec(irProgram)
+    }
+
     fun environmentSnapshot(): Map<String, String> = env.snapshot()
 }

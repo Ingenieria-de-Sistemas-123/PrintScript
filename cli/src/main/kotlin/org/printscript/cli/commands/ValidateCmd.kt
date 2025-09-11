@@ -8,7 +8,7 @@ import picocli.CommandLine.Option
 import java.io.File
 import java.util.concurrent.Callable
 
-@Command(name = "validate", description = ["Validate PrintScript source syntax."])
+@Command(name = "validate", description = ["Validate PrintScript source syntax."], mixinStandardHelpOptions = true)
 class ValidateCmd : Callable<Int> {
     @Option(names = ["-f", "--file"], required = true)
     lateinit var file: String

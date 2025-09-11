@@ -18,8 +18,8 @@ import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintNode
 
-class AstToIr {
-    fun transform(program: List<ASTNode>): List<StmtIR> = program.map { toStmt(it) }
+class AstToIr : AstToIrMapper {
+    override fun transform(program: List<ASTNode>): List<StmtIR> = program.map { toStmt(it) }
 
     private fun toStmt(n: ASTNode): StmtIR =
         when (n) {

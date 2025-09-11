@@ -13,7 +13,7 @@ import picocli.CommandLine.Option
 import java.io.File
 import java.util.concurrent.Callable
 
-@Command(name = "analyze", description = ["Run static analysis (linter)."])
+@Command(name = "analyze", description = ["Run static analysis (linter)."], mixinStandardHelpOptions = true)
 class AnalyzeCmd : Callable<Int> {
     @Option(names = ["-f", "--file"], required = true)
     lateinit var file: String
@@ -32,7 +32,7 @@ class AnalyzeCmd : Callable<Int> {
             onSuccess = { ast ->
                 val issues = lint.analyze(ast)
                 if (issues.isEmpty()) {
-                    println("No issues ✅")
+                    println("No issues")
                     0
                 } else {
                     println("Issues found (${issues.size}):")
