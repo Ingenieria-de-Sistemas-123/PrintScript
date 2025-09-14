@@ -10,6 +10,7 @@ import org.printscript.interpreter.ir.PrintIR
 import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.ir.StmtVisitor
 import org.printscript.interpreter.runtime.Environment
+import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.asString
 import org.printscript.interpreter.runtime.runtimeTypeOf
@@ -61,7 +62,7 @@ internal class Executor(
         val cond = env.read(i.conditionVar)
         val isTrue =
             (cond as? Value.Bool)?.v
-                ?: throw RuntimeException("La condición de if debe ser una variable boolean: '${i.conditionVar}'")
+                ?: throw RuntimeError("La condición de if debe ser una variable boolean: '${i.conditionVar}'")
         if (isTrue) {
             exec(i.thenBlock)
         } else {
