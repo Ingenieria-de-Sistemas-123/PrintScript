@@ -5,6 +5,7 @@ class Environment {
         val type: RType,
         var value: Value?,
         var initialized: Boolean,
+        val isConst: Boolean,
     )
 
     private val vars = mutableMapOf<String, Var>()
@@ -15,7 +16,22 @@ class Environment {
         init: Value?,
     ) {
         if (name in vars) throw RuntimeError("Variable '$name' ya definida")
-        vars[name] = Var(type, init, init != null)
+        if (init != null && type != runtimeTypeOf(init)) {
+            throw RuntimeError("Inicialización incompatible de '$name': se esperaba $type y se recibió ${runtimeTypeOf(init)}")
+        }
+        vars[name] = Var(type, init, init != null, isConst = false)
+    }
+
+    fun declareConst(
+        name: String,
+        type: RType,
+        init: Value,
+    ) {
+        if (name in vars) throw RuntimeError("Variable '$name' ya definida")
+        if (type != runtimeTypeOf(init)) {
+            throw RuntimeError("Inicialización incompatible de const '$name': se esperaba $type y se recibió ${runtimeTypeOf(init)}")
+        }
+        vars[name] = Var(type, init, initialized = true, isConst = true)
     }
 
     fun assign(
@@ -23,6 +39,9 @@ class Environment {
         value: Value,
     ) {
         val v = vars[name] ?: throw RuntimeError("Variable '$name' no definida")
+        if (v.isConst) {
+            throw RuntimeError("No se puede asignar a la constante '$name'")
+        }
         if (v.type != runtimeTypeOf(value)) {
             throw RuntimeError("Asignación incompatible a '$name': se esperaba ${v.type} y se recibió ${runtimeTypeOf(value)}")
         }
@@ -36,13 +55,13 @@ class Environment {
         return v.value!!
     }
 
-    // Lo usamos mas adelante. Util a futuro para tests/CLI: nos devuelve una vista stringificada del ambiente
     fun snapshot(): Map<String, String> =
         vars.mapValues { (_, v) ->
             when (val value = v.value) {
                 null -> "<uninitialized>"
                 is Value.Num -> if (value.v % 1.0 == 0.0) value.v.toLong().toString() else value.v.toString()
                 is Value.Str -> value.v
+                is Value.Bool -> value.v.toString()
             }
         }
 }

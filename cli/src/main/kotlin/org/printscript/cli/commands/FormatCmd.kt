@@ -9,7 +9,7 @@ import picocli.CommandLine.Option
 import java.io.File
 import java.util.concurrent.Callable
 
-@Command(name = "format", description = ["Format a PrintScript source file."])
+@Command(name = "format", description = ["Format a PrintScript source file."], mixinStandardHelpOptions = true)
 class FormatCmd : Callable<Int> {
     @Option(names = ["-f", "--file"], required = true)
     lateinit var file: String
