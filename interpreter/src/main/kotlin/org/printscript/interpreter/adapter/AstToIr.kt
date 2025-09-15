@@ -86,7 +86,9 @@ class AstToIr : AstToIrMapper {
     private fun numberFromAny(v: Any?): Double =
         when (v) {
             is Number -> v.toDouble()
-            is String -> v.toDoubleOrNull() ?: error("Literal number inválido: '$v'")
+            is String ->
+                v.toDoubleOrNull()
+                    ?: if (v == "empty") 0.0 else error("Literal number inválido: '$v'")
             else -> error("Literal number inválido: $v")
         }
 }
