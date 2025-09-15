@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.PrintNode
-import kotlin.text.lines
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
