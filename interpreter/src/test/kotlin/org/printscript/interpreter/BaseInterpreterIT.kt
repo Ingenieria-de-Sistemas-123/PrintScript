@@ -9,37 +9,18 @@ import org.printscript.parser.node.LiteralNode
 
 @Tag("integration")
 abstract class BaseInterpreterIT {
-    // Posición dummy para todos los nodos de prueba
+
     protected fun pos() = Position(1, 1)
 
-    // Helpers AST (parser)
-    protected fun num(n: Double) = LiteralNode(n, "number", pos())
+    protected fun num(n: Double) = LiteralNode(n)
+    protected fun num(n: Int) = LiteralNode(n.toDouble())
+    protected fun str(s: String) = LiteralNode(s)
+    protected fun id(name: String) = LiteralNode(name)
 
-    protected fun num(n: Int) = LiteralNode(n.toDouble(), "number", pos())
-
-    protected fun str(s: String) = LiteralNode(s, "string", pos())
-
-    protected fun id(name: String) = LiteralNode(name, "identifier", pos())
-
-    protected fun plus(
-        l: ASTNode,
-        r: ASTNode,
-    ) = DoubleExpressionNode(l, "+", r, pos())
-
-    protected fun minus(
-        l: ASTNode,
-        r: ASTNode,
-    ) = DoubleExpressionNode(l, "-", r, pos())
-
-    protected fun star(
-        l: ASTNode,
-        r: ASTNode,
-    ) = DoubleExpressionNode(l, "*", r, pos())
-
-    protected fun slash(
-        l: ASTNode,
-        r: ASTNode,
-    ) = DoubleExpressionNode(l, "/", r, pos())
+    protected fun plus(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "+", r, pos())
+    protected fun minus(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "-", r, pos())
+    protected fun star(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "*", r, pos())
+    protected fun slash(l: ASTNode, r: ASTNode) = DoubleExpressionNode(l, "/", r, pos())
 
     protected fun newInterpreterWithBuffer(): Pair<Interpreter, BufferOutput> {
         val out = BufferOutput()

@@ -13,9 +13,7 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     fun `render de enteros sin ,0`() {
         val ast =
             listOf(
-                // verifica que 2.0 se imprima como "2"
                 PrintStatementNode(num(2.0), pos()),
-                // y que el resultado de una operación en punto flotante 4.0 salga "4"
                 PrintStatementNode(plus(num(2.0), num(2.0)), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()

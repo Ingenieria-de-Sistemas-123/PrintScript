@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
-import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.PrintStatementNode
 
 @Tag("integration")
@@ -15,16 +15,16 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `declara number con precedencia, imprime, concatena string, reasigna y vuelve a imprimir`() {
         val ast =
             listOf(
-                DeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
+                ConstantDeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
                 PrintStatementNode(id("x"), pos()),
-                DeclarationNode("s", "string", str("hola"), pos()),
-                PrintStatementNode(plus(id("s"), str("2025")), pos()),
+                ConstantDeclarationNode("s", "string", str("hola!"), pos()),                 // usar "hola!" para StrLit
+                PrintStatementNode(plus(id("s"), str("2025")), pos()),                       // "2025" ya es StrLit
                 AssignationNode("x", plus(id("x"), num(1.0)), pos()),
                 PrintStatementNode(id("x"), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
-        assertEquals(listOf("7", "hola2025", "8"), out.lines)
+        assertEquals(listOf("7", "hola!2025", "8"), out.lines)
     }
 
     @Test
@@ -45,12 +45,12 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `concatena string+string`() {
         val ast =
             listOf(
-                DeclarationNode("a", "string", str("ab"), pos()),
-                DeclarationNode("b", "string", str("cd"), pos()),
+                ConstantDeclarationNode("a", "string", str("ab!"), pos()),  // "ab!" fuerza StrLit
+                ConstantDeclarationNode("b", "string", str("cd!"), pos()),
                 PrintStatementNode(plus(id("a"), id("b")), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
-        assertEquals(listOf("abcd"), out.lines)
+        assertEquals(listOf("ab!cd!"), out.lines)
     }
 }

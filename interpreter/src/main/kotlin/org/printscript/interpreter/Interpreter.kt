@@ -1,6 +1,6 @@
 package org.printscript.interpreter
 
-import org.printscript.interpreter.adapter.AstToIr
+import org.printscript.interpreter.adapter.ASTtoIR
 import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.io.DefaultOutputProvider
 import org.printscript.interpreter.io.OutputProvider
@@ -12,7 +12,7 @@ class Interpreter(
 ) {
     private val env = Environment()
     private val exec = Executor(env, output)
-    private val adapter = AstToIr()
+    private val adapter = ASTtoIR()
 
     // Entrada publica mas tipica: AST del parser--> ejecuta
     fun execute(ast: List<ASTNode>) {
