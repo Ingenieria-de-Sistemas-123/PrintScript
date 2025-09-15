@@ -2,6 +2,7 @@ package org.printscript.interpreter
 
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -14,15 +15,15 @@ import org.printscript.parser.node.PrintNode
 @DisplayName("Interpreter – Errores")
 class InterpreterErrorsIT : BaseInterpreterIT() {
     @Test
-    fun `string + number falla ( '+' estricto )`() {
+    fun `string + number concatena correctamente`() {
         val ast =
             listOf(
                 DeclarationNode("s", "string", str("hola"), pos()),
                 PrintNode(plus(id("s"), num(2025.0)), pos()),
             )
-        val (interpreter, _) = newInterpreterWithBuffer()
-        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
-        assertTrue(ex.message!!.contains("Operador '+' no definido"))
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertEquals(listOf("hola2025"), out.lines)
     }
 
     @Test

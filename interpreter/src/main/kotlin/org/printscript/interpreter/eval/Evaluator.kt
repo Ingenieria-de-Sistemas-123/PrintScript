@@ -31,18 +31,23 @@ internal class Evaluator(
     // v1.1
     override fun visitBool(b: BoolLit): Value = Bool(b.value)
 
+    private fun numToString(n: Double): String =
+        if (n % 1.0 == 0.0) n.toInt().toString() else n.toString()
+
     override fun visitBinary(b: Binary): Value {
         val l = b.left.accept(this)
         val r = b.right.accept(this)
         return when (b.op) {
             Op.PLUS ->
                 when {
-                    l is Num && r is Num -> Num(l.v + r.v) // suma
-                    l is Str && r is Str -> Str(l.v + r.v) // concat
+                    l is Num && r is Num -> Num(l.v + r.v)
+                    l is Str && r is Str -> Str(l.v + r.v)
+                    l is Str && r is Num -> Str(l.v + numToString(r.v))
+                    l is Num && r is Str -> Str(numToString(l.v) + r.v)
                     else -> throw RuntimeError(
-                        "Operador '+' no definido para ${typeName(l)} y ${typeName(r)}",
-                    )
-                }
+                    "Operador '+' no definido para ${typeName(l)} y ${typeName(r)}"
+                )
+            }
             Op.MINUS -> Num(reqNum(l, "-") - reqNum(r, "-"))
             Op.STAR -> Num(reqNum(l, "*") * reqNum(r, "*"))
             Op.SLASH -> {
@@ -52,6 +57,7 @@ internal class Evaluator(
             }
         }
     }
+
 
     // v1.1: readInput
     override fun visitReadInput(r: ReadInputIR): Value {

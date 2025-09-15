@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.PrintNode
+import kotlin.text.lines
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
@@ -53,4 +54,17 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         interpreter.execute(ast)
         assertEquals(listOf("abcd"), out.lines)
     }
+
+    @Test
+    fun `concatena string+number`() {
+        val ast =
+            listOf(
+                DeclarationNode("s", "string", str("hola"), pos()),
+                PrintNode(plus(id("s"), num(2025.0)), pos()),
+            )
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertEquals(listOf("hola2025"), out.lines)
+    }
+
 }
