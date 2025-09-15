@@ -14,15 +14,15 @@ import org.printscript.parser.node.PrintNode
 @DisplayName("Interpreter – Errores")
 class InterpreterErrorsIT : BaseInterpreterIT() {
     @Test
-    fun `string + number falla ( '+' estricto )`() {
+    fun `string + number concatena correctamente`() {
         val ast =
             listOf(
                 DeclarationNode("s", "string", str("hola"), pos()),
                 PrintNode(plus(id("s"), num(2025.0)), pos()),
             )
-        val (interpreter, _) = newInterpreterWithBuffer()
-        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
-        assertTrue(ex.message!!.contains("Operador '+' no definido"))
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertTrue { out.lines == listOf("hola2025") }
     }
 
     @Test
@@ -67,5 +67,25 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Asignación incompatible"))
+    }
+
+    @Test
+    fun `declaracion doble de variable`() {
+        val ast =
+            listOf(
+                DeclarationNode("x", "number", num(1.0), pos()),
+                DeclarationNode("x", "number", num(2.0), pos()),
+            )
+        val (interpreter, _) = newInterpreterWithBuffer()
+        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("Variable 'x' ya definida"))
+    }
+
+    @Test
+    fun `declaracion con tipo invalido - falla`() {
+        val ast = listOf(DeclarationNode("x", "boolean", num(1.0), pos()))
+        val (interpreter, _) = newInterpreterWithBuffer()
+        val ex = assertThrows(IllegalStateException::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("Tipo de declaración desconocido 'boolean'"))
     }
 }
