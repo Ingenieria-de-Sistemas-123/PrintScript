@@ -10,11 +10,11 @@ import org.printscript.parser.node.DoubleExpressionNode
 class StringNumberConcatRule : Rule {
     override fun check(
         node: ASTNode,
-        ctx: LintContext,
+        lintContext: LintContext,
     ): List<Issue> {
         if (node is DoubleExpressionNode && node.operator == "+") {
-            val lt = inferType(node.left, ctx) ?: return emptyList() // Tipo izquierdo
-            val rt = inferType(node.right, ctx) ?: return emptyList() // Tipo derecho
+            val lt = inferType(node.left, lintContext) ?: return emptyList()
+            val rt = inferType(node.right, lintContext) ?: return emptyList()
 
             val mixed = (lt == "string" && rt == "number") || (lt == "number" && rt == "string")
             if (mixed) {

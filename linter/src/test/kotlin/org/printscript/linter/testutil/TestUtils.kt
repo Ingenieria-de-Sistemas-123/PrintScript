@@ -1,0 +1,39 @@
+package org.printscript.linter.testutil
+
+import org.printscript.common.Position
+import org.printscript.parser.node.*
+
+object TestUtils {
+    fun pos(l: Int, c: Int) = Position(l, c)
+
+    fun num(n: Number) = LiteralNode(n)
+    fun str(s: String) = LiteralNode(s)
+    fun bool(b: Boolean) = LiteralNode(b)
+
+    fun plus(l: ASTNode, r: ASTNode, line: Int = 1, col: Int = 1) =
+        DoubleExpressionNode(l, "+", r, pos(line, col))
+
+    fun minus(l: ASTNode, r: ASTNode, line: Int = 1, col: Int = 1) =
+        DoubleExpressionNode(l, "-", r, pos(line, col))
+
+    fun mul(l: ASTNode, r: ASTNode, line: Int = 1, col: Int = 1) =
+        DoubleExpressionNode(l, "*", r, pos(line, col))
+
+    fun div(l: ASTNode, r: ASTNode, line: Int = 1, col: Int = 1) =
+        DoubleExpressionNode(l, "/", r, pos(line, col))
+
+    fun printlnNode(expr: ASTNode, line: Int = 1, col: Int = 1) =
+        PrintStatementNode(expr, pos(line, col))
+
+    fun declVar(name: String, type: String, expr: ASTNode, line: Int, col: Int): DeclarationNode =
+        VariableDeclarationNode(name, type, expr, pos(line, col))
+
+    fun declConst(name: String, type: String, expr: ASTNode, line: Int, col: Int): DeclarationNode =
+        ConstantDeclarationNode(name, type, expr, pos(line, col))
+
+    fun assign(name: String, expr: ASTNode, line: Int, col: Int) =
+        AssignationNode(name, expr, pos(line, col))
+
+    fun ifElse(ifNodes: List<ASTNode>, elseNodes: List<ASTNode>, condition: LiteralNode<*>) =
+        IfElseNode(ifNodes, elseNodes, condition)
+}
