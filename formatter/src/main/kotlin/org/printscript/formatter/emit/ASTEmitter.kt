@@ -23,14 +23,16 @@ import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 
 class ASTEmitter(private val cfg: FormatterConfig) {
-
     fun emitProgram(program: List<ASTNode>): List<FormatToken> {
         val out = mutableListOf<FormatToken>()
         program.forEach { emitStmt(it, out) }
         return out
     }
 
-    private fun emitStmt(n: ASTNode, sink: MutableList<FormatToken>) {
+    private fun emitStmt(
+        n: ASTNode,
+        sink: MutableList<FormatToken>,
+    ) {
         when (n) {
             is DeclarationNode -> {
                 sink += Keyword("let")
@@ -62,19 +64,23 @@ class ASTEmitter(private val cfg: FormatterConfig) {
         }
     }
 
-    private fun emitExpr(n: ASTNode, sink: MutableList<FormatToken>) {
+    private fun emitExpr(
+        n: ASTNode,
+        sink: MutableList<FormatToken>,
+    ) {
         when (n) {
             is DoubleExpressionNode -> {
                 emitExpr(n.left, sink)
-                sink += Op(
-                    when (n.operator.trim()) {
-                        "+" -> OpKind.PLUS
-                        "-" -> OpKind.MINUS
-                        "*" -> OpKind.STAR
-                        "/" -> OpKind.SLASH
-                        else -> error("Operador no soportado: '${n.operator}'")
-                    }
-                )
+                sink +=
+                    Op(
+                        when (n.operator.trim()) {
+                            "+" -> OpKind.PLUS
+                            "-" -> OpKind.MINUS
+                            "*" -> OpKind.STAR
+                            "/" -> OpKind.SLASH
+                            else -> error("Operador no soportado: '${n.operator}'")
+                        },
+                    )
                 emitExpr(n.right, sink)
             }
 
@@ -84,7 +90,10 @@ class ASTEmitter(private val cfg: FormatterConfig) {
         }
     }
 
-    private fun emitLiteral(n: LiteralNode<*>, sink: MutableList<FormatToken>) {
+    private fun emitLiteral(
+        n: LiteralNode<*>,
+        sink: MutableList<FormatToken>,
+    ) {
         when (val v = n.value) {
             is Number -> sink += NumberLit(v.toString())
             is String -> {

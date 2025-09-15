@@ -16,61 +16,67 @@ class ASTEmitterTest {
 
     @Test
     fun `declaracion emite tokens esperados`() {
-        val decl = ConstantDeclarationNode(
-            identifier = "v",
-            valueType = "number",
-            expression = LiteralNode(42.0),
-            position = pos()
-        )
+        val decl =
+            ConstantDeclarationNode(
+                identifier = "v",
+                valueType = "number",
+                expression = LiteralNode(42.0),
+                position = pos(),
+            )
         val ast = listOf<ASTNode>(decl)
 
         val tokens = ASTEmitter(FormatterConfig()).emitProgram(ast)
-        val expected = listOf(
-            FormatToken.Keyword("let"),
-            FormatToken.Ident("v"),
-            FormatToken.Colon,
-            FormatToken.TypeName("number"),
-            FormatToken.Equals,
-            FormatToken.NumberLit("42.0"),
-            FormatToken.Semicolon,
-        )
+        val expected =
+            listOf(
+                FormatToken.Keyword("let"),
+                FormatToken.Ident("v"),
+                FormatToken.Colon,
+                FormatToken.TypeName("number"),
+                FormatToken.Equals,
+                FormatToken.NumberLit("42.0"),
+                FormatToken.Semicolon,
+            )
         assertEquals(expected, tokens)
     }
 
     @Test
     fun `asignacion emite tokens esperados`() {
-        val ast = listOf<ASTNode>(
-            AssignationNode(
-                variable = "x",
-                expression = LiteralNode(1.0),
-                position = pos(),
+        val ast =
+            listOf<ASTNode>(
+                AssignationNode(
+                    variable = "x",
+                    expression = LiteralNode(1.0),
+                    position = pos(),
+                ),
             )
-        )
         val tokens = ASTEmitter(FormatterConfig()).emitProgram(ast)
-        val expected = listOf(
-            FormatToken.Ident("x"),
-            FormatToken.Equals,
-            FormatToken.NumberLit("1.0"),
-            FormatToken.Semicolon,
-        )
+        val expected =
+            listOf(
+                FormatToken.Ident("x"),
+                FormatToken.Equals,
+                FormatToken.NumberLit("1.0"),
+                FormatToken.Semicolon,
+            )
         assertEquals(expected, tokens)
     }
 
     @Test
     fun `println emite keyword y parentesis`() {
-        val ast = listOf<ASTNode>(
-            // Heurística del emitter: "x" parece identificador => Ident("x")
-            PrintStatementNode(LiteralNode("x"), pos()),
-        )
+        val ast =
+            listOf<ASTNode>(
+                // Heurística del emitter: "x" parece identificador => Ident("x")
+                PrintStatementNode(LiteralNode("x"), pos()),
+            )
         val tokens = ASTEmitter(FormatterConfig(lineJumpBeforePrintln = 1)).emitProgram(ast)
-        val expected = listOf(
-            FormatToken.NewLine(1),
-            FormatToken.Keyword("println"),
-            FormatToken.OpenParen,
-            FormatToken.Ident("x"),
-            FormatToken.CloseParen,
-            FormatToken.Semicolon,
-        )
+        val expected =
+            listOf(
+                FormatToken.NewLine(1),
+                FormatToken.Keyword("println"),
+                FormatToken.OpenParen,
+                FormatToken.Ident("x"),
+                FormatToken.CloseParen,
+                FormatToken.Semicolon,
+            )
         assertEquals(expected, tokens)
     }
 }
