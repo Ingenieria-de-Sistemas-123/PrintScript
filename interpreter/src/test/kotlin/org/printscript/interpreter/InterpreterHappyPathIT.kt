@@ -65,5 +65,4 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         interpreter.execute(ast)
         assertEquals(listOf("hola2025"), out.lines)
     }
-
 }

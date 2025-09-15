@@ -2,7 +2,6 @@ package org.printscript.interpreter
 
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -23,7 +22,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
-        assertEquals(listOf("hola2025"), out.lines)
+        assertTrue { out.lines == listOf("hola2025") }
     }
 
     @Test
@@ -68,5 +67,25 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Asignación incompatible"))
+    }
+
+    @Test
+    fun `declaracion doble de variable`() {
+        val ast =
+            listOf(
+                DeclarationNode("x", "number", num(1.0), pos()),
+                DeclarationNode("x", "number", num(2.0), pos()),
+            )
+        val (interpreter, _) = newInterpreterWithBuffer()
+        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("Variable 'x' ya definida"))
+    }
+
+    @Test
+    fun `declaracion con tipo invalido - falla`() {
+        val ast = listOf(DeclarationNode("x", "boolean", num(1.0), pos()))
+        val (interpreter, _) = newInterpreterWithBuffer()
+        val ex = assertThrows(IllegalStateException::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("Tipo de declaración desconocido 'boolean'"))
     }
 }

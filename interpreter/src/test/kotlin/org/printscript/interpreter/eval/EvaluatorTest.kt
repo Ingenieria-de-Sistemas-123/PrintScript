@@ -7,6 +7,7 @@ import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.util.TestIO
+import org.printscript.interpreter.util.minus
 import org.printscript.interpreter.util.num
 import org.printscript.interpreter.util.plus
 import org.printscript.interpreter.util.slash
@@ -33,10 +34,23 @@ class EvaluatorTest {
     }
 
     @Test
-    fun `string + number lanza error en '+' estricto`() {
-        assertThrows(RuntimeError::class.java) {
-            plus(str("hola"), num(2025.0)).accept(Evaluator(Environment(), TestIO.empty))
-        }
+    fun `string + number concatena correctamente`() {
+        val v = plus(str("hola"), num(2025.0)).accept(Evaluator(Environment(), TestIO.empty))
+        assertEquals(Value.Str("hola2025"), v)
+    }
+
+    @Test
+    fun `number + string concatena correctamente`() {
+        val v = plus(num(2025.0), str("hola")).accept(Evaluator(Environment(), TestIO.empty))
+        assertEquals(Value.Str("2025hola"), v)
+    }
+
+    @Test
+    fun `resta con tipos no numericos falla`() {
+        val env = Environment()
+        val ev = Evaluator(env, TestIO.empty)
+        val expr = minus(str("1"), str("2"))
+        assertThrows(RuntimeError::class.java) { expr.accept(ev) }
     }
 
     @Test
@@ -46,5 +60,14 @@ class EvaluatorTest {
         val expr = slash(num(1.0), num(0.0))
 
         assertThrows(RuntimeError::class.java) { expr.accept(ev) }
+    }
+
+    @Test
+    fun `division normal - 8 div 2 = 4`() {
+        val env = Environment()
+        val ev = Evaluator(env, TestIO.empty)
+        val expr = slash(num(8.0), num(2.0))
+        val v = expr.accept(ev)
+        assertEquals(Value.Num(4.0), v)
     }
 }
