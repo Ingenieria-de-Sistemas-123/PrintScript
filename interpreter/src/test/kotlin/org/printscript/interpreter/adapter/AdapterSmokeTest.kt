@@ -9,7 +9,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 import kotlin.test.assertEquals
 
 class AdapterSmokeTest {
@@ -35,7 +35,7 @@ class AdapterSmokeTest {
                         ),
                     position = pos,
                 ),
-                PrintNode(
+                PrintStatementNode(
                     expression = LiteralNode("x", "identifier", pos),
                     position = pos,
                 ),

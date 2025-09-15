@@ -2,7 +2,7 @@ package org.printscript.parser.node
 
 import org.printscript.common.Position
 
-class PrintNode(
+data class ReadInputNode(
     val expression: ASTNode,
-    val position: Position,
+    val position: Position
 ) : ASTNode

@@ -5,14 +5,14 @@ import org.printscript.linter.issue.Severity
 import org.printscript.linter.util.rangeOf
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 class PrintlnRestrictionRule : Rule {
     override fun check(
         node: ASTNode,
         ctx: LintContext,
     ): List<Issue> {
-        if (node is PrintNode) {
+        if (node is PrintStatementNode) {
             val ok =
                 node.expression is LiteralNode<*> &&
                     ((node.expression as LiteralNode<*>).type == "string" || (node.expression as LiteralNode<*>).type == "identifier")

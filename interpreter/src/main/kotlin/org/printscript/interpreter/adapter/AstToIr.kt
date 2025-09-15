@@ -16,7 +16,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 class AstToIr {
     fun transform(program: List<ASTNode>): List<StmtIR> = program.map { toStmt(it) }
@@ -35,12 +35,11 @@ class AstToIr {
                 AssignIR(n.name, valueExpr)
             }
 
-            is PrintNode -> PrintIR(toExpr(n.expression))
+            is PrintStatementNode -> PrintIR(toExpr(n.expression))
 
             else -> error("Nodo de sentencia no soportado: ${n::class.simpleName}")
         }
 
-    /** Expresión del parser -> ExprIR */
     private fun toExpr(n: ASTNode): ExprIR =
         when (n) {
             is LiteralNode<*> ->
@@ -52,8 +51,7 @@ class AstToIr {
                         IdRef(
                             n.value?.toString() ?: error("Identifier inválido (null) en LiteralNode"),
                         )
-                    // Si en el futuro agregan boolean en el parser y en tu IR:
-                    // "boolean"    -> BoolLit((n.value as? Boolean) ?: error("Boolean inválido"))
+
                     else -> error("Tipo de literal no soportado: '${n.type}' (valor=${n.value})")
                 }
 
@@ -64,8 +62,6 @@ class AstToIr {
 
             else -> error("Nodo de expresión no soportado: ${n::class.simpleName}")
         }
-
-    // helpers de mapeo
 
     private fun mapType(s: String): RType =
         when (s.lowercase()) {

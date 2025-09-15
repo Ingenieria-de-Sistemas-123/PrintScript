@@ -1,76 +1,81 @@
 package org.printscript.lexer
 
-import org.printscript.lexer.exception.LexicalException
-import org.printscript.lexer.pattern.DefaultTokenProvider
 import org.printscript.lexer.pattern.TokenProvider
 import org.printscript.token.Token
 import org.printscript.token.TokenType
+import java.io.BufferedReader
+import java.io.Reader
 
-class Lexer(
-    private val provider: TokenProvider = DefaultTokenProvider,
-) {
-    companion object {
-        infix fun builder(block: LexerBuilder.() -> Unit): Lexer {
-            val builder = LexerBuilder()
-            builder.block()
-            return builder.build(Lexer())
-        }
+class Lexer(private val tokenProvider: TokenProvider) {
+
+    fun lexLines(reader: Reader): Iterator<List<Token>> = LineIterator(reader)
+
+    fun lex(reader: Reader): List<Token> {
+        val flat = mutableListOf<Token>()
+        val it = lexLines(reader)
+        while (it.hasNext()) flat += it.next()
+        val eofPos = if (flat.isEmpty()) 1 else flat.last().column
+        val eofLine = if (flat.isEmpty()) 1 else flat.last().line
+        flat += Token(TokenType.EOF, "", eofLine, eofPos)
+        return flat
     }
 
-    private val ws = Regex("""[ \t\r]+""")
-    private val nl = Regex("""\n""")
+    private inner class LineIterator(reader: Reader) : Iterator<List<Token>> {
+        private val bufferedReader: BufferedReader = reader.buffered()
+        private var lineText: String? = null
+        private var lineNumber = 0
+        private var column = 1
 
-    fun lex(input: String): List<Token> {
-        val out = mutableListOf<Token>()
-        var pos = 0
-        var line = 1
-        var col = 1
+        init { nextLine() }
 
-        fun advance(by: Int) {
-            for (k in 0 until by) {
-                if (input[pos + k] == '\n') {
-                    line++
-                    col = 1
-                } else {
-                    col++
-                }
-            }
-            pos += by
+        private fun nextLine() {
+            lineText = bufferedReader.readLine()
+            lineNumber++
+            column = 1
         }
 
-        while (pos < input.length) {
-            val nlMatch = nl.matchAt(input, pos)
-            if (nlMatch != null) {
-                advance(nlMatch.value.length)
-                continue
-            }
-
-            val wsMatch = ws.matchAt(input, pos)
-            if (wsMatch != null) {
-                advance(wsMatch.value.length)
-                continue
-            }
-
-            val hit =
-                provider.matchAt(input, pos)
-                    ?: throw LexicalException("Caracter inesperado '${input[pos]}' en línea $line, columna $col", line, col)
-
-            val (lexeme, type) = hit
-            val value =
-                if (type == TokenType.STRING && lexeme.length >= 2 &&
-                    (lexeme.first() == '"' || lexeme.first() == '\'') &&
-                    lexeme.last() == lexeme.first()
-                ) {
-                    lexeme.substring(1, lexeme.length - 1)
-                } else {
-                    lexeme
-                }
-
-            out += Token(type, value, line, col)
-            advance(lexeme.length)
+        private fun skipBlankLines() {
+            while (lineText != null && lineText!!.isBlank()) nextLine()
         }
 
-        out += Token(TokenType.EOF, "", line, col)
-        return out
+        override fun hasNext(): Boolean {
+            skipBlankLines()
+            return lineText != null
+        }
+
+        override fun next(): List<Token> {
+            if (!hasNext()) throw NoSuchElementException("No more lines to read")
+            val tokens = tokenize(lineText!!)
+            nextLine()
+            return tokens
+        }
+
+        private fun tokenize(line: String): List<Token> {
+            val tokens = mutableListOf<Token>()
+            var pos = 0
+            var col = 1
+
+            fun skipSpace() {
+                while (pos < line.length && line[pos].isWhitespace()) {
+                    pos++; col++
+                }
+            }
+
+            while (pos < line.length) {
+                skipSpace()
+                if (pos >= line.length) break
+
+                val match = tokenProvider.getTokenFor(line, pos)
+                    ?: error("Unexpected character at line $lineNumber, column $col")
+
+                val (lexeme, type) = match
+                val value = lexeme
+                tokens += Token(type, value, lineNumber, col)
+
+                pos += lexeme.length
+                col += lexeme.length
+            }
+            return tokens
+        }
     }
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Errores")
@@ -18,7 +18,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
         val ast =
             listOf(
                 DeclarationNode("s", "string", str("hola"), pos()),
-                PrintNode(plus(id("s"), num(2025.0)), pos()),
+                PrintStatementNode(plus(id("s"), num(2025.0)), pos()),
             )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
@@ -27,7 +27,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `division por cero`() {
-        val ast = listOf(PrintNode(slash(num(1.0), num(0.0)), pos()))
+        val ast = listOf(PrintStatementNode(slash(num(1.0), num(0.0)), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("División por cero"))
@@ -35,7 +35,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `identificador no declarado`() {
-        val ast = listOf(PrintNode(id("x"), pos()))
+        val ast = listOf(PrintStatementNode(id("x"), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Variable 'x' no definida"))

@@ -6,7 +6,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 object AstFactory {
     fun pos(
@@ -59,5 +59,5 @@ object AstFactory {
         expr: ASTNode,
         line: Int = 1,
         col: Int = 1,
-    ) = PrintNode(expr, pos(line, col))
+    ) = PrintStatementNode(expr, pos(line, col))
 }

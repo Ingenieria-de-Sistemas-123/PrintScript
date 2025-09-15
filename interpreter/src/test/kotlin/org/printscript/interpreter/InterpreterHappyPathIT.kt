@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
@@ -16,11 +16,11 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val ast =
             listOf(
                 DeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
-                PrintNode(id("x"), pos()),
+                PrintStatementNode(id("x"), pos()),
                 DeclarationNode("s", "string", str("hola"), pos()),
-                PrintNode(plus(id("s"), str("2025")), pos()),
+                PrintStatementNode(plus(id("s"), str("2025")), pos()),
                 AssignationNode("x", plus(id("x"), num(1.0)), pos()),
-                PrintNode(id("x"), pos()),
+                PrintStatementNode(id("x"), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -31,10 +31,10 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `aritmetica basica y formateo de enteros sin coma`() {
         val ast =
             listOf(
-                PrintNode(minus(num(3.0), num(1.0)), pos()),
-                PrintNode(star(num(2.0), num(5.0)), pos()),
-                PrintNode(slash(num(8.0), num(2.0)), pos()),
-                PrintNode(plus(num(2.0), num(0.0)), pos()),
+                PrintStatementNode(minus(num(3.0), num(1.0)), pos()),
+                PrintStatementNode(star(num(2.0), num(5.0)), pos()),
+                PrintStatementNode(slash(num(8.0), num(2.0)), pos()),
+                PrintStatementNode(plus(num(2.0), num(0.0)), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -47,7 +47,7 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
             listOf(
                 DeclarationNode("a", "string", str("ab"), pos()),
                 DeclarationNode("b", "string", str("cd"), pos()),
-                PrintNode(plus(id("a"), id("b")), pos()),
+                PrintStatementNode(plus(id("a"), id("b")), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)

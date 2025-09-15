@@ -12,7 +12,7 @@ import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.Value.Num
 import org.printscript.interpreter.runtime.Value.Str
 
-// usamos visitor, evalua expresiones a valores en runtime
+
 internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
     override fun visitNum(n: NumLit): Value = Num(n.value)
 

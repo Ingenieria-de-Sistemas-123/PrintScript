@@ -1,98 +1,92 @@
-package org.printscript.parser.builder
+package com.printscript.parser.builder
 
 import org.printscript.common.Position
-import org.printscript.parser.ParseException
-import org.printscript.parser.helpers.TokenHandler
+import org.printscript.parser.builder.Builder
 import org.printscript.parser.node.ASTNode
-import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
+import org.printscript.token.Token
 import org.printscript.token.TokenType
+import org.printscript.parser.node.DoubleExpressionNode
 
-class ExpressionBuilder(private val h: TokenHandler) {
-    fun build(): ASTNode = expr(0)
 
-    private fun expr(minPrec: Int): ASTNode {
-        var left = unary()
-        while (!stopHere()) {
-            val opTok = h.current()
-            if (!isBinary(opTok.type)) break
-            val prec = precedence(opTok.type)
-            if (prec < minPrec) break
+class ExpressionBuilder(private val line: List<Token>) : Builder {
 
-            h.advance()
-            val opPos = Position(opTok.line, opTok.column)
-
-            val right = expr(prec + 1)
-            left = DoubleExpressionNode(left, opSymbol(opTok.type), right, opPos)
-        }
-        return left
+    override fun build(): ASTNode {
+        return if (line.isEmpty()) LiteralNode("\"\"") else addNodes(line)
     }
 
-    private fun unary(): ASTNode =
-        if (h.current().type == TokenType.MINUS) {
-            val opTok = h.current()
-            val opPos = Position(opTok.line, opTok.column)
-            h.advance()
-            DoubleExpressionNode(LiteralNode("0", "number", opPos), "-", unary(), opPos)
-        } else {
-            primary()
+    private fun addNodes(tokens: List<Token>): ASTNode {
+        if (tokens.size == 1) {
+            val v = tokens[0].value
+            @Suppress("SwallowedException", "TooGenericExceptionCaught")
+            return try {
+                LiteralNode(v.toInt())
+            } catch (_: NumberFormatException) {
+                try {
+                    LiteralNode(v.toDouble())
+                } catch (_: NumberFormatException) {
+                    try {
+                        LiteralNode(v.toBooleanStrict())
+                    } catch (_: Exception) {
+                        LiteralNode(v)
+                    }
+                }
+            }
         }
 
-    private fun primary(): ASTNode {
-        val t = h.current()
-        val pos = Position(t.line, t.column)
-        return when (t.type) {
-            TokenType.NUMBER -> {
-                h.advance()
-                LiteralNode(t.value, "number", pos)
-            }
-            TokenType.STRING -> {
-                h.advance()
-                LiteralNode(t.value, "string", pos)
-            }
-            TokenType.IDENTIFIER -> {
-                h.advance()
-                LiteralNode(t.value, "identifier", pos)
-            }
-            TokenType.OPEN_PAREN -> {
-                h.advance()
-                val e = expr(0)
-                hExpect(TokenType.CLOSE_PAREN, "Se esperaba ')'")
-                e
-            }
-            else -> throw ParseException("Expresión inválida: ${t.type}", t.line, t.column)
+        if (tokens.first().value == "(" && tokens.last().value == ")") {
+            return addNodes(tokens.subList(1, tokens.size - 1))
         }
+
+        val operators = mutableListOf<Pair<Token, Int>>()
+        tokens.forEachIndexed { idx, tok -> if (operatorsToCheck(tok)) operators += tok to idx }
+
+        val (operator, index) = findLowestPrecedenceOperator(operators)
+
+        val leftTokens  = tokens.subList(0, index)
+        val rightTokens = tokens.subList(index + 1, tokens.size)
+
+        val rightNode = addNodes(rightTokens)
+
+        if (leftTokens.isEmpty() && operator.value == "-") {
+            val pos = Position(operator.line, operator.column)
+            return DoubleExpressionNode(LiteralNode(0), "-", rightNode, pos)
+        }
+
+        val leftNode = addNodes(leftTokens)
+        val pos = Position(operator.line, operator.column)
+        return DoubleExpressionNode(leftNode, operator.value, rightNode, pos)
     }
 
-    private fun precedence(t: TokenType) =
-        when (t) {
-            TokenType.PLUS, TokenType.MINUS -> 1
-            TokenType.STAR, TokenType.SLASH -> 2
-            else -> -1
+    private fun findLowestPrecedenceOperator(operators: List<Pair<Token, Int>>): Pair<Token, Int> {
+        var result: Pair<Token, Int>? = null
+        var i = 0
+        var parenCount = 0
+
+        while (i < operators.size) {
+            val (token, index) = operators[i]
+
+            if (token.value == "(") {
+                parenCount++
+            } else if (token.value == ")") {
+                parenCount--
+            } else if (parenCount == 0) {
+                if (result == null || getPrecedence(token.value) <= getPrecedence(result!!.first.value)) {
+                    result = token to index
+                }
+            }
+            i++
         }
 
-    private fun isBinary(t: TokenType) = t == TokenType.PLUS || t == TokenType.MINUS || t == TokenType.STAR || t == TokenType.SLASH
-
-    private fun stopHere(): Boolean {
-        val tt = h.current().type
-        return tt == TokenType.CLOSE_PAREN || tt == TokenType.SEMICOLON || tt == TokenType.EOF
+        return result ?: operators[0]
     }
 
-    private fun opSymbol(t: TokenType) =
-        when (t) {
-            TokenType.PLUS -> "+"
-            TokenType.MINUS -> "-"
-            TokenType.STAR -> "*"
-            TokenType.SLASH -> "/"
-            else -> "?"
-        }
-
-    private fun hExpect(
-        type: TokenType,
-        msg: String,
-    ) {
-        val t = h.current()
-        if (t.type != type) throw ParseException("$msg. Encontré ${t.type} '${t.value}'", t.line, t.column)
-        h.advance()
+    private fun getPrecedence(op: String): Int = when (op) {
+        "+", "-" -> 1
+        "*", "/" -> 2
+        else     -> Int.MAX_VALUE
     }
+
+    private fun operatorsToCheck(token: Token): Boolean =
+        token.value in listOf("/", "*", "(", ")", "+", "-")
 }

@@ -9,7 +9,7 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 class AstEmitterTest {
     private fun pos() = Position(1, 1)
@@ -65,7 +65,7 @@ class AstEmitterTest {
     fun `println emite keyword y parentesis`() {
         val ast =
             listOf<ASTNode>(
-                PrintNode(LiteralNode("x", "identifier", pos()), pos()),
+                PrintStatementNode(LiteralNode("x", "identifier", pos()), pos()),
             )
         val tokens = AstEmitter(FormatterConfig(lineJumpBeforePrintln = 1)).emitProgram(ast)
         val expected =

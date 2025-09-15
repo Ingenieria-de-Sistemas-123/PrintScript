@@ -9,7 +9,6 @@ import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.asString
 import org.printscript.interpreter.runtime.runtimeTypeOf
 
-// visitor que ejecuta sentencias usando el Evaluator para expressions
 internal class Executor(
     private val env: Environment,
     private val output: OutputProvider,

@@ -17,7 +17,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 class AstEmitter(private val cfg: FormatterConfig) {
     fun emitProgram(program: List<ASTNode>): List<FormatToken> {
@@ -51,7 +51,7 @@ class AstEmitter(private val cfg: FormatterConfig) {
                 sink += FormatToken.Semicolon
             }
 
-            is PrintNode -> {
+            is PrintStatementNode -> {
                 repeat(cfg.lineJumpBeforePrintln) { sink += NewLine() }
                 sink += Keyword("println")
                 sink += OpenParen

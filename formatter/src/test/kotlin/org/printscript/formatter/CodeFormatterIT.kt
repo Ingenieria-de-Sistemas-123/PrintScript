@@ -7,7 +7,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 import kotlin.test.assertEquals
 
 class CodeFormatterIT {
@@ -35,7 +35,7 @@ class CodeFormatterIT {
                         ),
                     position = pos(),
                 ),
-                PrintNode(LiteralNode("x", "identifier", pos()), pos()),
+                PrintStatementNode(LiteralNode("x", "identifier", pos()), pos()),
                 AssignationNode(
                     "x",
                     DoubleExpressionNode(
@@ -46,7 +46,7 @@ class CodeFormatterIT {
                     ),
                     pos(),
                 ),
-                PrintNode(LiteralNode("x", "identifier", pos()), pos()),
+                PrintStatementNode(LiteralNode("x", "identifier", pos()), pos()),
             )
 
         val cfg =
@@ -74,7 +74,7 @@ class CodeFormatterIT {
         val ast =
             listOf(
                 DeclarationNode("a", "number", LiteralNode(5.0, "number", pos()), pos()),
-                PrintNode(LiteralNode("a", "identifier", pos()), pos()),
+                PrintStatementNode(LiteralNode("a", "identifier", pos()), pos()),
             )
         val cfg =
             FormatterConfig(
@@ -91,7 +91,7 @@ class CodeFormatterIT {
         val ast =
             listOf(
                 DeclarationNode("s", "string", LiteralNode("hola", "string", pos()), pos()),
-                PrintNode(
+                PrintStatementNode(
                     DoubleExpressionNode(
                         left = LiteralNode("s", "identifier", pos()),
                         operator = "+",
