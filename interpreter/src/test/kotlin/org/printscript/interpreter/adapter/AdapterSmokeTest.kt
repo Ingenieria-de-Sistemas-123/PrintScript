@@ -3,9 +3,7 @@ package org.printscript.interpreter.adapter
 import org.junit.jupiter.api.Test
 import org.printscript.common.Position
 import org.printscript.interpreter.eval.Executor
-import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.runtime.Environment
-import org.printscript.interpreter.util.TestIO
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
@@ -46,7 +44,7 @@ class AdapterSmokeTest {
         val ir = ASTtoIR().transform(progAst)
 
         val out = StringBuilder()
-        val exec = Executor(Environment(), OutputProvider { s -> out.appendLine(s) }, TestIO.empty)
+        val exec = Executor(Environment()) { s -> out.appendLine(s) }
         ir.forEach { it.accept(exec) }
 
         assertEquals("3\n", out.toString())
