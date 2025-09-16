@@ -7,39 +7,41 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 class Linter(
     private val rules: List<Rule>,
     private val config: LintConfig = LintConfig(),
 ) {
     fun analyze(program: List<ASTNode>): List<Issue> {
-        val ctx = LintContext(config)
-        val out = mutableListOf<Issue>()
+        val lintContext = LintContext(config)
+        val issues = mutableListOf<Issue>()
+
+        fun applyRules(node: ASTNode) {
+            for (rule in rules) issues += rule.check(node, lintContext)
+        }
 
         fun visit(node: ASTNode) {
-            // 1) aplica todas las reglas al nodo actual en el q estamos
-            for (rule in rules) out += rule.check(node, ctx)
-
-            // 2) descender a hijos segun el tipo
+            applyRules(node)
             when (node) {
-                is DeclarationNode -> visit(node.value)
-                // 'type' aca es el valor asignado (expr)
-                is AssignationNode -> visit(node.type)
+                is DeclarationNode -> visit(node.expression)
+                is AssignationNode -> visit(node.expression)
                 is DoubleExpressionNode -> {
                     visit(node.left)
                     visit(node.right)
                 }
-                is PrintNode -> visit(node.expression)
-
-                // sin hijos
+                is PrintStatementNode -> visit(node.expression)
+                is IfElseNode -> {
+                    node.ifBranch.forEach(::visit)
+                    node.elseBranch.forEach(::visit)
+                }
                 is LiteralNode<*> -> { }
-                // no-op
+                else -> { }
             }
         }
-
-        for (n in program) visit(n)
-        return out
+        program.forEach(::visit)
+        return issues
     }
 }

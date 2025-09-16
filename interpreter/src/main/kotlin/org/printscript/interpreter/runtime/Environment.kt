@@ -5,7 +5,6 @@ class Environment {
         val type: RType,
         var value: Value?,
         var initialized: Boolean,
-        val isConst: Boolean,
     )
 
     private val vars = mutableMapOf<String, Var>()
@@ -16,22 +15,7 @@ class Environment {
         init: Value?,
     ) {
         if (name in vars) throw RuntimeError("Variable '$name' ya definida")
-        if (init != null && type != runtimeTypeOf(init)) {
-            throw RuntimeError("Inicialización incompatible de '$name': se esperaba $type y se recibió ${runtimeTypeOf(init)}")
-        }
-        vars[name] = Var(type, init, init != null, isConst = false)
-    }
-
-    fun declareConst(
-        name: String,
-        type: RType,
-        init: Value,
-    ) {
-        if (name in vars) throw RuntimeError("Variable '$name' ya definida")
-        if (type != runtimeTypeOf(init)) {
-            throw RuntimeError("Inicialización incompatible de const '$name': se esperaba $type y se recibió ${runtimeTypeOf(init)}")
-        }
-        vars[name] = Var(type, init, initialized = true, isConst = true)
+        vars[name] = Var(type, init, init != null)
     }
 
     fun assign(
@@ -39,9 +23,6 @@ class Environment {
         value: Value,
     ) {
         val v = vars[name] ?: throw RuntimeError("Variable '$name' no definida")
-        if (v.isConst) {
-            throw RuntimeError("No se puede asignar a la constante '$name'")
-        }
         if (v.type != runtimeTypeOf(value)) {
             throw RuntimeError("Asignación incompatible a '$name': se esperaba ${v.type} y se recibió ${runtimeTypeOf(value)}")
         }
@@ -61,7 +42,6 @@ class Environment {
                 null -> "<uninitialized>"
                 is Value.Num -> if (value.v % 1.0 == 0.0) value.v.toLong().toString() else value.v.toString()
                 is Value.Str -> value.v
-                is Value.Bool -> value.v.toString()
             }
         }
 }

@@ -9,7 +9,6 @@ import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
 import org.printscript.interpreter.runtime.RuntimeError
-import org.printscript.interpreter.util.TestIO
 import org.printscript.interpreter.util.assign
 import org.printscript.interpreter.util.decl
 import org.printscript.interpreter.util.id
@@ -31,7 +30,7 @@ class ExecutorTest {
                     lines += text
                 }
             }
-        val exec = Executor(env, out, TestIO.empty)
+        val exec = Executor(env, out)
 
         val prog =
             listOf<StmtIR>(
@@ -56,7 +55,7 @@ class ExecutorTest {
                     lines += text
                 }
             }
-        val exec = Executor(env, out, TestIO.empty)
+        val exec = Executor(env, out)
 
         val prog =
             listOf<StmtIR>(
@@ -71,31 +70,27 @@ class ExecutorTest {
     }
 
     @Test
-    fun `string + number concatena correctamente en println`() {
+    fun `string + number en println falla (tipado estricto en '+')`() {
         val env = Environment()
-        val out =
-            object : OutputProvider {
-                val lines = mutableListOf<String>()
+        val exec = Executor(env) { }
 
-                override fun println(text: String) {
-                    lines += text
-                }
-            }
-        val exec = Executor(env, out, TestIO.empty)
         val prog =
             listOf<StmtIR>(
                 decl("s", RType.STRING, str("hola")),
                 print(plus(id("s"), num(2025.0))),
             )
-        prog.forEach { it.accept(exec) }
-        assertEquals(listOf("hola2025"), out.lines)
-        assertEquals(mapOf("s" to "hola"), env.snapshot())
+
+        val ex =
+            assertThrows(RuntimeError::class.java) {
+                prog.forEach { it.accept(exec) }
+            }
+        assertTrue(ex.message!!.contains("Operador '+' no definido"))
     }
 
     @Test
     fun `type mismatch en declaracion - falla`() {
         val env = Environment()
-        val exec = Executor(env, {}, TestIO.empty)
+        val exec = Executor(env) { }
 
         val prog =
             listOf<StmtIR>(
@@ -112,7 +107,7 @@ class ExecutorTest {
     @Test
     fun `variable no definida - falla al asignar`() {
         val env = Environment()
-        val exec = Executor(env, {}, TestIO.empty)
+        val exec = Executor(env) { }
 
         val prog = listOf(assign("x", num(3.0)))
 

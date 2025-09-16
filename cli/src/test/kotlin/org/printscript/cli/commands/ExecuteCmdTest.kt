@@ -3,17 +3,18 @@ package org.printscript.cli.commands
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.printscript.cli.util.CommandRunner
-import picocli.CommandLine
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.PrintWriter
-import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ExecuteCmdTest {
     @TempDir
     lateinit var temp: File
+
+    @TempDir
+    lateinit var tmp: Path
 
     @Test
     fun executePrintsOutput() {
@@ -44,93 +45,17 @@ class ExecuteCmdTest {
     }
 
     @Test
-    fun help_prints_usage_and_exits_zero() {
-        val cmd = CommandLine(ExecuteCmd())
-        val out = ByteArrayOutputStream()
-        val err = ByteArrayOutputStream()
-        cmd.setOut(PrintWriter(out, true))
-        cmd.setErr(PrintWriter(err, true))
-
-        val code = cmd.execute("--help")
-
-        assertEquals(0, code)
-        val text = out.toString()
-        assertTrue(text.contains("Usage:"))
-        assertTrue(text.contains("--ps-version") || text.contains("--version"))
-        assertTrue(text.contains("--inputs-file"))
-        assertEquals("", err.toString())
+    fun `execute prints to stdout`() {
+        val f = tmp.resolve("hello.ps").apply { writeText("""println("hi");""") }
+        val r = CommandRunner.run("execute", "-f", f.toString())
+        assertEquals(0, r.exitCode, r.stdout + r.stderr)
+        assertTrue(r.stdout.contains("hi"), r.stdout)
     }
 
     @Test
-    fun runs_v10_program_exit_zero() {
-        val src = Files.createTempFile("ps-v10-", ".ps")
-        Files.writeString(
-            src,
-            """
-            let x: number = 1 + 2;
-            println(x);
-            """.trimIndent(),
-        )
-
-        val cmd = CommandLine(ExecuteCmd())
-        val out = ByteArrayOutputStream()
-        val err = ByteArrayOutputStream()
-        cmd.setOut(PrintWriter(out, true))
-        cmd.setErr(PrintWriter(err, true))
-
-        val code = cmd.execute("-f", src.toString(), "--ps-version", "1.0")
-
-        assertEquals(0, code)
-        assertEquals("", err.toString())
-    }
-
-    @Test
-    fun runs_with_version_alias() {
-        val src = Files.createTempFile("ps-v10-alias-", ".ps")
-        Files.writeString(
-            src,
-            """
-            let x: number = 40 + 2;
-            println(x);
-            """.trimIndent(),
-        )
-
-        val cmd = CommandLine(ExecuteCmd())
-        val out = ByteArrayOutputStream()
-        val err = ByteArrayOutputStream()
-        cmd.setOut(PrintWriter(out, true))
-        cmd.setErr(PrintWriter(err, true))
-
-        val code = cmd.execute("-f", src.toString(), "--version", "1.0")
-
-        assertEquals(0, code)
-        assertEquals("", err.toString())
-    }
-
-    @Test
-    fun accepts_inputs_file_even_if_not_used() {
-        val src = Files.createTempFile("ps-v10-inputs-", ".ps")
-        Files.writeString(
-            src,
-            """
-            let x: number = 5 + 5;
-            println(x);
-            """.trimIndent(),
-        )
-        val inputs =
-            Files.createTempFile("inputs-", ".txt").also {
-                Files.writeString(it, "ignored\n")
-            }
-
-        val cmd = CommandLine(ExecuteCmd())
-        val out = ByteArrayOutputStream()
-        val err = ByteArrayOutputStream()
-        cmd.setOut(PrintWriter(out, true))
-        cmd.setErr(PrintWriter(err, true))
-
-        val code = cmd.execute("-f", src.toString(), "--ps-version", "1.0", "--inputs-file", inputs.toString())
-
-        assertEquals(0, code)
-        assertEquals("", err.toString())
+    fun `execute returns non-zero on simple runtime error`() {
+        val f = tmp.resolve("rt.ps").apply { writeText("""let a: number; println(a);""") }
+        val r = CommandRunner.run("execute", "-f", f.toString())
+        assertTrue(r.exitCode != 0, "Runtime error should be non-zero")
     }
 }

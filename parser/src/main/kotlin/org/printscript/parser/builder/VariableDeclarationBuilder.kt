@@ -4,35 +4,76 @@ import org.printscript.common.Position
 import org.printscript.parser.ParseException
 import org.printscript.parser.helpers.TokenHandler
 import org.printscript.parser.node.ASTNode
-import org.printscript.parser.node.DeclarationNode
-import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.ConstantDeclarationNode
+import org.printscript.parser.node.VariableDeclarationNode
+import org.printscript.token.Token
 import org.printscript.token.TokenType
 
-class VariableDeclarationBuilder(private val h: TokenHandler) {
-    fun build(): ASTNode {
-        h.expect(TokenType.LET, "Se esperaba 'let'")
-        val id = h.expect(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable")
-        val name = id.value
-        val pos = Position(id.line, id.column)
+class VariableDeclarationBuilder(private val line: List<Token>) : Builder {
+    override fun build(): ASTNode {
+        val handler = TokenHandler(line)
 
-        h.expect(TokenType.COLON, "Se esperaba ':' después del nombre")
+        val first = handler.advance()
+        val isConst =
+            when (first.type) {
+                TokenType.CONST -> true
+                TokenType.LET -> false
+                else -> throw ParseException("Se esperaba 'let' o 'const'.", first.line, first.column)
+            }
 
-        val typeTok = h.current()
+        val identifier = handler.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.")
+        val name = identifier.value
+        val position = Position(identifier.line, identifier.column)
+
+        val colon = handler.consume(TokenType.SYNTAX, "Se esperaba ':' después del nombre de la variable.")
+        if (colon.value != ":") throw ParseException("Se esperaba ':' pero encontré '${colon.value}'", colon.line, colon.column)
+
+        val typeTok = handler.peek()
         val type =
-            when {
-                h.match(TokenType.NUMBER_TYPE) -> "number"
-                h.match(TokenType.STRING_TYPE) -> "string"
-                else -> throw ParseException("Se esperaba el tipo (number|string)", typeTok.line, typeTok.column)
+            when (typeTok.type) {
+                TokenType.NUMBER_TYPE -> {
+                    handler.advance()
+                    "number"
+                }
+                TokenType.STRING_TYPE -> {
+                    handler.advance()
+                    "string"
+                }
+                TokenType.BOOLEAN_TYPE -> {
+                    handler.advance()
+                    "boolean"
+                }
+                else -> throw ParseException("Se esperaba el tipo de la variable (number|string|boolean).", typeTok.line, typeTok.column)
             }
 
-        val value: ASTNode =
-            if (h.match(TokenType.EQUAL)) {
-                ExpressionBuilder(h).build()
-            } else {
-                LiteralNode("empty", type, pos)
-            }
+        if (handler.peek().type == TokenType.SYNTAX && handler.peek().value == ";") {
+            if (isConst) throw ParseException("La constante '$name' requiere un inicializador", identifier.line, identifier.column)
+            handler.consume(TokenType.SYNTAX, "Se esperaba ';' después de la declaración.")
 
-        h.expect(TokenType.SEMICOLON, "Se esperaba ';' al final de la declaración")
-        return DeclarationNode(name, type, value, pos)
+            return VariableDeclarationNode(name, type, ExpressionBuilder(emptyList()).build(), position)
+        }
+
+        handler.consume(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable.")
+        val exprTokens = handler.collectExpressionTokens(false)
+        val semi = handler.consume(TokenType.SYNTAX, "Se esperaba ';' después de la declaración.")
+        if (semi.value != ";") throw ParseException("Se esperaba ';' pero encontré '${semi.value}'", semi.line, semi.column)
+
+        val expr = resolveExpression(exprTokens.firstOrNull(), exprTokens)
+
+        return if (isConst) {
+            ConstantDeclarationNode(name, type, expr, position)
+        } else {
+            VariableDeclarationNode(name, type, expr, position)
+        }
     }
+
+    private fun resolveExpression(
+        first: Token?,
+        tokens: List<Token>,
+    ): ASTNode =
+        when (first?.type) {
+            TokenType.READ_INPUT -> ReadInputBuilder(tokens).build()
+            TokenType.READ_ENV -> ReadEnvBuilder(tokens).build()
+            else -> ExpressionBuilder(tokens).build()
+        }
 }

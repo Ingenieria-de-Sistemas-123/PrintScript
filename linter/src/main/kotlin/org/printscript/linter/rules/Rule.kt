@@ -6,6 +6,6 @@ import org.printscript.parser.node.ASTNode
 interface Rule {
     fun check(
         node: ASTNode,
-        ctx: LintContext,
+        lintContext: LintContext,
     ): List<Issue>
 }

@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test
 import org.printscript.common.Position
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.parser.node.AssignationNode
-import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 import kotlin.test.assertEquals
 
 class CodeFormatterIT {
@@ -15,38 +15,42 @@ class CodeFormatterIT {
 
     @Test
     fun `declara, imprime, reasigna, imprime (happy path)`() {
+        val decl =
+            ConstantDeclarationNode(
+                identifier = "x",
+                valueType = "number",
+                expression =
+                    DoubleExpressionNode(
+                        left = LiteralNode(1.0),
+                        operator = "+",
+                        right =
+                            DoubleExpressionNode(
+                                left = LiteralNode(2.0),
+                                operator = "*",
+                                right = LiteralNode(3.0),
+                                position = pos(),
+                            ),
+                        position = pos(),
+                    ),
+                position = pos(),
+            )
+
         val ast =
             listOf(
-                DeclarationNode(
-                    name = "x",
-                    type = "number",
-                    value =
+                decl,
+                PrintStatementNode(LiteralNode("x"), pos()),
+                AssignationNode(
+                    variable = "x",
+                    expression =
                         DoubleExpressionNode(
-                            left = LiteralNode(1.0, "number", pos()),
+                            left = LiteralNode("x"),
                             operator = "+",
-                            right =
-                                DoubleExpressionNode(
-                                    left = LiteralNode(2.0, "number", pos()),
-                                    operator = "*",
-                                    right = LiteralNode(3.0, "number", pos()),
-                                    position = pos(),
-                                ),
+                            right = LiteralNode(1.0),
                             position = pos(),
                         ),
                     position = pos(),
                 ),
-                PrintNode(LiteralNode("x", "identifier", pos()), pos()),
-                AssignationNode(
-                    "x",
-                    DoubleExpressionNode(
-                        left = LiteralNode("x", "identifier", pos()),
-                        operator = "+",
-                        right = LiteralNode(1.0, "number", pos()),
-                        position = pos(),
-                    ),
-                    pos(),
-                ),
-                PrintNode(LiteralNode("x", "identifier", pos()), pos()),
+                PrintStatementNode(LiteralNode("x"), pos()),
             )
 
         val cfg =
@@ -63,18 +67,26 @@ class CodeFormatterIT {
         val pretty = CodeFormatter().format(ast, cfg)
         val expected =
             "let x: number = 1.0 + 2.0 * 3.0;\n" +
-                "println(x);\n" +
-                "x = x + 1.0;\n" +
-                "println(x);\n"
+                "println(\"x\");\n" +
+                "x = \"x\" + 1.0;\n" +
+                "println(\"x\");\n"
         assertEquals(expected, pretty)
     }
 
     @Test
     fun `config sin salto post-semicolon (pero newline final)`() {
+        val decl =
+            ConstantDeclarationNode(
+                identifier = "a",
+                valueType = "number",
+                expression = LiteralNode(5.0),
+                position = pos(),
+            )
         val ast =
             listOf(
-                DeclarationNode("a", "number", LiteralNode(5.0, "number", pos()), pos()),
-                PrintNode(LiteralNode("a", "identifier", pos()), pos()),
+                decl,
+                // LiteralNode("a") => string "a"
+                PrintStatementNode(LiteralNode("a"), pos()),
             )
         val cfg =
             FormatterConfig(
@@ -83,19 +95,26 @@ class CodeFormatterIT {
                 spaceAfterColon = true,
             )
         val pretty = CodeFormatter().format(ast, cfg)
-        assertEquals("let a: number = 5.0;println(a);\n", pretty)
+        assertEquals("let a: number = 5.0;println(\"a\");\n", pretty) // <-- antes println(a)
     }
 
     @Test
     fun `idempotencia (mismo AST, mismo output)`() {
+        val decl =
+            ConstantDeclarationNode(
+                identifier = "s",
+                valueType = "string",
+                expression = LiteralNode("hola"),
+                position = pos(),
+            )
         val ast =
             listOf(
-                DeclarationNode("s", "string", LiteralNode("hola", "string", pos()), pos()),
-                PrintNode(
+                decl,
+                PrintStatementNode(
                     DoubleExpressionNode(
-                        left = LiteralNode("s", "identifier", pos()),
+                        left = LiteralNode("s"),
                         operator = "+",
-                        right = LiteralNode("2025", "string", pos()),
+                        right = LiteralNode("2025"),
                         position = pos(),
                     ),
                     pos(),

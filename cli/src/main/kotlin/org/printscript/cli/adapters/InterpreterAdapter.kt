@@ -2,7 +2,6 @@ package org.printscript.cli.adapters
 
 import org.printscript.interpreter.Interpreter
 import org.printscript.interpreter.adapter.AstToIr
-import org.printscript.interpreter.adapter.AstToIrV11
 import org.printscript.interpreter.io.IOContext
 import org.printscript.parser.node.ASTNode
 

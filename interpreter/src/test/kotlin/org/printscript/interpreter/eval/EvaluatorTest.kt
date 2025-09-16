@@ -15,8 +15,6 @@ import org.printscript.interpreter.util.star
 import org.printscript.interpreter.util.str
 
 class EvaluatorTest {
-    // expresiones - num, str, id, binary
-
     @Test
     fun `suma y precedencia`() {
         val env = Environment()
