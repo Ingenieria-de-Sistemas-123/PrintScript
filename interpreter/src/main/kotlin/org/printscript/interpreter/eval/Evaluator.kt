@@ -12,7 +12,6 @@ import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.Value.Num
 import org.printscript.interpreter.runtime.Value.Str
 
-
 internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
     override fun visitNum(n: NumLit): Value = Num(n.value)
 
@@ -26,8 +25,8 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
         return when (b.op) {
             Op.PLUS ->
                 when {
-                    l is Num && r is Num -> Num(l.v + r.v) // suma
-                    l is Str && r is Str -> Str(l.v + r.v) // concat
+                    l is Num && r is Num -> Num(l.v + r.v)
+                    l is Str && r is Str -> Str(l.v + r.v)
                     else -> throw RuntimeError(
                         "Operador '+' no definido para ${typeName(l)} y ${typeName(r)}",
                     )

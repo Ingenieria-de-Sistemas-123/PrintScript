@@ -17,8 +17,8 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
             listOf(
                 ConstantDeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
                 PrintStatementNode(id("x"), pos()),
-                ConstantDeclarationNode("s", "string", str("hola!"), pos()),                 // usar "hola!" para StrLit
-                PrintStatementNode(plus(id("s"), str("2025")), pos()),                       // "2025" ya es StrLit
+                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
+                PrintStatementNode(plus(id("s"), str("2025")), pos()),
                 AssignationNode("x", plus(id("x"), num(1.0)), pos()),
                 PrintStatementNode(id("x"), pos()),
             )
@@ -45,7 +45,7 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `concatena string+string`() {
         val ast =
             listOf(
-                ConstantDeclarationNode("a", "string", str("ab!"), pos()),  // "ab!" fuerza StrLit
+                ConstantDeclarationNode("a", "string", str("ab!"), pos()),
                 ConstantDeclarationNode("b", "string", str("cd!"), pos()),
                 PrintStatementNode(plus(id("a"), id("b")), pos()),
             )

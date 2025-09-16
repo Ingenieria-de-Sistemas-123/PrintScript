@@ -4,5 +4,5 @@ import org.printscript.common.Position
 
 data class ReadInputNode(
     val expression: ASTNode,
-    val position: Position
+    val position: Position,
 ) : ASTNode

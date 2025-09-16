@@ -1,15 +1,12 @@
 package org.printscript.parser
 
-
 import org.printscript.parser.helpers.ASTGenerator
 import org.printscript.parser.helpers.TokenHandler
 import org.printscript.parser.node.ASTNode
 import org.printscript.token.Token
 import org.printscript.token.TokenType
 
-
 class DefaultParser : Parser {
-
     override fun parse(tokens: List<Token>): List<ASTNode> {
         val handler = TokenHandler(tokens)
         val nodes = mutableListOf<ASTNode>()
@@ -51,11 +48,13 @@ class DefaultParser : Parser {
             }
 
             fun consumeBlock() {
-                if (handler.isAtEnd()) throw ParseException(
-                    "Se esperaba '{' después de la condición",
-                    first.line,
-                    first.column
-                )
+                if (handler.isAtEnd()) {
+                    throw ParseException(
+                        "Se esperaba '{' después de la condición",
+                        first.line,
+                        first.column,
+                    )
+                }
                 val open = take()
                 if (!(open.type == TokenType.SYNTAX && open.value == "{")) {
                     throw ParseException("Se esperaba '{' pero encontré '${open.value}'", open.line, open.column)

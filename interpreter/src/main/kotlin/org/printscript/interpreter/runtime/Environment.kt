@@ -36,7 +36,6 @@ class Environment {
         return v.value!!
     }
 
-    // Lo usamos mas adelante. Util a futuro para tests/CLI: nos devuelve una vista stringificada del ambiente
     fun snapshot(): Map<String, String> =
         vars.mapValues { (_, v) ->
             when (val value = v.value) {

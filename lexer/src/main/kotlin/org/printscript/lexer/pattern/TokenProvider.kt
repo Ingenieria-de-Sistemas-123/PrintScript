@@ -3,8 +3,13 @@ package org.printscript.lexer.pattern
 import org.printscript.token.TokenType
 
 sealed interface TokenProvider {
-    fun getTokenFor(line: String, position: Int): Pair<String, TokenType>?
+    fun getTokenFor(
+        line: String,
+        position: Int,
+    ): Pair<String, TokenType>?
+
     operator fun plus(other: TokenProvider): TokenProvider
+
     fun iterator(): Iterator<Pair<String, TokenType>>
 
     companion object {

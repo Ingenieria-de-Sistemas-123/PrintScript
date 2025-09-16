@@ -1,6 +1,5 @@
 package org.printscript.interpreter.runtime
 
-// los valores en tiempo de ejecucion d el lenguaje
 sealed interface Value {
     data class Num(val v: Double) : Value
 
@@ -9,7 +8,6 @@ sealed interface Value {
 
 enum class RType { NUMBER, STRING }
 
-// helpers internos
 internal fun Value.asString(): String =
     when (this) {
         is Value.Num -> if (v % 1.0 == 0.0) v.toLong().toString() else v.toString()

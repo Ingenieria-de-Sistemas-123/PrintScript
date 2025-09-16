@@ -7,7 +7,10 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DeclarationNode
 
 class NoDuplicateVariableRule : Rule {
-    override fun check(node: ASTNode, lintContext: LintContext): List<Issue> {
+    override fun check(
+        node: ASTNode,
+        lintContext: LintContext,
+    ): List<Issue> {
         if (node is DeclarationNode) {
             val name = node.identifier
             val type = node.valueType
@@ -18,7 +21,10 @@ class NoDuplicateVariableRule : Rule {
                     Issue(
                         ruleId = "no-duplicate-var",
                         message = "Variable '$name' ya declarada previamente",
-                        startLine = r.sl, startCol = r.sc, endLine = r.el, endCol = r.ec,
+                        startLine = r.sl,
+                        startCol = r.sc,
+                        endLine = r.el,
+                        endCol = r.ec,
                         severity = Severity.ERROR,
                     ),
                 )

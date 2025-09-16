@@ -7,7 +7,6 @@ import java.io.BufferedReader
 import java.io.Reader
 
 class Lexer(private val tokenProvider: TokenProvider) {
-
     fun lexLines(reader: Reader): Iterator<List<Token>> = LineIterator(reader)
 
     fun lex(reader: Reader): List<Token> {
@@ -26,7 +25,9 @@ class Lexer(private val tokenProvider: TokenProvider) {
         private var lineNumber = 0
         private var column = 1
 
-        init { nextLine() }
+        init {
+            nextLine()
+        }
 
         private fun nextLine() {
             lineText = bufferedReader.readLine()
@@ -57,7 +58,8 @@ class Lexer(private val tokenProvider: TokenProvider) {
 
             fun skipSpace() {
                 while (pos < line.length && line[pos].isWhitespace()) {
-                    pos++; col++
+                    pos++
+                    col++
                 }
             }
 
@@ -65,8 +67,9 @@ class Lexer(private val tokenProvider: TokenProvider) {
                 skipSpace()
                 if (pos >= line.length) break
 
-                val match = tokenProvider.getTokenFor(line, pos)
-                    ?: error("Unexpected character at line $lineNumber, column $col")
+                val match =
+                    tokenProvider.getTokenFor(line, pos)
+                        ?: error("Unexpected character at line $lineNumber, column $col")
 
                 val (lexeme, type) = match
                 val value = lexeme

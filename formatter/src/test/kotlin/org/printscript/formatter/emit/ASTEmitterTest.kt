@@ -61,10 +61,9 @@ class ASTEmitterTest {
     }
 
     @Test
-    fun `println emite keyword y parentesis`() {
+    fun `println emite keyword y parentesis con ident adentro`() {
         val ast =
             listOf<ASTNode>(
-                // Heurística del emitter: "x" parece identificador => Ident("x")
                 PrintStatementNode(LiteralNode("x"), pos()),
             )
         val tokens = ASTEmitter(FormatterConfig(lineJumpBeforePrintln = 1)).emitProgram(ast)
@@ -73,7 +72,7 @@ class ASTEmitterTest {
                 FormatToken.NewLine(1),
                 FormatToken.Keyword("println"),
                 FormatToken.OpenParen,
-                FormatToken.Ident("x"),
+                FormatToken.StringLit("x"),
                 FormatToken.CloseParen,
                 FormatToken.Semicolon,
             )

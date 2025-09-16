@@ -72,7 +72,7 @@ class ExecutorTest {
     @Test
     fun `string + number en println falla (tipado estricto en '+')`() {
         val env = Environment()
-        val exec = Executor(env) { /* no-op */ }
+        val exec = Executor(env) { }
 
         val prog =
             listOf<StmtIR>(
@@ -90,7 +90,7 @@ class ExecutorTest {
     @Test
     fun `type mismatch en declaracion - falla`() {
         val env = Environment()
-        val exec = Executor(env) { /* no-op */ }
+        val exec = Executor(env) { }
 
         val prog =
             listOf<StmtIR>(

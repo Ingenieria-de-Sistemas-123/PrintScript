@@ -1,16 +1,12 @@
-package com.printscript.parser.builder
+package org.printscript.parser.builder
 
 import org.printscript.common.Position
-import org.printscript.parser.builder.Builder
 import org.printscript.parser.node.ASTNode
+import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.token.Token
-import org.printscript.token.TokenType
-import org.printscript.parser.node.DoubleExpressionNode
-
 
 class ExpressionBuilder(private val line: List<Token>) : Builder {
-
     override fun build(): ASTNode {
         return if (line.isEmpty()) LiteralNode("\"\"") else addNodes(line)
     }
@@ -43,7 +39,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
 
         val (operator, index) = findLowestPrecedenceOperator(operators)
 
-        val leftTokens  = tokens.subList(0, index)
+        val leftTokens = tokens.subList(0, index)
         val rightTokens = tokens.subList(index + 1, tokens.size)
 
         val rightNode = addNodes(rightTokens)
@@ -81,12 +77,12 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
         return result ?: operators[0]
     }
 
-    private fun getPrecedence(op: String): Int = when (op) {
-        "+", "-" -> 1
-        "*", "/" -> 2
-        else     -> Int.MAX_VALUE
-    }
+    private fun getPrecedence(op: String): Int =
+        when (op) {
+            "+", "-" -> 1
+            "*", "/" -> 2
+            else -> Int.MAX_VALUE
+        }
 
-    private fun operatorsToCheck(token: Token): Boolean =
-        token.value in listOf("/", "*", "(", ")", "+", "-")
+    private fun operatorsToCheck(token: Token): Boolean = token.value in listOf("/", "*", "(", ")", "+", "-")
 }

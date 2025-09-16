@@ -17,7 +17,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
     fun `string + number falla ( '+' estricto )`() {
         val ast =
             listOf(
-                ConstantDeclarationNode("s", "string", str("hola!"), pos()), // 'hola!' fuerza StrLit
+                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
                 PrintStatementNode(plus(id("s"), num(2025.0)), pos()),
             )
         val (interpreter, _) = newInterpreterWithBuffer()
@@ -62,7 +62,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
         val ast =
             listOf(
                 ConstantDeclarationNode("x", "number", num(1.0), pos()),
-                AssignationNode("x", str("hola!"), pos()), // 'hola!' => StrLit
+                AssignationNode("x", str("hola!"), pos()),
             )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }

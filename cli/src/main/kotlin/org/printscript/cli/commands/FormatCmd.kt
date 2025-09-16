@@ -42,25 +42,29 @@ class FormatCmd : Callable<Int> {
         return res.fold(
             onSuccess = { ast ->
                 val cfg = fmt.loadConfig(configPath)
+                val formatted = fmt.format(ast, cfg)
+
                 if (check) {
-                    val diff = fmt.check(ast, cfg, source)
-                    return if (diff == null) {
+                    return if (formatted == source) {
                         println("OK: $file is already formatted.")
                         0
                     } else {
                         println("File is not formatted. Suggested output:\n")
-                        println(diff)
+                        println(formatted)
                         1
                     }
                 } else {
-                    val out = fmt.format(ast, cfg)
                     if (apply) {
-                        sourceFile.writeText(out)
-                        println("Formatting applied to $file")
+                        if (formatted != source) {
+                            sourceFile.writeText(formatted)
+                            println("Formatting applied to $file")
+                        } else {
+                            println("OK: $file is already formatted.")
+                        }
                     } else {
-                        println(out)
+                        println(formatted)
                     }
-                    0
+                    return 0
                 }
             },
             onFailure = { t ->

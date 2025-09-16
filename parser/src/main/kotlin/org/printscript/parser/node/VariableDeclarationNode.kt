@@ -12,8 +12,8 @@ data class VariableDeclarationNode(
         return when {
             other is VariableDeclarationNode -> {
                 this.identifier == other.identifier &&
-                        this.valueType == other.valueType &&
-                        this.expression == other.expression
+                    this.valueType == other.valueType &&
+                    this.expression == other.expression
             }
             else -> super.equals(other)
         }

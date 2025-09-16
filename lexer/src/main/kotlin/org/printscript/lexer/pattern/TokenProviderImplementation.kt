@@ -3,10 +3,12 @@ package org.printscript.lexer.pattern
 import org.printscript.token.TokenType
 
 class TokenProviderImplementation(
-    private val tokens: LinkedHashMap<String, TokenType>
+    private val tokens: LinkedHashMap<String, TokenType>,
 ) : TokenProvider {
-
-    override fun getTokenFor(line: String, position: Int): Pair<String, TokenType>? {
+    override fun getTokenFor(
+        line: String,
+        position: Int,
+    ): Pair<String, TokenType>? {
         for ((pattern, type) in tokens) {
             val m = Regex(pattern).find(line, position)
             if (m != null && m.range.first == position) {
@@ -22,6 +24,5 @@ class TokenProviderImplementation(
         return TokenProviderImplementation(merged)
     }
 
-    override fun iterator(): Iterator<Pair<String, TokenType>> =
-        tokens.entries.map { it.key to it.value }.iterator()
+    override fun iterator(): Iterator<Pair<String, TokenType>> = tokens.entries.map { it.key to it.value }.iterator()
 }

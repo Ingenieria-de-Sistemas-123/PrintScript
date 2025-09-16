@@ -7,7 +7,6 @@ import org.printscript.token.TokenType
 data class TokenHandler(val line: List<Token>) {
     private var currentTokenIndex = 0
 
-
     fun collectExpressionTokens(with: Boolean): List<Token> {
         val tokens = mutableListOf<Token>()
         while (!isAtEnd() && peek().type != TokenType.SYNTAX) {
@@ -19,10 +18,11 @@ data class TokenHandler(val line: List<Token>) {
 
     fun collectExpressionTokensInParenthesis(): List<Token> {
         val tokens = mutableListOf<Token>()
-        var depth = 1 // ya consumimos "(" afuera
+        var depth = 1
 
         while (!isAtEnd()) {
-            val t = peek(); advance()
+            val t = peek()
+            advance()
             if (t.type == TokenType.SYNTAX && t.value == "(") {
                 depth++
             } else if (t.type == TokenType.SYNTAX && t.value == ")") {
@@ -50,13 +50,19 @@ data class TokenHandler(val line: List<Token>) {
         return line[currentTokenIndex]
     }
 
-    fun consume(type: TokenType, message: String): Token {
+    fun consume(
+        type: TokenType,
+        message: String,
+    ): Token {
         if (check(type)) return advance()
         val p = peek()
         throw IllegalArgumentException("$message At line ${p.line} column ${p.column}")
     }
 
-    fun expect(type: TokenType, message: String): Token = consume(type, message)
+    fun expect(
+        type: TokenType,
+        message: String,
+    ): Token = consume(type, message)
 
     private fun check(type: TokenType): Boolean = !isAtEnd() && peek().type == type
 

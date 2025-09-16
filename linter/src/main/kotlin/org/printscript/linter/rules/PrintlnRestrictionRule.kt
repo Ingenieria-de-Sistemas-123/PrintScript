@@ -8,7 +8,10 @@ import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 
 class PrintlnRestrictionRule : Rule {
-    override fun check(node: ASTNode, lintContext: LintContext): List<Issue> {
+    override fun check(
+        node: ASTNode,
+        lintContext: LintContext,
+    ): List<Issue> {
         if (node is PrintStatementNode) {
             val expr = node.expression
             val ok = expr is LiteralNode<*> && (expr.value is String)
@@ -18,7 +21,10 @@ class PrintlnRestrictionRule : Rule {
                     Issue(
                         ruleId = "println-restriction",
                         message = "println solo admite literal o identificador (no expresiones)",
-                        startLine = r.sl, startCol = r.sc, endLine = r.el, endCol = r.ec,
+                        startLine = r.sl,
+                        startCol = r.sc,
+                        endLine = r.el,
+                        endCol = r.ec,
                         severity = Severity.WARNING,
                     ),
                 )

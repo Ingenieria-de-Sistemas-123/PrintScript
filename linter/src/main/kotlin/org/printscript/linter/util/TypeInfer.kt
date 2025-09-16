@@ -1,9 +1,15 @@
 package org.printscript.linter.util
 
 import org.printscript.linter.rules.LintContext
-import org.printscript.parser.node.*
+import org.printscript.parser.node.ASTNode
+import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.LiteralNode
 
-fun inferType(expr: ASTNode, lintContext: LintContext): String? =
+fun inferType(
+    expr: ASTNode,
+    lintContext: LintContext,
+): String? =
     when (expr) {
         is LiteralNode<*> ->
             when (val v = expr.value) {

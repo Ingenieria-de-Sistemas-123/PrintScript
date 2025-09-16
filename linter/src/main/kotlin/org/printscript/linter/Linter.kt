@@ -3,7 +3,13 @@ package org.printscript.linter
 import org.printscript.linter.issue.Issue
 import org.printscript.linter.rules.LintContext
 import org.printscript.linter.rules.Rule
-import org.printscript.parser.node.*
+import org.printscript.parser.node.ASTNode
+import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.DeclarationNode
+import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.IfElseNode
+import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.PrintStatementNode
 
 class Linter(
     private val rules: List<Rule>,
@@ -22,11 +28,17 @@ class Linter(
             when (node) {
                 is DeclarationNode -> visit(node.expression)
                 is AssignationNode -> visit(node.expression)
-                is DoubleExpressionNode -> { visit(node.left); visit(node.right) }
+                is DoubleExpressionNode -> {
+                    visit(node.left)
+                    visit(node.right)
+                }
                 is PrintStatementNode -> visit(node.expression)
-                is IfElseNode -> { node.ifBranch.forEach(::visit); node.elseBranch.forEach(::visit) }
-                is LiteralNode<*> -> {  }
-                else -> {  }
+                is IfElseNode -> {
+                    node.ifBranch.forEach(::visit)
+                    node.elseBranch.forEach(::visit)
+                }
+                is LiteralNode<*> -> { }
+                else -> { }
             }
         }
         program.forEach(::visit)

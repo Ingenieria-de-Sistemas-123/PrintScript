@@ -1,6 +1,5 @@
 package org.printscript.parser.builder
 
-import com.printscript.parser.builder.ExpressionBuilder
 import org.printscript.common.Position
 import org.printscript.parser.ParseException
 import org.printscript.parser.helpers.TokenHandler

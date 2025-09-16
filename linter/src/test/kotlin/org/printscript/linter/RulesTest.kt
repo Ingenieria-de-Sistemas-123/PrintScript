@@ -15,9 +15,7 @@ import org.printscript.linter.testutil.TestUtils.plus
 import org.printscript.linter.testutil.TestUtils.printlnNode
 import org.printscript.linter.testutil.TestUtils.str
 
-
 class RulesTest {
-
     @Test
     fun `NoDuplicateVariableRule detects redeclaration`() {
         val rule = NoDuplicateVariableRule()
@@ -66,8 +64,10 @@ class RulesTest {
         val i3 = rule.check(ok1, ctx)
         val i4 = rule.check(ok2, ctx)
 
-        assertEquals(1, i1.size); assertEquals("string-number-concat", i1.first().ruleId)
-        assertEquals(1, i2.size); assertEquals("string-number-concat", i2.first().ruleId)
+        assertEquals(1, i1.size)
+        assertEquals("string-number-concat", i1.first().ruleId)
+        assertEquals(1, i2.size)
+        assertEquals("string-number-concat", i2.first().ruleId)
         assertTrue(i3.isEmpty())
         assertTrue(i4.isEmpty())
     }

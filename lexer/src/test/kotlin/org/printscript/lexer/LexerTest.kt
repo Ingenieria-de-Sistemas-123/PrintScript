@@ -1,21 +1,21 @@
 package org.printscript.lexer
 
 import org.junit.jupiter.api.Test
-import java.io.StringReader
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFailsWith
 import org.printscript.lexer.pattern.PreConfiguredTokens
 import org.printscript.token.TokenType
+import java.io.StringReader
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class LexerTest {
-
     @Test
     fun lex_flat_includesEOF_and_positions() {
-        val code = """
-      let x: number = 1 + 2;
-      println("hi");
-    """.trimIndent()
+        val code =
+            """
+            let x: number = 1 + 2;
+            println("hi");
+            """.trimIndent()
 
         val lexer = Lexer(PreConfiguredTokens.TOKENS_1_1)
         val tokens = lexer.lex(StringReader(code))
@@ -38,12 +38,13 @@ class LexerTest {
 
     @Test
     fun lexLines_iterates_by_nonblank_lines() {
-        val code = """
-      
-      let a: number = 1;
-      
-      println(a);
-    """.trimIndent()
+        val code =
+            """
+
+            let a: number = 1;
+
+            println(a);
+            """.trimIndent()
 
         val lexer = Lexer(PreConfiguredTokens.TOKENS_1_1)
         val it = lexer.lexLines(StringReader(code))

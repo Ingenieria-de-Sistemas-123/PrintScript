@@ -9,7 +9,7 @@ import org.printscript.interpreter.runtime.Environment
 class BigProgramSmokeTest {
     @Test
     fun `10k prints with limited heap`() {
-        val exec = Executor(Environment()) { /* no-op output */ }
+        val exec = Executor(Environment()) { }
 
         repeat(10_000) { i ->
             PrintIR(NumLit(i.toDouble())).accept(exec)

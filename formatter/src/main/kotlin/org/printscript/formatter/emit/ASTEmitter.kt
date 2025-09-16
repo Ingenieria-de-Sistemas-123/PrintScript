@@ -97,7 +97,8 @@ class ASTEmitter(private val cfg: FormatterConfig) {
         when (val v = n.value) {
             is Number -> sink += NumberLit(v.toString())
             is String -> {
-                if (IDENT_REGEX.matches(v)) sink += Ident(v) else sink += StringLit(v)
+                val normalized = unquoteAndUnescape(v)
+                sink += StringLit(normalized)
             }
             is Boolean -> {
                 sink += Ident(v.toString())
@@ -106,7 +107,52 @@ class ASTEmitter(private val cfg: FormatterConfig) {
         }
     }
 
-    companion object {
-        private val IDENT_REGEX = Regex("^[A-Za-z_][A-Za-z0-9_]*$")
+    private fun unquoteAndUnescape(v: String): String {
+        val inner =
+            if (v.length >= 2 && v.first() == '"' && v.last() == '"') {
+                v.substring(1, v.length - 1)
+            } else {
+                v
+            }
+        return unescape(inner)
     }
+
+    private fun unescape(s: String): String =
+        buildString {
+            var i = 0
+            while (i < s.length) {
+                val c = s[i]
+                if (c == '\\' && i + 1 < s.length) {
+                    when (s[i + 1]) {
+                        '\\' -> {
+                            append('\\')
+                            i++
+                        }
+                        '"' -> {
+                            append('"')
+                            i++
+                        }
+                        'n' -> {
+                            append('\n')
+                            i++
+                        }
+                        't' -> {
+                            append('\t')
+                            i++
+                        }
+                        'r' -> {
+                            append('\r')
+                            i++
+                        }
+                        else -> {
+                            append(s[i + 1])
+                            i++
+                        }
+                    }
+                } else {
+                    append(c)
+                }
+                i++
+            }
+        }
 }

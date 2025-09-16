@@ -1,19 +1,21 @@
 package org.printscript.linter
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.printscript.common.Position
 import org.printscript.linter.issue.Issue
 import org.printscript.linter.issue.Severity
 import org.printscript.linter.rules.LintContext
 import org.printscript.linter.testutil.TestUtils.assign
+import org.printscript.linter.testutil.TestUtils.bool
 import org.printscript.linter.testutil.TestUtils.declVar
-import org.printscript.linter.testutil.TestUtils.num
-import org.printscript.linter.testutil.TestUtils.plus
+import org.printscript.linter.testutil.TestUtils.div
 import org.printscript.linter.testutil.TestUtils.minus
 import org.printscript.linter.testutil.TestUtils.mul
-import org.printscript.linter.testutil.TestUtils.div
-import org.printscript.linter.testutil.TestUtils.bool
+import org.printscript.linter.testutil.TestUtils.num
+import org.printscript.linter.testutil.TestUtils.plus
 import org.printscript.linter.testutil.TestUtils.printlnNode
 import org.printscript.linter.testutil.TestUtils.str
 import org.printscript.linter.util.idRange
@@ -22,7 +24,6 @@ import org.printscript.linter.util.rangeOf
 import org.printscript.parser.node.ASTNode
 
 class UtilsTest {
-
     @Test
     fun `issue default severity WARNING and explicit ERROR`() {
         val i1 = Issue("r1", "msg", 1, 1, 1, 5)
@@ -47,7 +48,7 @@ class UtilsTest {
         assertEquals(3, r.sl)
         assertEquals(7, r.sc)
         assertEquals(3, r.el)
-        assertEquals(11, r.ec) // 7 + len("total") - 1
+        assertEquals(11, r.ec)
     }
 
     @Test
@@ -64,11 +65,26 @@ class UtilsTest {
         val rp = rangeOf(p)
         val rl = rangeOf(l)
 
-        assertEquals(5, rd.sl); assertEquals(2, rd.sc); assertEquals(5, rd.el); assertEquals(2, rd.ec)
-        assertEquals(6, ra.sl); assertEquals(4, ra.sc); assertEquals(6, ra.el); assertEquals(4, ra.ec)
-        assertEquals(7, re.sl); assertEquals(3, re.sc); assertEquals(7, re.el); assertEquals(3, re.ec)
-        assertEquals(8, rp.sl); assertEquals(5, rp.sc); assertEquals(8, rp.el); assertEquals(5, rp.ec)
-        assertEquals(1, rl.sl); assertEquals(1, rl.sc); assertEquals(1, rl.el); assertEquals(1, rl.ec)
+        assertEquals(5, rd.sl)
+        assertEquals(2, rd.sc)
+        assertEquals(5, rd.el)
+        assertEquals(2, rd.ec)
+        assertEquals(6, ra.sl)
+        assertEquals(4, ra.sc)
+        assertEquals(6, ra.el)
+        assertEquals(4, ra.ec)
+        assertEquals(7, re.sl)
+        assertEquals(3, re.sc)
+        assertEquals(7, re.el)
+        assertEquals(3, re.ec)
+        assertEquals(8, rp.sl)
+        assertEquals(5, rp.sc)
+        assertEquals(8, rp.el)
+        assertEquals(5, rp.ec)
+        assertEquals(1, rl.sl)
+        assertEquals(1, rl.sc)
+        assertEquals(1, rl.el)
+        assertEquals(1, rl.ec)
     }
 
     @Test

@@ -14,12 +14,10 @@ class Interpreter(
     private val exec = Executor(env, output)
     private val adapter = ASTtoIR()
 
-    // Entrada publica mas tipica: AST del parser--> ejecuta
     fun execute(ast: List<ASTNode>) {
         val irProgram = adapter.transform(ast) // List<StmtIR>
         irProgram.forEach { stmt -> stmt.accept(exec) }
     }
 
-    /** a futuro: si queremos exponer un snapshot del entorno para tests/CLI */
     fun environmentSnapshot(): Map<String, String> = env.snapshot()
 }

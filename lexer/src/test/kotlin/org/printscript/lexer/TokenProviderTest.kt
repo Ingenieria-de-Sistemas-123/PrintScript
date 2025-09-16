@@ -7,12 +7,12 @@ import org.printscript.token.TokenType
 import kotlin.test.Test
 
 class TokenProviderTest {
-
     @Test
     fun getTokenFor_matchesAtGivenPosition_only() {
-        val tp = TokenProvider.builder(
-            mapOf("\\blet\\b" to TokenType.LET, "\\=" to TokenType.EQUAL)
-        )
+        val tp =
+            TokenProvider.builder(
+                mapOf("\\blet\\b" to TokenType.LET, "\\=" to TokenType.EQUAL),
+            )
         val line = "  let x = 1"
         val m0 = tp.getTokenFor(line, 0)
         assertNull(m0)

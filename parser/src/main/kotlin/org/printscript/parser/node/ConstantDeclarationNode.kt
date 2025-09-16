@@ -6,14 +6,14 @@ data class ConstantDeclarationNode(
     override val identifier: String,
     override val valueType: String,
     override val expression: ASTNode,
-    override val position: Position
+    override val position: Position,
 ) : DeclarationNode {
     override fun equals(other: Any?): Boolean {
         return when {
             other is VariableDeclarationNode -> {
                 this.identifier == other.identifier &&
-                        this.valueType == other.valueType &&
-                        this.expression == other.expression
+                    this.valueType == other.valueType &&
+                    this.expression == other.expression
             }
             else -> super.equals(other)
         }
