@@ -9,16 +9,18 @@ import org.printscript.parser.node.DeclarationNode
 class NoDuplicateVariableRule : Rule {
     override fun check(
         node: ASTNode,
-        ctx: LintContext,
+        lintContext: LintContext,
     ): List<Issue> {
         if (node is DeclarationNode) {
-            val prev = ctx.symbols.putIfAbsent(node.name, node.type)
+            val name = node.identifier
+            val type = node.valueType
+            val prev = lintContext.symbols.putIfAbsent(name, type)
             if (prev != null) {
-                val r = idRange(node.name, node.position)
+                val r = idRange(name, node.position)
                 return listOf(
                     Issue(
                         ruleId = "no-duplicate-var",
-                        message = "Variable '${node.name}' ya declarada previamente",
+                        message = "Variable '$name' ya declarada previamente",
                         startLine = r.sl,
                         startCol = r.sc,
                         endLine = r.el,

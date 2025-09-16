@@ -4,7 +4,6 @@ import org.printscript.formatter.CodeFormatter
 import org.printscript.formatter.config.ConfigJsonReader
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.parser.node.ASTNode
-import java.io.File
 
 class FormatterAdapter {
     private val formatter = CodeFormatter()
@@ -13,7 +12,7 @@ class FormatterAdapter {
         if (path.isNullOrBlank()) {
             FormatterConfig()
         } else {
-            ConfigJsonReader().readFromFile(File(path).readText())
+            ConfigJsonReader().readFromFile(path)
         }
 
     fun format(

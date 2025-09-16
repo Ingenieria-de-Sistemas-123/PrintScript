@@ -2,8 +2,8 @@ package org.printscript.parser.node
 
 import org.printscript.common.Position
 
-class AssignationNode(
-    val name: String,
-    val type: ASTNode,
+data class AssignationNode(
+    val variable: String,
+    val expression: ASTNode,
     val position: Position,
 ) : ASTNode

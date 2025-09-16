@@ -1,21 +1,27 @@
 package org.printscript.parser.builder
 
 import org.printscript.common.Position
+import org.printscript.parser.ParseException
 import org.printscript.parser.helpers.TokenHandler
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
+import org.printscript.token.Token
 import org.printscript.token.TokenType
 
-class AssignationBuilder(private val h: TokenHandler) {
-    fun build(): ASTNode {
-        val id = h.expect(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable")
-        val name = id.value
-        val pos = Position(id.line, id.column)
+class AssignationBuilder(private val line: List<Token>) : Builder {
+    override fun build(): ASTNode {
+        val handler = TokenHandler(line)
+        val identifier = handler.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.")
+        val name = identifier.value
+        val position = Position(identifier.line, identifier.column)
 
-        h.expect(TokenType.EQUAL, "Se esperaba '=' después del nombre")
-        val value = ExpressionBuilder(h).build()
-        h.expect(TokenType.SEMICOLON, "Se esperaba ';' al final de la asignación")
+        handler.consume(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable.")
 
-        return AssignationNode(name, value, pos)
+        val exprTokens = handler.collectExpressionTokens(false)
+
+        val semi = handler.consume(TokenType.SYNTAX, "Se esperaba ';' después de la declaración.")
+        if (semi.value != ";") throw ParseException("Se esperaba ';' pero encontré '${semi.value}'", semi.line, semi.column)
+
+        return AssignationNode(name, ExpressionBuilder(exprTokens).build(), position)
     }
 }

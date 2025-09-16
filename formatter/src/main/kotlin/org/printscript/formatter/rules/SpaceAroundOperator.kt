@@ -8,7 +8,6 @@ class SpaceAroundOperator : CodeFormatRule {
         ctx: ApplyContext,
     ) {
         t as FormatToken.Op
-        // Heurística simple: "-" unario si prev es apertura/otro op/igual/coma/nulo
         val unaryMinus =
             t.kind == FormatToken.OpKind.MINUS &&
                 (

@@ -2,7 +2,7 @@ package org.printscript.parser.node
 
 import org.printscript.common.Position
 
-class DoubleExpressionNode(
+data class DoubleExpressionNode(
     val left: ASTNode,
     val operator: String,
     val right: ASTNode,

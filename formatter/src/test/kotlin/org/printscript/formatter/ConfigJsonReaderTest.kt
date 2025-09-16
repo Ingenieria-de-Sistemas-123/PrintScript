@@ -36,11 +36,9 @@ class ConfigJsonReaderTest {
     @Test
     fun `valores faltantes toman defaults`() {
         val tmp = Files.createTempFile("fmt-", ".json").toFile()
-        // Dejamos sólo 2 campos
         tmp.writeText("""{ "spaceAroundEquals": true, "indentSize": 8 }""")
 
         val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
-        // defaults del data class para los ausentes
         assertEquals(false, cfg.spaceBeforeColon)
         assertEquals(true, cfg.spaceAfterColon)
         assertEquals(true, cfg.spaceAroundEquals)

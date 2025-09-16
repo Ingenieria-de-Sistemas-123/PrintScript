@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.PrintStatementNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Edge Cases")
@@ -13,10 +13,8 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     fun `render de enteros sin ,0`() {
         val ast =
             listOf(
-                // verifica que 2.0 se imprima como "2"
-                PrintNode(num(2.0), pos()),
-                // y que el resultado de una operación en punto flotante 4.0 salga "4"
-                PrintNode(plus(num(2.0), num(2.0)), pos()),
+                PrintStatementNode(num(2.0), pos()),
+                PrintStatementNode(plus(num(2.0), num(2.0)), pos()),
             )
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
@@ -27,7 +25,7 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     fun `precedencia via AST anidado`() {
         val ast =
             listOf(
-                PrintNode(
+                PrintStatementNode(
                     star(plus(num(1.0), num(2.0)), num(3.0)),
                     pos(),
                 ),

@@ -2,9 +2,9 @@ package org.printscript.parser.node
 
 import org.printscript.common.Position
 
-class DeclarationNode(
-    val name: String,
-    val type: String,
-    val value: ASTNode,
-    val position: Position,
-) : ASTNode
+sealed interface DeclarationNode : ASTNode {
+    val identifier: String
+    val valueType: String
+    val expression: ASTNode
+    val position: Position
+}

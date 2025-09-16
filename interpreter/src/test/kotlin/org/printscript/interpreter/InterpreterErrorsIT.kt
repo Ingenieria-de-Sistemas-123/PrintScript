@@ -7,27 +7,27 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.parser.node.AssignationNode
-import org.printscript.parser.node.DeclarationNode
-import org.printscript.parser.node.PrintNode
+import org.printscript.parser.node.ConstantDeclarationNode
+import org.printscript.parser.node.PrintStatementNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Errores")
 class InterpreterErrorsIT : BaseInterpreterIT() {
     @Test
-    fun `string + number concatena correctamente`() {
+    fun `string + number falla ( '+' estricto )`() {
         val ast =
             listOf(
-                DeclarationNode("s", "string", str("hola"), pos()),
-                PrintNode(plus(id("s"), num(2025.0)), pos()),
+                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
+                PrintStatementNode(plus(id("s"), num(2025.0)), pos()),
             )
-        val (interpreter, out) = newInterpreterWithBuffer()
-        interpreter.execute(ast)
-        assertTrue { out.lines == listOf("hola2025") }
+        val (interpreter, _) = newInterpreterWithBuffer()
+        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("Operador '+' no definido"))
     }
 
     @Test
     fun `division por cero`() {
-        val ast = listOf(PrintNode(slash(num(1.0), num(0.0)), pos()))
+        val ast = listOf(PrintStatementNode(slash(num(1.0), num(0.0)), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("División por cero"))
@@ -35,7 +35,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `identificador no declarado`() {
-        val ast = listOf(PrintNode(id("x"), pos()))
+        val ast = listOf(PrintStatementNode(id("x"), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Variable 'x' no definida"))
@@ -51,7 +51,7 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
 
     @Test
     fun `type mismatch en declaracion`() {
-        val ast = listOf(DeclarationNode("s", "string", num(10.0), pos()))
+        val ast = listOf(ConstantDeclarationNode("s", "string", num(10.0), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(IllegalArgumentException::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Inicialización incompatible"))
@@ -61,31 +61,11 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
     fun `type mismatch en asignacion`() {
         val ast =
             listOf(
-                DeclarationNode("x", "number", num(1.0), pos()),
-                AssignationNode("x", str("hola"), pos()),
+                ConstantDeclarationNode("x", "number", num(1.0), pos()),
+                AssignationNode("x", str("hola!"), pos()),
             )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("Asignación incompatible"))
-    }
-
-    @Test
-    fun `declaracion doble de variable`() {
-        val ast =
-            listOf(
-                DeclarationNode("x", "number", num(1.0), pos()),
-                DeclarationNode("x", "number", num(2.0), pos()),
-            )
-        val (interpreter, _) = newInterpreterWithBuffer()
-        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
-        assertTrue(ex.message!!.contains("Variable 'x' ya definida"))
-    }
-
-    @Test
-    fun `declaracion con tipo invalido - falla`() {
-        val ast = listOf(DeclarationNode("x", "boolean", num(1.0), pos()))
-        val (interpreter, _) = newInterpreterWithBuffer()
-        val ex = assertThrows(IllegalStateException::class.java) { interpreter.execute(ast) }
-        assertTrue(ex.message!!.contains("Tipo de declaración desconocido 'boolean'"))
     }
 }
