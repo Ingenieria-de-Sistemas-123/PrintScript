@@ -11,6 +11,10 @@ data class DeclIR(val name: String, val declaredType: RType, val initializer: Ex
     override fun <R> accept(v: StmtVisitor<R>): R = v.visitDecl(this)
 }
 
+data class ConstDeclIR(val name: String, val declaredType: RType, val initializer: ExprIR) : StmtIR {
+    override fun <R> accept(v: StmtVisitor<R>): R = v.visitConstDecl(this)
+}
+
 data class AssignIR(val name: String, val expr: ExprIR) : StmtIR {
     override fun <R> accept(v: StmtVisitor<R>): R = v.visitAssign(this)
 }
@@ -40,7 +44,20 @@ data class Binary(val op: Op, val left: ExprIR, val right: ExprIR) : ExprIR {
     override fun <R> accept(v: ExprVisitor<R>): R = v.visitBinary(this)
 }
 
-enum class Op { PLUS, MINUS, STAR, SLASH }
+data class IfIR(val condition: ExprIR, val thenBranch: List<StmtIR>, val elseBranch: List<StmtIR>?) : StmtIR {
+    override fun <R> accept(v: StmtVisitor<R>): R = v.visitIf(this)
+}
+
+data class BoolLit(val value: Boolean) : ExprIR {
+    override fun <R> accept(v: ExprVisitor<R>): R = v.visitBool(this)
+}
+
+enum class Op {
+    PLUS,
+    MINUS,
+    STAR,
+    SLASH,
+}
 
 // visitors
 interface ExprVisitor<R> {
@@ -51,6 +68,8 @@ interface ExprVisitor<R> {
     fun visitId(i: IdRef): R
 
     fun visitBinary(b: Binary): R
+
+    fun visitBool(b: BoolLit): R
 }
 
 interface StmtVisitor<R> {
@@ -59,4 +78,8 @@ interface StmtVisitor<R> {
     fun visitAssign(a: AssignIR): R
 
     fun visitPrint(p: PrintIR): R
+
+    fun visitIf(i: IfIR): R
+
+    fun visitConstDecl(c: ConstDeclIR): R
 }

@@ -42,6 +42,7 @@ class Environment {
                 null -> "<uninitialized>"
                 is Value.Num -> if (value.v % 1.0 == 0.0) value.v.toLong().toString() else value.v.toString()
                 is Value.Str -> value.v
+                is Value.Bool -> value.v.toString()
             }
         }
 }

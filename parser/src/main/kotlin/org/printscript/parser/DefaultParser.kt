@@ -7,8 +7,8 @@ import org.printscript.token.Token
 import org.printscript.token.TokenType
 
 class DefaultParser : Parser {
-    override fun parse(tokens: List<Token>): List<ASTNode> {
-        val handler = TokenHandler(tokens)
+    override fun parse(list: List<Token>): List<ASTNode> {
+        val handler = TokenHandler(list)
         val nodes = mutableListOf<ASTNode>()
         val generator = ASTGenerator()
 

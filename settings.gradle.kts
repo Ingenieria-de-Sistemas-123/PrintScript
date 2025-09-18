@@ -15,12 +15,16 @@ plugins {
 
 rootProject.name = "PrintScript"
 
-include("linter",
+include(
+    "linter",
     "cli",
     "formatter",
     "interpreter",
     "lexer",
     "parser",
     "token",
-    "common"
+    "common",
+    "runner"
 )
+
+include("runner")

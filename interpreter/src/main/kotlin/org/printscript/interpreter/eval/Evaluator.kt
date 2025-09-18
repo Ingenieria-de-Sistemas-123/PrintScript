@@ -50,5 +50,6 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
         when (v) {
             is Num -> "number"
             is Str -> "string"
+            is Value.Bool -> "boolean"
         }
 }
