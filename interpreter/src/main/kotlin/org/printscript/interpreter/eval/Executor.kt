@@ -2,17 +2,17 @@ package org.printscript.interpreter.eval
 
 import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.ir.AssignIR
+import org.printscript.interpreter.ir.ConstDeclIR
 import org.printscript.interpreter.ir.DeclIR
 import org.printscript.interpreter.ir.IfIR
 import org.printscript.interpreter.ir.PrintIR
 import org.printscript.interpreter.ir.StmtVisitor
-import org.printscript.interpreter.ir.ConstDeclIR
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.asString
 import org.printscript.interpreter.runtime.runtimeTypeOf
 
-//ejecuta sentencias del IR usando patron visitor
+// ejecuta sentencias del IR usando patron visitor
 internal class Executor(
     private val env: Environment,
     private val output: OutputProvider,
@@ -48,8 +48,12 @@ internal class Executor(
         }
     }
 
-
     override fun visitConstDecl(c: ConstDeclIR) {
-        TODO("Not yet implemented")
+        val init = c.initializer.accept(eval)
+        val actualType = runtimeTypeOf(init)
+        require(actualType == c.declaredType) {
+            "Inicialización incompatible de constante '${c.name}': se esperaba ${c.declaredType} y se recibió $actualType"
+        }
+        env.declareConst(c.name, c.declaredType, init)
     }
 }
