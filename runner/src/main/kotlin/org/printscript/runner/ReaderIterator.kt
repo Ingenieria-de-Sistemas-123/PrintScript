@@ -9,12 +9,15 @@ class ReaderIterator {
 
         return object : Iterator<String> {
             var nextLine: String? = advance()
+
             override fun hasNext() = nextLine != null
+
             override fun next(): String {
                 val currentLine = nextLine ?: throw NoSuchElementException()
                 nextLine = advance()
                 return currentLine
             }
+
             private fun advance() = if (scanner.hasNextLine()) scanner.nextLine() else null
         }
     }
