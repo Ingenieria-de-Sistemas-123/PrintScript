@@ -1,0 +1,19 @@
+plugins {
+    id 'org.printscript.conventions'
+}
+
+group = 'org.printscript'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation project(':common')
+    implementation project(':token')
+    implementation project(':lexer')
+    implementation project(':parser')
+    implementation project(':interpreter')
+}
