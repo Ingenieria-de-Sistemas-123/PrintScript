@@ -2,7 +2,7 @@ package org.printscript.runner
 
 import java.io.InputStream
 
-//TODO: Implementar la clase Runner
+// TODO: Implementar la clase Runner
 class Runner {
     fun run(
         inputStream: InputStream,
