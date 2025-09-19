@@ -48,8 +48,7 @@ class ASTtoIR {
         }
 
     private fun literalToIr(n: LiteralNode<*>): ExprIR {
-        val v = n.value
-        return when (v) {
+        return when (val v = n.value) {
             is Number -> NumLit(v.toDouble())
             is String -> if (IDENT_REGEX.matches(v)) IdRef(v) else StrLit(v)
             is Boolean -> StrLit(v.toString())
@@ -61,6 +60,7 @@ class ASTtoIR {
         when (s.lowercase()) {
             "number" -> RType.NUMBER
             "string" -> RType.STRING
+            "boolean" -> RType.BOOLEAN
             else -> error("Tipo de declaración desconocido '$s'")
         }
 

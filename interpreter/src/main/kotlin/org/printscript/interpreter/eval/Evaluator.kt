@@ -1,6 +1,7 @@
 package org.printscript.interpreter.eval
 
 import org.printscript.interpreter.ir.Binary
+import org.printscript.interpreter.ir.BoolLit
 import org.printscript.interpreter.ir.ExprVisitor
 import org.printscript.interpreter.ir.IdRef
 import org.printscript.interpreter.ir.NumLit
@@ -18,6 +19,8 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
     override fun visitStr(s: StrLit): Value = Str(s.value)
 
     override fun visitId(i: IdRef): Value = env.read(i.name)
+
+    override fun visitBool(b: BoolLit): Value = Value.Bool(b.value)
 
     override fun visitBinary(b: Binary): Value {
         val l = b.left.accept(this)
@@ -50,5 +53,6 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
         when (v) {
             is Num -> "number"
             is Str -> "string"
+            is Value.Bool -> "boolean"
         }
 }

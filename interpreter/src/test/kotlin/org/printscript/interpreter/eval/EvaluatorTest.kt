@@ -3,7 +3,16 @@ package org.printscript.interpreter.eval
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.printscript.interpreter.ir.AssignIR
+import org.printscript.interpreter.ir.BoolLit
+import org.printscript.interpreter.ir.ConstDeclIR
+import org.printscript.interpreter.ir.DeclIR
+import org.printscript.interpreter.ir.IfIR
+import org.printscript.interpreter.ir.NumLit
+import org.printscript.interpreter.ir.PrintIR
+import org.printscript.interpreter.ir.StrLit
 import org.printscript.interpreter.runtime.Environment
+import org.printscript.interpreter.runtime.RType
 import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.util.num
@@ -43,5 +52,81 @@ class EvaluatorTest {
         val expr = slash(num(1.0), num(0.0))
 
         assertThrows(RuntimeError::class.java) { expr.accept(ev) }
+    }
+
+    @Test
+    fun `if verdadero ejecuta rama then`() {
+        val env = Environment()
+        val executor = Executor(env) { } // OutputProvider vacío para test
+        env.declare("x", RType.NUMBER, null)
+        val stmt =
+            IfIR(
+                condition = BoolLit(true),
+                thenBranch = listOf(AssignIR("x", NumLit(1.0))),
+                elseBranch = listOf(AssignIR("x", NumLit(2.0))),
+            )
+        stmt.accept(executor)
+        assertEquals(Value.Num(1.0), env.read("x"))
+    }
+
+    @Test
+    fun `if falso ejecuta rama else`() {
+        val env = Environment()
+        val executor = Executor(env) { } // OutputProvider vacío para test
+        env.declare("x", RType.NUMBER, null)
+        val stmt =
+            IfIR(
+                condition = BoolLit(false),
+                thenBranch = listOf(AssignIR("x", NumLit(1.0))),
+                elseBranch = listOf(AssignIR("x", NumLit(2.0))),
+            )
+        stmt.accept(executor)
+        assertEquals(Value.Num(2.0), env.read("x"))
+    }
+
+    @Test
+    fun `declara variable y asigna valor correcto`() {
+        val env = Environment()
+        val executor = Executor(env) { }
+        val decl = DeclIR("y", RType.NUMBER, NumLit(42.0))
+        decl.accept(executor)
+        assertEquals(Value.Num(42.0), env.read("y"))
+    }
+
+    @Test
+    fun `declara constante y asigna valor correcto`() {
+        val env = Environment()
+        val executor = Executor(env) { }
+        val constDecl = ConstDeclIR("z", RType.STRING, StrLit("constante"))
+        constDecl.accept(executor)
+        assertEquals(Value.Str("constante"), env.read("z"))
+    }
+
+    @Test
+    fun `print imprime valor numerico`() {
+        var output = ""
+        val env = Environment()
+        val executor = Executor(env) { output = it }
+        val printStmt = PrintIR(NumLit(7.0))
+        printStmt.accept(executor)
+        assertEquals("7", output)
+    }
+
+    @Test
+    fun `declara variable con tipo incorrecto lanza error`() {
+        val env = Environment()
+        val executor = Executor(env) { }
+        val decl = DeclIR("x", RType.NUMBER, StrLit("no es número"))
+        assertThrows(IllegalArgumentException::class.java) { decl.accept(executor) }
+    }
+
+    @Test
+    fun `asigna valor a variable existente`() {
+        val env = Environment()
+        val executor = Executor(env) { }
+        env.declare("a", RType.NUMBER, Value.Num(1.0))
+        val assign = AssignIR("a", NumLit(99.0))
+        assign.accept(executor)
+        assertEquals(Value.Num(99.0), env.read("a"))
     }
 }

@@ -27,4 +27,38 @@ class EnvironmentTest {
         val ex = assertThrows(RuntimeError::class.java) { env.read("x") }
         assertTrue(ex.message!!.contains("antes de inicializar"))
     }
+
+    @Test fun `declara y lee constante`() {
+        val env = Environment()
+        env.declareConst("c", RType.NUMBER, Value.Num(42.0))
+        assertEquals(Value.Num(42.0), env.read("c"))
+    }
+
+    @Test fun `no permite reasignar constante`() {
+        val env = Environment()
+        env.declareConst("c", RType.NUMBER, Value.Num(1.0))
+        val ex = assertThrows(RuntimeError::class.java) { env.assign("c", Value.Num(2.0)) }
+        assertTrue(ex.message!!.contains("No se puede reasignar"))
+    }
+
+    @Test fun `no permite declarar dos veces la misma variable`() {
+        val env = Environment()
+        env.declare("x", RType.NUMBER, Value.Num(1.0))
+        val ex = assertThrows(RuntimeError::class.java) { env.declare("x", RType.NUMBER, Value.Num(2.0)) }
+        assertTrue(ex.message!!.contains("ya definida"))
+    }
+
+    @Test fun `no permite declarar dos veces la misma constante`() {
+        val env = Environment()
+        env.declareConst("c", RType.NUMBER, Value.Num(1.0))
+        val ex = assertThrows(RuntimeError::class.java) { env.declareConst("c", RType.NUMBER, Value.Num(2.0)) }
+        assertTrue(ex.message!!.contains("ya definida"))
+    }
+
+    @Test fun `asignacion incompatible de tipo falla`() {
+        val env = Environment()
+        env.declare("x", RType.NUMBER, Value.Num(1.0))
+        val ex = assertThrows(RuntimeError::class.java) { env.assign("x", Value.Str("hola")) }
+        assertTrue(ex.message!!.contains("Asignación incompatible"))
+    }
 }
