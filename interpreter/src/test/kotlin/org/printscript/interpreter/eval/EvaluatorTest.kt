@@ -103,7 +103,7 @@ class EvaluatorTest {
     }
 
     @Test
-    fun `print imprime valor numérico`() {
+    fun `print imprime valor numerico`() {
         var output = ""
         val env = Environment()
         val executor = Executor(env) { output = it }
