@@ -1,9 +1,9 @@
 package org.printscript.runner
 
+import org.printscript.interpreter.Interpreter
 import org.printscript.lexer.Lexer
 import org.printscript.lexer.pattern.TokenProvider
 import org.printscript.parser.Parser
-import org.printscript.interpreter.Interpreter
 import java.io.InputStream
 import java.io.InputStreamReader
 
