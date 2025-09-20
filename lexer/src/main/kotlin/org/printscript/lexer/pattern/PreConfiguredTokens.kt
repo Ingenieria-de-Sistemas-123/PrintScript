@@ -3,6 +3,7 @@ package org.printscript.lexer.pattern
 import org.printscript.token.TokenType
 
 object PreConfiguredTokens {
+    @JvmField
     val TOKENS_1_0: TokenProvider =
         TokenProvider builder (
             mapOf(
@@ -22,6 +23,7 @@ object PreConfiguredTokens {
             )
         )
 
+    @JvmField
     val TOKENS_1_1: TokenProvider =
         TokenProvider.builder(
             mapOf(
