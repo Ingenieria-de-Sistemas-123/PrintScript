@@ -9,9 +9,38 @@ data class TokenHandler(val line: List<Token>) {
 
     fun collectExpressionTokens(with: Boolean): List<Token> {
         val tokens = mutableListOf<Token>()
-        while (!isAtEnd() && peek().type != TokenType.SYNTAX) {
+        var depth = 0
+        while (!isAtEnd()) {
+            val current = peek()
+
+            if (current.type == TokenType.SYNTAX && current.value == ";" && depth == 0) {
+                break
+            }
+
+            if (current.type == TokenType.SYNTAX) {
+                when (current.value) {
+                    "(" -> depth++
+                    ")" -> {
+                        if (depth == 0) {
+                            throw ParseException(
+                                "Paréntesis desbalanceados",
+                                current.line,
+                                current.column,
+                            )
+                        }
+                        depth--
+                    }
+                }
+            }
+
             tokens.add(advance())
         }
+
+        if (depth != 0) {
+            val errorToken = tokens.lastOrNull() ?: if (!isAtEnd()) peek() else line.last()
+            throw ParseException("Paréntesis desbalanceados", errorToken.line, errorToken.column)
+        }
+
         if (with) tokens.add(consume(TokenType.SYNTAX, "Se esperaba ';'"))
         return tokens
     }

@@ -97,4 +97,42 @@ class TokenHandlerTest {
         assertTrue(expr.isNotEmpty())
         assertTrue(expr.all { !(it.type == TokenType.SYNTAX && it.value == ";") })
     }
+
+    @Test
+    fun collectExpressionTokens_handles_parenthesized_expression_until_semicolon() {
+        val tokens =
+            listOf(
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.NUMBER, "1"),
+                TestUtils.token(TokenType.PLUS, "+"),
+                TestUtils.token(TokenType.NUMBER, "2"),
+                TestUtils.syntax(")"),
+                TestUtils.syntax(";"),
+                TestUtils.eof(),
+            )
+        val handler = TokenHandler(tokens)
+        val expr = handler.collectExpressionTokens(with = false)
+
+        assertEquals(listOf("(", "1", "+", "2", ")"), expr.map { it.value })
+    }
+
+    @Test
+    fun collectExpressionTokens_handles_function_call_expression() {
+        val tokens =
+            listOf(
+                TestUtils.token(TokenType.READ_INPUT, "readInput"),
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.STRING, "Name?"),
+                TestUtils.syntax(")"),
+                TestUtils.syntax(";"),
+                TestUtils.eof(),
+            )
+        val handler = TokenHandler(tokens)
+        val expr = handler.collectExpressionTokens(with = false)
+
+        assertEquals(4, expr.size)
+        assertEquals("(", expr[1].value)
+        assertEquals(")", expr.last().value)
+        assertTrue(expr.none { it.value == ";" })
+    }
 }
