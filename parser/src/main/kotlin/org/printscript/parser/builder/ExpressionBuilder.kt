@@ -73,10 +73,12 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
 
     private fun literalFrom(token: Token): LiteralNode<*> =
         when (token.type) {
-                        TokenType.NUMBER -> {
+            TokenType.NUMBER -> {
                 val doubleValue = token.value.toDoubleOrNull()
                 if (doubleValue == null) {
-                    throw IllegalArgumentException("Invalid number format for token value: '${token.value}' at line ${token.line}, column ${token.column}")
+                    throw IllegalArgumentException(
+                        "Invalid number format for token value: '${token.value}' at line ${token.line}, column ${token.column}",
+                    )
                 }
                 LiteralNode(doubleValue, TokenType.NUMBER)
             }

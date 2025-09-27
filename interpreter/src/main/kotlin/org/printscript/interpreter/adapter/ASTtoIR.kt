@@ -55,12 +55,13 @@ class ASTtoIR {
             TokenType.STRING -> StrLit(n.value as String)
             TokenType.IDENTIFIER -> IdRef(n.value as String)
             TokenType.TRUE, TokenType.FALSE -> BoolLit(n.value as Boolean)
-            null -> when (val v = n.value) {
-                is Number -> NumLit(v.toDouble())
-                is String -> if (IDENT_REGEX.matches(v)) IdRef(v) else StrLit(v)
-                is Boolean -> BoolLit(v)
-                else -> error("Literal no soportado: $v (${v?.let { it::class.simpleName }})")
-            }
+            null ->
+                when (val v = n.value) {
+                    is Number -> NumLit(v.toDouble())
+                    is String -> if (IDENT_REGEX.matches(v)) IdRef(v) else StrLit(v)
+                    is Boolean -> BoolLit(v)
+                    else -> error("Literal no soportado: $v (${v?.let { it::class.simpleName }})")
+                }
             else ->
                 when (val v = n.value) {
                     is Number -> NumLit(v.toDouble())

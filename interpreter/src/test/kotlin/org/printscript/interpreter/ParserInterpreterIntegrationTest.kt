@@ -1,20 +1,20 @@
 package org.printscript.interpreter
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import org.printscript.interpreter.io.OutputProvider
 import org.printscript.lexer.Lexer
 import org.printscript.lexer.pattern.PreConfiguredTokens
 import org.printscript.parser.DefaultParser
 import java.io.StringReader
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ParserInterpreterIntegrationTest {
     @Test
     fun `evaluates arithmetic assignment`() {
-        val source = """
+        val source =
+            """
             let total: number = 2 + 3;
             println(total);
-        """.trimIndent()
+            """.trimIndent()
 
         val (output, interpreter) = runScript(source)
 
@@ -24,9 +24,10 @@ class ParserInterpreterIntegrationTest {
 
     @Test
     fun `prints string literal without quotes`() {
-        val source = """
+        val source =
+            """
             println("hello");
-        """.trimIndent()
+            """.trimIndent()
 
         val (output, _) = runScript(source)
 
