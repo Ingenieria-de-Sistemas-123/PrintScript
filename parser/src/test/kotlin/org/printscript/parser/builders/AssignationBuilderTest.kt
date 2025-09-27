@@ -1,7 +1,8 @@
-package org.printscript.parser.builder
+package org.printscript.parser.builders
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.printscript.parser.builder.AssignationBuilder
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
