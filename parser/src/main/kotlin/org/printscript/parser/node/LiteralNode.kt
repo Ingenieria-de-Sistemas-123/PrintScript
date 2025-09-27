@@ -4,5 +4,5 @@ import org.printscript.token.TokenType
 
 data class LiteralNode<T>(
     val value: T,
-    val tokenType: TokenType? = null,
+    val tokenType: TokenType?,
 ) : ASTNode

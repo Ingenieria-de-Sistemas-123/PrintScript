@@ -11,14 +11,15 @@ import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.parser.node.VariableDeclarationNode
 import org.printscript.parser.node.VariableNode
+import org.printscript.token.TokenType
 
 class NodeTest {
     @Test
     fun construct_and_equals_print_statement() {
         val pos = Position(1, 5)
-        val expr = LiteralNode("hi")
+        val expr = LiteralNode("hi", TokenType.STRING)
         val node1 = PrintStatementNode(expr, pos)
-        val node2 = PrintStatementNode(LiteralNode("hi"), Position(1, 5))
+        val node2 = PrintStatementNode(LiteralNode("hi", TokenType.STRING), Position(1, 5))
 
         assertEquals(expr, node1.expression)
         assertEquals(pos, node1.position)
@@ -29,8 +30,8 @@ class NodeTest {
     @Test
     fun not_equals_when_expression_differs_print_statement() {
         val pos = Position(1, 5)
-        val a = PrintStatementNode(LiteralNode("hi"), pos)
-        val b = PrintStatementNode(LiteralNode("bye"), pos)
+        val a = PrintStatementNode(LiteralNode("hi", TokenType.STRING), pos)
+        val b = PrintStatementNode(LiteralNode("bye", TokenType.STRING), pos)
 
         assertNotEquals((a.expression as LiteralNode<*>).value, (b.expression as LiteralNode<*>).value)
     }
@@ -38,7 +39,7 @@ class NodeTest {
     @Test
     fun construct_and_equals_constant_declaration() {
         val pos = Position(2, 3)
-        val node = ConstantDeclarationNode("C", "number", LiteralNode(42), pos)
+        val node = ConstantDeclarationNode("C", "number", LiteralNode(42, TokenType.NUMBER), pos)
 
         assertEquals("C", node.identifier)
         assertEquals("number", node.valueType)
@@ -49,17 +50,17 @@ class NodeTest {
     @Test
     fun not_equals_on_different_expression_constant_declaration() {
         val pos = Position(2, 3)
-        val a = ConstantDeclarationNode("C", "number", LiteralNode(1), pos)
-        val b = ConstantDeclarationNode("C", "number", LiteralNode(2), pos)
+        val a = ConstantDeclarationNode("C", "number", LiteralNode(1, TokenType.NUMBER), pos)
+        val b = ConstantDeclarationNode("C", "number", LiteralNode(2, TokenType.NUMBER), pos)
         assertNotEquals(a, b)
     }
 
     @Test
     fun construct_and_equals_variable_declaration() {
         val pos = Position(3, 1)
-        val expr = LiteralNode("empty")
+        val expr = LiteralNode("empty", TokenType.STRING)
         val a = VariableDeclarationNode("x", "string", expr, pos)
-        val b = VariableDeclarationNode("x", "string", LiteralNode("empty"), Position(3, 1))
+        val b = VariableDeclarationNode("x", "string", LiteralNode("empty", TokenType.STRING), Position(3, 1))
 
         assertEquals("x", a.identifier)
         assertEquals("string", a.valueType)
@@ -72,15 +73,15 @@ class NodeTest {
     @Test
     fun not_equals_on_type_change_variable_declaration() {
         val pos = Position(3, 1)
-        val a = VariableDeclarationNode("x", "string", LiteralNode("empty"), pos)
-        val b = VariableDeclarationNode("x", "number", LiteralNode("empty"), pos)
+        val a = VariableDeclarationNode("x", "string", LiteralNode("empty", TokenType.STRING), pos)
+        val b = VariableDeclarationNode("x", "number", LiteralNode("empty", TokenType.STRING), pos)
         assertNotEquals(a, b)
     }
 
     @Test
     fun construct_and_equals_constant_node() {
         val pos = Position(4, 2)
-        val node = ConstantNode("FLAG", "boolean", LiteralNode(true), pos)
+        val node = ConstantNode("FLAG", "boolean", LiteralNode(true, TokenType.BOOLEAN_TYPE), pos)
 
         assertEquals("FLAG", node.identifier)
         assertEquals("boolean", node.valueType)
@@ -91,15 +92,15 @@ class NodeTest {
     @Test
     fun not_equals_when_identifier_differs_constant_node() {
         val pos = Position(4, 2)
-        val a = ConstantNode("A", "number", LiteralNode(1), pos)
-        val b = ConstantNode("B", "number", LiteralNode(1), pos)
+        val a = ConstantNode("A", "number", LiteralNode(1, TokenType.NUMBER), pos)
+        val b = ConstantNode("B", "number", LiteralNode(1, TokenType.NUMBER), pos)
         assertNotEquals(a, b)
     }
 
     @Test
     fun construct_and_equals_variable() {
         val pos = Position(6, 7)
-        val node = VariableNode("v", "number", LiteralNode(1), pos)
+        val node = VariableNode("v", "number", LiteralNode(1, TokenType.NUMBER), pos)
 
         assertEquals("v", node.identifier)
         assertEquals("number", node.valueType)
@@ -110,8 +111,8 @@ class NodeTest {
     @Test
     fun not_equals_when_value_differs_variable() {
         val pos = Position(5, 7)
-        val a = VariableNode("n", "number", LiteralNode(1), pos)
-        val b = VariableNode("n", "number", LiteralNode(2), pos)
+        val a = VariableNode("n", "number", LiteralNode(1, TokenType.NUMBER), pos)
+        val b = VariableNode("n", "number", LiteralNode(2, TokenType.NUMBER), pos)
         assertNotEquals(a, b)
     }
 

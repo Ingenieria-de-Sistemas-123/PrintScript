@@ -9,7 +9,14 @@ import org.printscript.token.TokenType
 
 class ExpressionBuilder(private val line: List<Token>) : Builder {
     override fun build(): ASTNode {
-        return if (line.isEmpty()) LiteralNode("\"\"") else addNodes(line)
+        return if (line.isEmpty()) {
+            LiteralNode(
+                "\"\"",
+                TokenType.SLASH,
+            )
+        } else {
+            addNodes(line) // Return empty string literal for empty expressions
+        }
     }
 
     private fun addNodes(tokens: List<Token>): ASTNode {
@@ -31,7 +38,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
 
         if (leftTokens.isEmpty() && operator.value == "-") {
             val pos = Position(operator.line, operator.column)
-            return DoubleExpressionNode(LiteralNode(0), "-", rightNode, pos)
+            return DoubleExpressionNode(LiteralNode(0, TokenType.NUMBER), "-", rightNode, pos)
         }
 
         val leftNode = addNodes(leftTokens)
