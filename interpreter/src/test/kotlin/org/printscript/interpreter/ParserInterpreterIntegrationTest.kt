@@ -38,7 +38,7 @@ class ParserInterpreterIntegrationTest {
         val tokens = lexer.lex(StringReader(source))
         val ast = DefaultParser().parse(tokens)
         val buffer = mutableListOf<String>()
-        val interpreter = Interpreter(output = OutputProvider { buffer += it })
+        val interpreter = Interpreter(output = { buffer += it })
         interpreter.execute(ast)
         return buffer.toList() to interpreter
     }
