@@ -13,17 +13,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
     }
 
     private fun addNodes(tokens: List<Token>): ASTNode {
-        if (tokens.size == 1) {
-            val token = tokens[0]
-            return when (token.type) {
-                TokenType.IDENTIFIER -> LiteralNode(token.value) // referencia a variable
-                TokenType.NUMBER -> LiteralNode(token.value)
-                TokenType.TRUE -> LiteralNode(true)
-                TokenType.FALSE -> LiteralNode(false)
-                TokenType.STRING -> LiteralNode(token.value)
-                else -> throw IllegalArgumentException("Token inesperado: ${token.type}")
-            }
-        }
+        if (tokens.size == 1) return literalFrom(tokens.first())
 
         if (tokens.first().value == "(" && tokens.last().value == ")") {
             return addNodes(tokens.subList(1, tokens.size - 1))
@@ -80,4 +70,44 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
         }
 
     private fun operatorsToCheck(token: Token): Boolean = token.value in listOf("/", "*", "(", ")", "+", "-")
+
+    private fun literalFrom(token: Token): LiteralNode<*> =
+        when (token.type) {
+                        TokenType.NUMBER -> {
+                val doubleValue = token.value.toDoubleOrNull()
+                if (doubleValue == null) {
+                    throw IllegalArgumentException("Invalid number format for token value: '${token.value}' at line ${token.line}, column ${token.column}")
+                }
+                LiteralNode(doubleValue, TokenType.NUMBER)
+            }
+            TokenType.STRING -> LiteralNode(unescapeString(token.value), TokenType.STRING)
+            TokenType.TRUE -> LiteralNode(true, TokenType.TRUE)
+            TokenType.FALSE -> LiteralNode(false, TokenType.FALSE)
+            TokenType.IDENTIFIER -> LiteralNode(token.value, TokenType.IDENTIFIER)
+            else -> LiteralNode(token.value, token.type)
+        }
+
+    private fun unescapeString(raw: String): String {
+        val withoutQuotes = raw.removeSurrounding("\"")
+        val sb = StringBuilder()
+        var i = 0
+        while (i < withoutQuotes.length) {
+            val c = withoutQuotes[i]
+            if (c == '\\' && i + 1 < withoutQuotes.length) {
+                when (val next = withoutQuotes[i + 1]) {
+                    '\\' -> sb.append('\\')
+                    '"' -> sb.append('"')
+                    'n' -> sb.append('\n')
+                    't' -> sb.append('\t')
+                    'r' -> sb.append('\r')
+                    else -> sb.append(next)
+                }
+                i += 2
+            } else {
+                sb.append(c)
+                i++
+            }
+        }
+        return sb.toString()
+    }
 }
