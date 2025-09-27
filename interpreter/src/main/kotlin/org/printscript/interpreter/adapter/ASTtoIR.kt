@@ -2,6 +2,7 @@ package org.printscript.interpreter.adapter
 
 import org.printscript.interpreter.ir.AssignIR
 import org.printscript.interpreter.ir.Binary
+import org.printscript.interpreter.ir.BoolLit
 import org.printscript.interpreter.ir.DeclIR
 import org.printscript.interpreter.ir.ExprIR
 import org.printscript.interpreter.ir.IdRef
@@ -51,7 +52,7 @@ class ASTtoIR {
         return when (val v = n.value) {
             is Number -> NumLit(v.toDouble())
             is String -> if (IDENT_REGEX.matches(v)) IdRef(v) else StrLit(v)
-            is Boolean -> StrLit(v.toString())
+            is Boolean -> BoolLit(v)
             else -> error("Literal no soportado: $v (${v?.let { it::class.simpleName }})")
         }
     }
