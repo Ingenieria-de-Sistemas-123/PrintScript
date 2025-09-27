@@ -18,6 +18,7 @@ import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.token.TokenType
 
 class ASTtoIR {
     fun transform(program: List<ASTNode>): List<StmtIR> = program.map { toStmt(it) }
@@ -48,14 +49,26 @@ class ASTtoIR {
             else -> error("Nodo de expresión no soportado: ${n::class.simpleName}")
         }
 
-    private fun literalToIr(n: LiteralNode<*>): ExprIR {
-        return when (val v = n.value) {
-            is Number -> NumLit(v.toDouble())
-            is String -> if (IDENT_REGEX.matches(v)) IdRef(v) else StrLit(v)
-            is Boolean -> BoolLit(v)
-            else -> error("Literal no soportado: $v (${v?.let { it::class.simpleName }})")
+    private fun literalToIr(n: LiteralNode<*>): ExprIR =
+        when (n.tokenType) {
+            TokenType.NUMBER -> NumLit((n.value as Number).toDouble())
+            TokenType.STRING -> StrLit(n.value as String)
+            TokenType.IDENTIFIER -> IdRef(n.value as String)
+            TokenType.TRUE, TokenType.FALSE -> BoolLit(n.value as Boolean)
+            null -> when (val v = n.value) {
+                is Number -> NumLit(v.toDouble())
+                is String -> if (IDENT_REGEX.matches(v)) IdRef(v) else StrLit(v)
+                is Boolean -> BoolLit(v)
+                else -> error("Literal no soportado: $v (${v?.let { it::class.simpleName }})")
+            }
+            else ->
+                when (val v = n.value) {
+                    is Number -> NumLit(v.toDouble())
+                    is String -> StrLit(v)
+                    is Boolean -> BoolLit(v)
+                    else -> error("Literal no soportado: $v (${v?.let { it::class.simpleName }})")
+                }
         }
-    }
 
     private fun mapType(s: String): RType =
         when (s.lowercase()) {

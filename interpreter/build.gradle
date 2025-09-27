@@ -13,6 +13,8 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation project(':parser')
     implementation project(':common')
+    implementation project(':token')
+    implementation project(':lexer')
 }
 
 test {
