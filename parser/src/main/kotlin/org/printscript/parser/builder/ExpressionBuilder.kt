@@ -5,6 +5,7 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.token.Token
+import org.printscript.token.TokenType
 
 class ExpressionBuilder(private val line: List<Token>) : Builder {
     override fun build(): ASTNode {
@@ -13,20 +14,14 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
 
     private fun addNodes(tokens: List<Token>): ASTNode {
         if (tokens.size == 1) {
-            val v = tokens[0].value
-            @Suppress("SwallowedException", "TooGenericExceptionCaught")
-            return try {
-                LiteralNode(v.toInt())
-            } catch (_: NumberFormatException) {
-                try {
-                    LiteralNode(v.toDouble())
-                } catch (_: NumberFormatException) {
-                    try {
-                        LiteralNode(v.toBooleanStrict())
-                    } catch (_: Exception) {
-                        LiteralNode(v)
-                    }
-                }
+            val token = tokens[0]
+            return when (token.type) {
+                TokenType.IDENTIFIER -> LiteralNode(token.value) // referencia a variable
+                TokenType.NUMBER -> LiteralNode(token.value)
+                TokenType.TRUE -> LiteralNode(true)
+                TokenType.FALSE -> LiteralNode(false)
+                TokenType.STRING -> LiteralNode(token.value)
+                else -> throw IllegalArgumentException("Token inesperado: ${token.type}")
             }
         }
 
@@ -67,7 +62,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
             } else if (token.value == ")") {
                 parenCount--
             } else if (parenCount == 0) {
-                if (result == null || getPrecedence(token.value) <= getPrecedence(result!!.first.value)) {
+                if (result == null || getPrecedence(token.value) <= getPrecedence(result.first.value)) {
                     result = token to index
                 }
             }
