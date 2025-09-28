@@ -12,7 +12,7 @@ import org.printscript.token.TokenType
 class ConditionalBuilder(private val line: List<Token>) : Builder {
     override fun build(): ASTNode {
         val handler = TokenHandler(line)
-        val tokenIf = handler.consume(TokenType.IF, "Se esperaba 'if'")
+        handler.consume(TokenType.IF, "Se esperaba 'if'")
         val cond = parseCondition(handler)
         val thenBranch = parseBlock(handler)
         val elseBranch =
@@ -59,7 +59,19 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
         val out = mutableListOf<ASTNode>()
         val gen = ASTGenerator()
 
-        while (!(h.peek().type == TokenType.SYNTAX && h.peek().value == "}")) {
+        while (true) {
+            if (h.isAtEnd()) {
+                val errorToken = line.lastOrNull() ?: lb
+                throw ParseException(
+                    "Se esperaba '}' al final del bloque",
+                    errorToken.line,
+                    errorToken.column,
+                )
+            }
+
+            val next = h.peek()
+            if (next.type == TokenType.SYNTAX && next.value == "}") break
+
             val stmt = mutableListOf<Token>()
             var depth = 0
 
@@ -69,6 +81,14 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
                 stmt += t
                 if (t.type == TokenType.SYNTAX && (t.value == "(" || t.value == "{")) depth++
                 if (t.type == TokenType.SYNTAX && (t.value == ")" || t.value == "}")) depth--
+
+                if (h.isAtEnd() && (depth > 0 || (stmt.last().value != ";" && stmt.last().value != "}"))) {
+                    throw ParseException(
+                        "Sentencia incompleta dentro del bloque",
+                        stmt.last().line,
+                        stmt.last().column,
+                    )
+                }
             } while (depth > 0 || (stmt.last().value != ";" && stmt.last().value != "}"))
 
             out += gen.createAST(stmt)

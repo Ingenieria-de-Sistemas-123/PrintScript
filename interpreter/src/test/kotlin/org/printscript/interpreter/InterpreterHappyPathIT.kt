@@ -60,7 +60,7 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `if con variable booleana como condicion ejecuta rama verdadera`() {
         val ast =
             listOf(
-                VariableDeclarationNode("flag", "boolean", bool(true), pos()),
+                VariableDeclarationNode("flag", "boolean", boolTrue(), pos()),
                 IfElseNode(
                     ifBranch = listOf(PrintStatementNode(str("then"), pos())),
                     elseBranch = listOf(PrintStatementNode(str("else"), pos())),

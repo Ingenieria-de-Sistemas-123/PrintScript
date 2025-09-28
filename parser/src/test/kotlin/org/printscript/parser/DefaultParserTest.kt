@@ -432,4 +432,22 @@ class DefaultParserTest {
             )
         assertFailsWith<ParseException> { parser.parse(tokens) }
     }
+
+    @Test
+    fun error_if_missing_opening_brace() {
+        val tokens =
+            listOf(
+                TestUtils.token(TokenType.IF),
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.IDENTIFIER, "cond"),
+                TestUtils.syntax(")"),
+                TestUtils.token(TokenType.PRINTLN),
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.STRING, "T"),
+                TestUtils.syntax(")"),
+                TestUtils.syntax(";"),
+                TestUtils.eof(),
+            )
+        assertFailsWith<ParseException> { parser.parse(tokens) }
+    }
 }
