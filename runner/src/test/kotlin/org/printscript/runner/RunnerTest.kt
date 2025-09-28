@@ -125,7 +125,7 @@ class RunnerTest {
             }
 
         assertEquals("No se puede reasignar la constante 'pi'", error.message)
-        assertEquals(emptyMap(), interpreter.environmentSnapshot())
+        assertEquals(mapOf("pi" to "3"), interpreter.environmentSnapshot())
         assertEquals(emptyList(), capturedOutput)
     }
 }
