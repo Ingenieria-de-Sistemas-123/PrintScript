@@ -374,7 +374,7 @@ class DefaultParserTest {
                 TestUtils.token(TokenType.NUMBER_TYPE),
                 TestUtils.eof(),
             )
-        assertFailsWith<IllegalArgumentException> { parser.parse(tokens) }
+        assertFailsWith<ParseException> { parser.parse(tokens) }
     }
 
     @Test
@@ -387,7 +387,7 @@ class DefaultParserTest {
                 TestUtils.syntax(";"),
                 TestUtils.eof(),
             )
-        assertFailsWith<IllegalStateException> { parser.parse(tokens) }
+        assertFailsWith<ParseException> { parser.parse(tokens) }
     }
 
     @Test
@@ -399,7 +399,7 @@ class DefaultParserTest {
                 TestUtils.token(TokenType.NUMBER, "5"),
                 TestUtils.eof(),
             )
-        assertFailsWith<IllegalStateException> { parser.parse(tokens) }
+        assertFailsWith<ParseException> { parser.parse(tokens) }
     }
 
     @Test

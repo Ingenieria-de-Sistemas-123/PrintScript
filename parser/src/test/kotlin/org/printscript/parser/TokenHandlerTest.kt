@@ -61,7 +61,7 @@ class TokenHandlerTest {
             )
         val h = TokenHandler(tokens)
         val ex =
-            assertFailsWith<IllegalArgumentException> {
+            assertFailsWith<ParseException> {
                 h.consume(TokenType.LET, "Se esperaba 'let'")
             }
         assertTrue(ex.message!!.contains("Se esperaba 'let'"))
