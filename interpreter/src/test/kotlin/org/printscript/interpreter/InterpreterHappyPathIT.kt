@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.printscript.interpreter.io.IOContext
+import org.printscript.interpreter.util.MapEnvProvider
+import org.printscript.interpreter.util.QueueInputProvider
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.IfElseNode
@@ -88,5 +91,37 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
         assertEquals(listOf("else"), out.lines)
+    }
+
+    @Test
+    fun `readInput inicializa variable string`() {
+        val ctx = IOContext(QueueInputProvider(listOf("Ada")), MapEnvProvider(emptyMap()))
+        val ast =
+            listOf(
+                VariableDeclarationNode("name", "string", readInput(str("Nombre:")), pos()),
+                PrintStatementNode(id("name"), pos()),
+            )
+
+        val (interpreter, out) = newInterpreterWithBuffer(ctx)
+        interpreter.execute(ast)
+
+        assertEquals(listOf("Ada"), out.lines)
+        assertEquals("Ada", interpreter.environmentSnapshot()["name"])
+    }
+
+    @Test
+    fun `readEnv obtiene valores del provider`() {
+        val ctx = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(mapOf("USER" to "octavia")))
+        val ast =
+            listOf(
+                VariableDeclarationNode("user", "string", readEnv(str("USER")), pos()),
+                PrintStatementNode(id("user"), pos()),
+            )
+
+        val (interpreter, out) = newInterpreterWithBuffer(ctx)
+        interpreter.execute(ast)
+
+        assertEquals(listOf("octavia"), out.lines)
+        assertEquals("octavia", interpreter.environmentSnapshot()["user"])
     }
 }

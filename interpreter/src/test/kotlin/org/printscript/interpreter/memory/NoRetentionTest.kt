@@ -11,6 +11,7 @@ import org.printscript.interpreter.ir.PrintIR
 import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
+import org.printscript.interpreter.util.TestIO
 import java.lang.ref.PhantomReference
 import java.lang.ref.ReferenceQueue
 
@@ -20,7 +21,7 @@ class NoRetentionTest {
 
     @Test
     fun `IR queda elegible para GC luego de ejecutar (phantom)`() {
-        val exec = Executor(Environment()) {}
+        val exec = Executor(Environment(), {}, TestIO.empty)
 
         val (queue, phantom) = buildAndRunProgramPhantom(exec)
         keepAlive = phantom

@@ -1,11 +1,14 @@
 package org.printscript.interpreter.eval
 
+import org.printscript.interpreter.io.IOContext
 import org.printscript.interpreter.ir.Binary
 import org.printscript.interpreter.ir.BoolLit
 import org.printscript.interpreter.ir.ExprVisitor
 import org.printscript.interpreter.ir.IdRef
 import org.printscript.interpreter.ir.NumLit
 import org.printscript.interpreter.ir.Op
+import org.printscript.interpreter.ir.ReadEnv
+import org.printscript.interpreter.ir.ReadInput
 import org.printscript.interpreter.ir.StrLit
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RuntimeError
@@ -13,7 +16,10 @@ import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.Value.Num
 import org.printscript.interpreter.runtime.Value.Str
 
-internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
+internal class Evaluator(
+    private val env: Environment,
+    private val io: IOContext,
+) : ExprVisitor<Value> {
     override fun visitNum(n: NumLit): Value = Num(n.value)
 
     override fun visitStr(s: StrLit): Value = Str(s.value)
@@ -21,6 +27,20 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
     override fun visitId(i: IdRef): Value = env.read(i.name)
 
     override fun visitBool(b: BoolLit): Value = Value.Bool(b.value)
+
+    override fun visitReadInput(r: ReadInput): Value {
+        val prompt = requireString(r.prompt.accept(this), "readInput")
+        val line = io.input.readLine(prompt) ?: throw RuntimeError("Fin de la entrada: readInput no recibió más datos")
+        return Str(line)
+    }
+
+    override fun visitReadEnv(r: ReadEnv): Value {
+        val key = requireString(r.key.accept(this), "readEnv")
+        val value =
+            io.env.get(key)
+                ?: throw RuntimeError("Variable de entorno '$key' no encontrada")
+        return Str(value)
+    }
 
     override fun visitBinary(b: Binary): Value {
         val l = b.left.accept(this)
@@ -55,4 +75,9 @@ internal class Evaluator(private val env: Environment) : ExprVisitor<Value> {
             is Str -> "string"
             is Value.Bool -> "boolean"
         }
+
+    private fun requireString(
+        value: Value,
+        ctx: String,
+    ): String = (value as? Str)?.v ?: throw RuntimeError("$ctx requiere un argumento de tipo string")
 }

@@ -11,6 +11,8 @@ import org.printscript.interpreter.ir.IfIR
 import org.printscript.interpreter.ir.NumLit
 import org.printscript.interpreter.ir.Op
 import org.printscript.interpreter.ir.PrintIR
+import org.printscript.interpreter.ir.ReadEnv
+import org.printscript.interpreter.ir.ReadInput
 import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.ir.StrLit
 import org.printscript.interpreter.runtime.RType
@@ -22,6 +24,8 @@ import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.ReadEnvNode
+import org.printscript.parser.node.ReadInputNode
 import org.printscript.token.TokenType
 
 class ASTtoIR {
@@ -65,6 +69,8 @@ class ASTtoIR {
                 val op = opFrom(n.operator)
                 Binary(op, toExpr(n.left), toExpr(n.right))
             }
+            is ReadInputNode -> ReadInput(toExpr(n.expression))
+            is ReadEnvNode -> ReadEnv(toExpr(n.expression))
 
             else -> error("Nodo de expresión no soportado: ${n::class.simpleName}")
         }

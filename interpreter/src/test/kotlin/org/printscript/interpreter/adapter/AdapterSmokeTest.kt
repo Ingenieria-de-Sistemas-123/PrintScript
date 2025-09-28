@@ -6,6 +6,7 @@ import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.ir.BoolLit
 import org.printscript.interpreter.ir.IfIR
 import org.printscript.interpreter.runtime.Environment
+import org.printscript.interpreter.util.TestIO
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.IfElseNode
@@ -50,7 +51,7 @@ class AdapterSmokeTest {
         val ir = ASTtoIR().transform(progAst)
 
         val out = StringBuilder()
-        val exec = Executor(Environment()) { s -> out.appendLine(s) }
+        val exec = Executor(Environment(), { out.appendLine(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("3\n", out.toString())
@@ -93,7 +94,7 @@ class AdapterSmokeTest {
         assertIs<BoolLit>(secondIf.condition)
 
         val out = StringBuilder()
-        val exec = Executor(Environment()) { out.appendLine(it) }
+        val exec = Executor(Environment(), { out.appendLine(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("Si\nSiempre\n", out.toString())

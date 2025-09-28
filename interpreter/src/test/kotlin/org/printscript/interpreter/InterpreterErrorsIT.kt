@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.printscript.interpreter.io.IOContext
 import org.printscript.interpreter.runtime.RuntimeError
+import org.printscript.interpreter.util.MapEnvProvider
+import org.printscript.interpreter.util.QueueInputProvider
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.PrintStatementNode
@@ -67,5 +70,25 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("No se puede reasignar la constante"))
+    }
+
+    @Test
+    fun `readInput sin datos lanza error`() {
+        val ctx = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(emptyMap()))
+        val ast = listOf(PrintStatementNode(readInput(str("Prompt")), pos()))
+
+        val (interpreter, _) = newInterpreterWithBuffer(ctx)
+        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("readInput"))
+    }
+
+    @Test
+    fun `readEnv inexistente lanza error`() {
+        val ctx = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(emptyMap()))
+        val ast = listOf(PrintStatementNode(readEnv(str("MISSING")), pos()))
+
+        val (interpreter, _) = newInterpreterWithBuffer(ctx)
+        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
+        assertTrue(ex.message!!.contains("MISSING"))
     }
 }

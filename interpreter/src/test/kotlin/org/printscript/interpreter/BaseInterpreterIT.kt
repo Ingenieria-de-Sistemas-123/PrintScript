@@ -2,10 +2,14 @@ package org.printscript.interpreter
 
 import org.junit.jupiter.api.Tag
 import org.printscript.common.Position
+import org.printscript.interpreter.io.IOContext
 import org.printscript.interpreter.util.BufferOutput
+import org.printscript.interpreter.util.TestIO
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.ReadEnvNode
+import org.printscript.parser.node.ReadInputNode
 import org.printscript.token.TokenType
 
 @Tag("integration")
@@ -44,9 +48,13 @@ abstract class BaseInterpreterIT {
         r: ASTNode,
     ) = DoubleExpressionNode(l, "/", r, pos())
 
-    protected fun newInterpreterWithBuffer(): Pair<Interpreter, BufferOutput> {
+    protected fun readInput(arg: ASTNode) = ReadInputNode(arg, pos())
+
+    protected fun readEnv(arg: ASTNode) = ReadEnvNode(arg, pos())
+
+    protected fun newInterpreterWithBuffer(ioContext: IOContext = TestIO.empty): Pair<Interpreter, BufferOutput> {
         val out = BufferOutput()
-        val it = Interpreter(output = out)
+        val it = Interpreter(output = out, ioContext = ioContext)
         return it to out
     }
 }

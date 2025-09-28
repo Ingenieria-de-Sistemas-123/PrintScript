@@ -44,6 +44,14 @@ data class Binary(val op: Op, val left: ExprIR, val right: ExprIR) : ExprIR {
     override fun <R> accept(v: ExprVisitor<R>): R = v.visitBinary(this)
 }
 
+data class ReadInput(val prompt: ExprIR) : ExprIR {
+    override fun <R> accept(v: ExprVisitor<R>): R = v.visitReadInput(this)
+}
+
+data class ReadEnv(val key: ExprIR) : ExprIR {
+    override fun <R> accept(v: ExprVisitor<R>): R = v.visitReadEnv(this)
+}
+
 data class IfIR(val condition: ExprIR, val thenBranch: List<StmtIR>, val elseBranch: List<StmtIR>?) : StmtIR {
     override fun <R> accept(v: StmtVisitor<R>): R = v.visitIf(this)
 }
@@ -70,6 +78,10 @@ interface ExprVisitor<R> {
     fun visitBinary(b: Binary): R
 
     fun visitBool(b: BoolLit): R
+
+    fun visitReadInput(r: ReadInput): R
+
+    fun visitReadEnv(r: ReadEnv): R
 }
 
 interface StmtVisitor<R> {

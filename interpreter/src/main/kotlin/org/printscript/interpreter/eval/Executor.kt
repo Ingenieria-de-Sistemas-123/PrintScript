@@ -1,5 +1,6 @@
 package org.printscript.interpreter.eval
 
+import org.printscript.interpreter.io.IOContext
 import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.ir.AssignIR
 import org.printscript.interpreter.ir.ConstDeclIR
@@ -16,8 +17,9 @@ import org.printscript.interpreter.runtime.runtimeTypeOf
 internal class Executor(
     private val env: Environment,
     private val output: OutputProvider,
+    private val io: IOContext,
 ) : StmtVisitor<Unit> {
-    private val eval = Evaluator(env)
+    private val eval = Evaluator(env, io)
 
     override fun visitDecl(d: DeclIR) {
         val init = d.initializer.accept(eval)
