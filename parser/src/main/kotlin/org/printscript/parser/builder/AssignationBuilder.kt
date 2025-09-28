@@ -34,7 +34,7 @@ class AssignationBuilder(private val line: List<Token>) : Builder {
             if (exprTokens.first().type == TokenType.READ_INPUT) {
                 // esperar forma: READ_INPUT '(' <inner tokens> ')'
                 if (exprTokens.size < 3) {
-                    throw ParseException("LLamada a readInput incompleta", exprTokens.first().line, exprTokens.first().column)
+                    throw ParseException("Llamada a readInput incompleta", exprTokens.first().line, exprTokens.first().column)
                 }
                 // primer token = READ_INPUT, segundo debe ser '('
                 val second = exprTokens.getOrNull(1)
