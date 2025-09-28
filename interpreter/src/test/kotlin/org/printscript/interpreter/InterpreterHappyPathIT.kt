@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.VariableDeclarationNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
@@ -15,9 +16,9 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `declara number con precedencia, imprime, concatena string, reasigna y vuelve a imprimir`() {
         val ast =
             listOf(
-                ConstantDeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
+                VariableDeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
                 PrintStatementNode(id("x"), pos()),
-                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
+                VariableDeclarationNode("s", "string", str("hola!"), pos()),
                 PrintStatementNode(plus(id("s"), str("2025")), pos()),
                 AssignationNode("x", plus(id("x"), num(1.0)), pos()),
                 PrintStatementNode(id("x"), pos()),
