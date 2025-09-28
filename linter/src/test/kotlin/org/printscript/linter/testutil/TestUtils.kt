@@ -10,6 +10,7 @@ import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.parser.node.VariableDeclarationNode
+import org.printscript.token.TokenType
 
 object TestUtils {
     fun pos(
@@ -17,11 +18,11 @@ object TestUtils {
         c: Int,
     ) = Position(l, c)
 
-    fun num(n: Number) = LiteralNode(n)
+    fun num(n: Number) = LiteralNode(n, TokenType.NUMBER)
 
-    fun str(s: String) = LiteralNode(s)
+    fun str(s: String) = LiteralNode(s, TokenType.STRING)
 
-    fun bool(b: Boolean) = LiteralNode(b)
+    fun bool(b: Boolean) = LiteralNode(b, if (b) TokenType.TRUE else TokenType.FALSE)
 
     fun plus(
         l: ASTNode,

@@ -6,18 +6,19 @@ import org.printscript.interpreter.util.BufferOutput
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
+import org.printscript.token.TokenType
 
 @Tag("integration")
 abstract class BaseInterpreterIT {
     protected fun pos() = Position(1, 1)
 
-    protected fun num(n: Double) = LiteralNode(n)
+    protected fun num(n: Double) = LiteralNode(n, TokenType.NUMBER)
 
-    protected fun num(n: Int) = LiteralNode(n.toDouble())
+    protected fun num(n: Int) = LiteralNode(n.toDouble(), TokenType.NUMBER)
 
-    protected fun str(s: String) = LiteralNode(s)
+    protected fun str(s: String) = LiteralNode(s, TokenType.STRING)
 
-    protected fun id(name: String) = LiteralNode(name)
+    protected fun id(name: String) = LiteralNode(name, TokenType.IDENTIFIER)
 
     protected fun plus(
         l: ASTNode,
