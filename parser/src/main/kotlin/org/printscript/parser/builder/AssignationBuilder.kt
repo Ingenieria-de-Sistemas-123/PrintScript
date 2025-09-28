@@ -21,6 +21,11 @@ class AssignationBuilder(private val line: List<Token>) : Builder {
         // recoge tokens hasta ';' respetando paréntesis
         val exprTokens = handler.collectExpressionTokens(with = false)
 
+        // si después de recoger la expresión no hay un ';' explícito, considerarlo error
+        if (handler.isAtEnd() || !(handler.peek().type == TokenType.SYNTAX && handler.peek().value == ";")) {
+            throw IllegalStateException("Se esperaba ';' al final de la asignación")
+        }
+
         if (exprTokens.isEmpty()) {
             throw ParseException("Se esperaba una expresión en la asignación", identifier.line, identifier.column)
         }

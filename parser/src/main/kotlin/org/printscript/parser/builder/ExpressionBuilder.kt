@@ -9,13 +9,13 @@ import org.printscript.token.TokenType
 
 class ExpressionBuilder(private val line: List<Token>) : Builder {
     override fun build(): ASTNode {
-        return if (line.isEmpty()) {
-            LiteralNode(
-                "\"\"",
-                TokenType.SLASH,
-            )
+        // eliminar tokens EOF que puedan venir en la lista para no romper la lógica
+        val tokens = line.filter { it.type != TokenType.EOF }
+        return if (tokens.isEmpty()) {
+            // representar expresión vacía como literal string vacío
+            LiteralNode("", TokenType.STRING)
         } else {
-            addNodes(line) // Return empty string literal for empty expressions
+            addNodes(tokens)
         }
     }
 
@@ -47,6 +47,10 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
     }
 
     private fun findLowestPrecedenceOperator(operators: List<Pair<Token, Int>>): Pair<Token, Int> {
+        if (operators.isEmpty()) {
+            throw IllegalStateException("No se encontró operador en la expresión")
+        }
+
         var result: Pair<Token, Int>? = null
         var i = 0
         var parenCount = 0
@@ -66,7 +70,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
             i++
         }
 
-        return result ?: operators[0]
+        return result!!
     }
 
     private fun getPrecedence(op: String): Int =
