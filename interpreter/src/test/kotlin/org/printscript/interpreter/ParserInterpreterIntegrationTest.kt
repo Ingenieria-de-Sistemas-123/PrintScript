@@ -6,6 +6,7 @@ import org.printscript.parser.DefaultParser
 import java.io.StringReader
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.text.get
 
 class ParserInterpreterIntegrationTest {
     @Test
@@ -50,6 +51,24 @@ class ParserInterpreterIntegrationTest {
 
         assertEquals(listOf("Hola!"), output)
         assertEquals("true", interpreter.environmentSnapshot()["shouldGreet"])
+    }
+
+    @Test
+    fun `if condition false ejecuta else branch`() {
+        val source =
+            """
+        let shouldGreet: boolean = false;
+        if (shouldGreet) {
+            println("Hola!");
+        } else {
+            println("Chau");
+        }
+        """.trimIndent()
+
+        val (output, interpreter) = runScript(source)
+
+        assertEquals(listOf("Chau"), output)
+        assertEquals("false", interpreter.environmentSnapshot()["shouldGreet"])
     }
 
     private fun runScript(source: String): Pair<List<String>, Interpreter> {
