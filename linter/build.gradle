@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.printscript'
-version = '1.2-SNAPSHOT'
+version = '1.3-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -13,6 +13,7 @@ dependencies {
     implementation project(':parser')
     implementation project(':common')
     implementation project(':lexer')
+    implementation project(':token')
 
     testImplementation(project(":lexer"))
     testImplementation 'org.jetbrains.kotlin:kotlin-test'

@@ -5,6 +5,7 @@ import org.printscript.parser.ParseException
 import org.printscript.parser.helpers.TokenHandler
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
+import org.printscript.parser.node.ReadInputNode
 import org.printscript.token.Token
 import org.printscript.token.TokenType
 
@@ -15,13 +16,52 @@ class AssignationBuilder(private val line: List<Token>) : Builder {
         val name = identifier.value
         val position = Position(identifier.line, identifier.column)
 
-        handler.consume(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable.")
+        handler.consume(TokenType.EQUAL, "Se esperaba '=' en la asignación")
 
-        val exprTokens = handler.collectExpressionTokens(false)
+        // recoge tokens hasta ';' respetando paréntesis
+        val exprTokens = handler.collectExpressionTokens(with = false)
 
-        val semi = handler.consume(TokenType.SYNTAX, "Se esperaba ';' después de la declaración.")
-        if (semi.value != ";") throw ParseException("Se esperaba ';' pero encontré '${semi.value}'", semi.line, semi.column)
+        handler.expectSemicolon()
 
-        return AssignationNode(name, ExpressionBuilder(exprTokens).build(), position)
+        if (exprTokens.isEmpty()) {
+            throw ParseException("Se esperaba una expresión en la asignación", identifier.line, identifier.column)
+        }
+
+        val expression: ASTNode =
+            if (exprTokens.first().type == TokenType.READ_INPUT) {
+                // esperar forma: READ_INPUT '(' <inner tokens> ')'
+                if (exprTokens.size < 3) {
+                    throw ParseException("Llamada a readInput incompleta", exprTokens.first().line, exprTokens.first().column)
+                }
+                // primer token = READ_INPUT, segundo debe ser '('
+                val second = exprTokens.getOrNull(1)
+                if (second == null || second.type != TokenType.SYNTAX || second.value != "(") {
+                    throw ParseException(
+                        "Se esperaba '(' después de 'readInput'",
+                        second?.line ?: exprTokens.first().line,
+                        second?.column ?: exprTokens.first().column,
+                    )
+                }
+                if (exprTokens.last().type != TokenType.SYNTAX || exprTokens.last().value != ")") {
+                    throw ParseException(
+                        "Se esperaba ')' al final de la llamada a 'readInput'",
+                        exprTokens.last().line,
+                        exprTokens.last().column,
+                    )
+                }
+
+                val innerTokens = exprTokens.subList(2, exprTokens.size - 1)
+                if (innerTokens.isEmpty()) {
+                    throw ParseException("readInput requiere un argumento", exprTokens.first().line, exprTokens.first().column)
+                }
+
+                val innerExpr = ExpressionBuilder(innerTokens).build()
+                ReadInputNode(innerExpr, Position(exprTokens.first().line, exprTokens.first().column))
+            } else {
+                // caso general: delegar a ExpressionBuilder
+                ExpressionBuilder(exprTokens).build()
+            }
+
+        return AssignationNode(name, expression, position)
     }
 }

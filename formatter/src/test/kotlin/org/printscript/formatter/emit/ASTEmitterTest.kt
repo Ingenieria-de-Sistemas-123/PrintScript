@@ -10,6 +10,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.token.TokenType
 
 class ASTEmitterTest {
     private fun pos() = Position(1, 1)
@@ -20,7 +21,7 @@ class ASTEmitterTest {
             ConstantDeclarationNode(
                 identifier = "v",
                 valueType = "number",
-                expression = LiteralNode(42.0),
+                expression = LiteralNode(42.0, TokenType.NUMBER),
                 position = pos(),
             )
         val ast = listOf<ASTNode>(decl)
@@ -45,7 +46,7 @@ class ASTEmitterTest {
             listOf<ASTNode>(
                 AssignationNode(
                     variable = "x",
-                    expression = LiteralNode(1.0),
+                    expression = LiteralNode(1.0, TokenType.NUMBER),
                     position = pos(),
                 ),
             )
@@ -64,7 +65,7 @@ class ASTEmitterTest {
     fun `println emite keyword y parentesis con ident adentro`() {
         val ast =
             listOf<ASTNode>(
-                PrintStatementNode(LiteralNode("x"), pos()),
+                PrintStatementNode(LiteralNode("x", TokenType.STRING), pos()),
             )
         val tokens = ASTEmitter(FormatterConfig(lineJumpBeforePrintln = 1)).emitProgram(ast)
         val expected =

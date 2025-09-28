@@ -12,7 +12,7 @@ import org.printscript.token.TokenType
 class ConditionalBuilder(private val line: List<Token>) : Builder {
     override fun build(): ASTNode {
         val handler = TokenHandler(line)
-        val tokenIf = handler.consume(TokenType.IF, "Se esperaba 'if'")
+        handler.consume(TokenType.IF, "Se esperaba 'if'")
         val cond = parseCondition(handler)
         val thenBranch = parseBlock(handler)
         val elseBranch =
@@ -23,12 +23,16 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
                 emptyList()
             }
 
-        return IfElseNode(thenBranch, elseBranch, LiteralNode(cond))
+        val conditionLiteral = LiteralNode(value = cond, tokenType = TokenType.IDENTIFIER)
+        return IfElseNode(thenBranch, elseBranch, conditionLiteral)
     }
 
     private fun parseCondition(h: TokenHandler): String {
-        val lp = h.consume(TokenType.SYNTAX, "Se esperaba '('")
-        if (lp.value != "(") throw ParseException("Se esperaba '(' pero encontré '${lp.value}'", lp.line, lp.column)
+        val lp = h.peek()
+        if (lp.type != TokenType.SYNTAX || lp.value != "(") {
+            throw ParseException("Se esperaba '('", lp.line, lp.column)
+        }
+        h.advance()
 
         if (h.peek().type != TokenType.IDENTIFIER) {
             val t = h.peek()
@@ -36,21 +40,38 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
         }
         val ident = h.consume(TokenType.IDENTIFIER, "Se esperaba un identificador").value
 
-        val rp = h.consume(TokenType.SYNTAX, "Se esperaba ')'")
-        if (rp.value != ")") throw ParseException("Se esperaba ')' pero encontré '${rp.value}'", rp.line, rp.column)
+        val rp = h.peek()
+        if (rp.type != TokenType.SYNTAX || rp.value != ")") {
+            throw ParseException("Se esperaba ')'", rp.line, rp.column)
+        }
+        h.advance()
 
         return ident
     }
 
     private fun parseBlock(h: TokenHandler): List<ASTNode> {
-        if (h.consume(TokenType.SYNTAX, "Se esperaba '{'").value != "{") {
-            throw ParseException("Se esperaba '{'", h.peek().line, h.peek().column)
+        val lb = h.peek()
+        if (lb.type != TokenType.SYNTAX || lb.value != "{") {
+            throw ParseException("Se esperaba '{'", lb.line, lb.column)
         }
+        h.advance()
 
         val out = mutableListOf<ASTNode>()
         val gen = ASTGenerator()
 
-        while (!(h.peek().type == TokenType.SYNTAX && h.peek().value == "}")) {
+        while (true) {
+            if (h.isAtEnd()) {
+                val errorToken = line.lastOrNull() ?: lb
+                throw ParseException(
+                    "Se esperaba '}' al final del bloque",
+                    errorToken.line,
+                    errorToken.column,
+                )
+            }
+
+            val next = h.peek()
+            if (next.type == TokenType.SYNTAX && next.value == "}") break
+
             val stmt = mutableListOf<Token>()
             var depth = 0
 
@@ -60,12 +81,24 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
                 stmt += t
                 if (t.type == TokenType.SYNTAX && (t.value == "(" || t.value == "{")) depth++
                 if (t.type == TokenType.SYNTAX && (t.value == ")" || t.value == "}")) depth--
+
+                if (h.isAtEnd() && (depth > 0 || (stmt.last().value != ";" && stmt.last().value != "}"))) {
+                    throw ParseException(
+                        "Sentencia incompleta dentro del bloque",
+                        stmt.last().line,
+                        stmt.last().column,
+                    )
+                }
             } while (depth > 0 || (stmt.last().value != ";" && stmt.last().value != "}"))
 
             out += gen.createAST(stmt)
         }
 
-        h.consume(TokenType.SYNTAX, "Se esperaba '}'")
+        val rb = h.peek()
+        if (rb.type != TokenType.SYNTAX || rb.value != "}") {
+            throw ParseException("Se esperaba '}'", rb.line, rb.column)
+        }
+        h.advance()
         return out
     }
 }

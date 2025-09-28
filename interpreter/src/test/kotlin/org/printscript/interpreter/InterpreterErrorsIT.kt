@@ -66,6 +66,6 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
             )
         val (interpreter, _) = newInterpreterWithBuffer()
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
-        assertTrue(ex.message!!.contains("Asignación incompatible"))
+        assertTrue(ex.message!!.contains("No se puede reasignar la constante"))
     }
 }

@@ -8,6 +8,7 @@ import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.token.TokenType
 import kotlin.test.assertEquals
 
 class CodeFormatterIT {
@@ -21,13 +22,13 @@ class CodeFormatterIT {
                 valueType = "number",
                 expression =
                     DoubleExpressionNode(
-                        left = LiteralNode(1.0),
+                        left = LiteralNode(1.0, TokenType.NUMBER),
                         operator = "+",
                         right =
                             DoubleExpressionNode(
-                                left = LiteralNode(2.0),
+                                left = LiteralNode(2.0, TokenType.NUMBER),
                                 operator = "*",
-                                right = LiteralNode(3.0),
+                                right = LiteralNode(3.0, TokenType.NUMBER),
                                 position = pos(),
                             ),
                         position = pos(),
@@ -38,19 +39,19 @@ class CodeFormatterIT {
         val ast =
             listOf(
                 decl,
-                PrintStatementNode(LiteralNode("x"), pos()),
+                PrintStatementNode(LiteralNode("x", TokenType.STRING), pos()),
                 AssignationNode(
                     variable = "x",
                     expression =
                         DoubleExpressionNode(
-                            left = LiteralNode("x"),
+                            left = LiteralNode("x", TokenType.STRING),
                             operator = "+",
-                            right = LiteralNode(1.0),
+                            right = LiteralNode(1.0, TokenType.NUMBER),
                             position = pos(),
                         ),
                     position = pos(),
                 ),
-                PrintStatementNode(LiteralNode("x"), pos()),
+                PrintStatementNode(LiteralNode("x", TokenType.STRING), pos()),
             )
 
         val cfg =
@@ -79,14 +80,13 @@ class CodeFormatterIT {
             ConstantDeclarationNode(
                 identifier = "a",
                 valueType = "number",
-                expression = LiteralNode(5.0),
+                expression = LiteralNode(5.0, TokenType.NUMBER),
                 position = pos(),
             )
         val ast =
             listOf(
                 decl,
-                // LiteralNode("a") => string "a"
-                PrintStatementNode(LiteralNode("a"), pos()),
+                PrintStatementNode(LiteralNode("a", TokenType.STRING), pos()),
             )
         val cfg =
             FormatterConfig(
@@ -95,7 +95,7 @@ class CodeFormatterIT {
                 spaceAfterColon = true,
             )
         val pretty = CodeFormatter().format(ast, cfg)
-        assertEquals("let a: number = 5.0;println(\"a\");\n", pretty) // <-- antes println(a)
+        assertEquals("let a: number = 5.0;println(\"a\");\n", pretty)
     }
 
     @Test
@@ -104,7 +104,7 @@ class CodeFormatterIT {
             ConstantDeclarationNode(
                 identifier = "s",
                 valueType = "string",
-                expression = LiteralNode("hola"),
+                expression = LiteralNode("hola", TokenType.STRING),
                 position = pos(),
             )
         val ast =
@@ -112,9 +112,9 @@ class CodeFormatterIT {
                 decl,
                 PrintStatementNode(
                     DoubleExpressionNode(
-                        left = LiteralNode("s"),
+                        left = LiteralNode("s", TokenType.STRING),
                         operator = "+",
-                        right = LiteralNode("2025"),
+                        right = LiteralNode("2025", TokenType.STRING),
                         position = pos(),
                     ),
                     pos(),

@@ -47,6 +47,11 @@ class Environment {
         return v.value!!
     }
 
+    /**
+     * Returns a snapshot of the current environment for testing and debugging purposes.
+     * The snapshot is a map of variable names to their string representation of values.
+     * If a variable is uninitialized, it will show as "<uninitialized>".
+     */
     fun snapshot(): Map<String, String> =
         vars.mapValues { (_, v) ->
             when (val value = v.value) {

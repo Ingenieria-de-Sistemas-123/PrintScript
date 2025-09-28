@@ -5,30 +5,22 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.token.Token
+import org.printscript.token.TokenType
 
 class ExpressionBuilder(private val line: List<Token>) : Builder {
     override fun build(): ASTNode {
-        return if (line.isEmpty()) LiteralNode("\"\"") else addNodes(line)
+        // eliminar tokens EOF que puedan venir en la lista para no romper la lógica
+        val tokens = line.filter { it.type != TokenType.EOF }
+        return if (tokens.isEmpty()) {
+            // representar expresión vacía como literal string vacío
+            LiteralNode("", TokenType.STRING)
+        } else {
+            addNodes(tokens)
+        }
     }
 
     private fun addNodes(tokens: List<Token>): ASTNode {
-        if (tokens.size == 1) {
-            val v = tokens[0].value
-            @Suppress("SwallowedException", "TooGenericExceptionCaught")
-            return try {
-                LiteralNode(v.toInt())
-            } catch (_: NumberFormatException) {
-                try {
-                    LiteralNode(v.toDouble())
-                } catch (_: NumberFormatException) {
-                    try {
-                        LiteralNode(v.toBooleanStrict())
-                    } catch (_: Exception) {
-                        LiteralNode(v)
-                    }
-                }
-            }
-        }
+        if (tokens.size == 1) return literalFrom(tokens.first())
 
         if (tokens.first().value == "(" && tokens.last().value == ")") {
             return addNodes(tokens.subList(1, tokens.size - 1))
@@ -46,7 +38,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
 
         if (leftTokens.isEmpty() && operator.value == "-") {
             val pos = Position(operator.line, operator.column)
-            return DoubleExpressionNode(LiteralNode(0), "-", rightNode, pos)
+            return DoubleExpressionNode(LiteralNode(0, TokenType.NUMBER), "-", rightNode, pos)
         }
 
         val leftNode = addNodes(leftTokens)
@@ -55,6 +47,10 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
     }
 
     private fun findLowestPrecedenceOperator(operators: List<Pair<Token, Int>>): Pair<Token, Int> {
+        if (operators.isEmpty()) {
+            throw IllegalStateException("No se encontró operador en la expresión")
+        }
+
         var result: Pair<Token, Int>? = null
         var i = 0
         var parenCount = 0
@@ -67,14 +63,14 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
             } else if (token.value == ")") {
                 parenCount--
             } else if (parenCount == 0) {
-                if (result == null || getPrecedence(token.value) <= getPrecedence(result!!.first.value)) {
+                if (result == null || getPrecedence(token.value) <= getPrecedence(result.first.value)) {
                     result = token to index
                 }
             }
             i++
         }
 
-        return result ?: operators[0]
+        return requireNotNull(result) { "No suitable operator found at top-level (parenCount=0) in the provided operators list" }
     }
 
     private fun getPrecedence(op: String): Int =
@@ -85,4 +81,47 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
         }
 
     private fun operatorsToCheck(token: Token): Boolean = token.value in listOf("/", "*", "(", ")", "+", "-")
+
+    private fun literalFrom(token: Token): LiteralNode<*> =
+        when (token.type) {
+            TokenType.NUMBER -> {
+                try {
+                    val doubleValue = token.value.toDouble()
+                    LiteralNode(doubleValue, TokenType.NUMBER)
+                } catch (e: NumberFormatException) {
+                    throw IllegalArgumentException(
+                        "Invalid number format for token value: '${token.value}' at line ${token.line}, column ${token.column}",
+                    )
+                }
+            }
+            TokenType.STRING -> LiteralNode(unescapeString(token.value), TokenType.STRING)
+            TokenType.TRUE -> LiteralNode(true, TokenType.TRUE)
+            TokenType.FALSE -> LiteralNode(false, TokenType.FALSE)
+            TokenType.IDENTIFIER -> LiteralNode(token.value, TokenType.IDENTIFIER)
+            else -> LiteralNode(token.value, token.type)
+        }
+
+    private fun unescapeString(raw: String): String {
+        val withoutQuotes = raw.removeSurrounding("\"")
+        val sb = StringBuilder()
+        var i = 0
+        while (i < withoutQuotes.length) {
+            val c = withoutQuotes[i]
+            if (c == '\\' && i + 1 < withoutQuotes.length) {
+                when (val next = withoutQuotes[i + 1]) {
+                    '\\' -> sb.append('\\')
+                    '"' -> sb.append('"')
+                    'n' -> sb.append('\n')
+                    't' -> sb.append('\t')
+                    'r' -> sb.append('\r')
+                    else -> sb.append(next)
+                }
+                i += 2
+            } else {
+                sb.append(c)
+                i++
+            }
+        }
+        return sb.toString()
+    }
 }

@@ -166,6 +166,8 @@ class DefaultParserTest {
         val ifn = ast[0] as IfElseNode
         assertEquals(1, ifn.ifBranch.size)
         assertEquals(1, ifn.elseBranch.size)
+        assertEquals(TokenType.IDENTIFIER, ifn.condition.tokenType)
+        assertEquals("cond", ifn.condition.value)
     }
 
     @Test
@@ -190,6 +192,8 @@ class DefaultParserTest {
         val ifn = ast[0] as IfElseNode
         assertEquals(1, ifn.ifBranch.size)
         assertEquals(0, ifn.elseBranch.size)
+        assertEquals(TokenType.IDENTIFIER, ifn.condition.tokenType)
+        assertEquals("ok", ifn.condition.value)
     }
 
     @Test
@@ -374,7 +378,7 @@ class DefaultParserTest {
                 TestUtils.token(TokenType.NUMBER_TYPE),
                 TestUtils.eof(),
             )
-        assertFailsWith<IllegalArgumentException> { parser.parse(tokens) }
+        assertFailsWith<ParseException> { parser.parse(tokens) }
     }
 
     @Test
@@ -387,7 +391,7 @@ class DefaultParserTest {
                 TestUtils.syntax(";"),
                 TestUtils.eof(),
             )
-        assertFailsWith<IllegalStateException> { parser.parse(tokens) }
+        assertFailsWith<ParseException> { parser.parse(tokens) }
     }
 
     @Test
@@ -399,7 +403,7 @@ class DefaultParserTest {
                 TestUtils.token(TokenType.NUMBER, "5"),
                 TestUtils.eof(),
             )
-        assertFailsWith<IllegalStateException> { parser.parse(tokens) }
+        assertFailsWith<ParseException> { parser.parse(tokens) }
     }
 
     @Test
@@ -424,6 +428,24 @@ class DefaultParserTest {
                 TestUtils.token(TokenType.ELSE),
                 TestUtils.syntax("{"),
                 TestUtils.syntax("}"),
+                TestUtils.eof(),
+            )
+        assertFailsWith<ParseException> { parser.parse(tokens) }
+    }
+
+    @Test
+    fun error_if_missing_opening_brace() {
+        val tokens =
+            listOf(
+                TestUtils.token(TokenType.IF),
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.IDENTIFIER, "cond"),
+                TestUtils.syntax(")"),
+                TestUtils.token(TokenType.PRINTLN),
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.STRING, "T"),
+                TestUtils.syntax(")"),
+                TestUtils.syntax(";"),
                 TestUtils.eof(),
             )
         assertFailsWith<ParseException> { parser.parse(tokens) }

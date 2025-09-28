@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
+import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.VariableDeclarationNode
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
@@ -15,9 +17,9 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
     fun `declara number con precedencia, imprime, concatena string, reasigna y vuelve a imprimir`() {
         val ast =
             listOf(
-                ConstantDeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
+                VariableDeclarationNode("x", "number", plus(num(1.0), star(num(2.0), num(3.0))), pos()),
                 PrintStatementNode(id("x"), pos()),
-                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
+                VariableDeclarationNode("s", "string", str("hola!"), pos()),
                 PrintStatementNode(plus(id("s"), str("2025")), pos()),
                 AssignationNode("x", plus(id("x"), num(1.0)), pos()),
                 PrintStatementNode(id("x"), pos()),
@@ -52,5 +54,39 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
         assertEquals(listOf("ab!cd!"), out.lines)
+    }
+
+    @Test
+    fun `if con variable booleana como condicion ejecuta rama verdadera`() {
+        val ast =
+            listOf(
+                VariableDeclarationNode("flag", "boolean", boolTrue(), pos()),
+                IfElseNode(
+                    ifBranch = listOf(PrintStatementNode(str("then"), pos())),
+                    elseBranch = listOf(PrintStatementNode(str("else"), pos())),
+                    condition = id("flag"),
+                ),
+            )
+
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+
+        assertEquals(listOf("then"), out.lines)
+    }
+
+    @Test
+    fun `if con variable booleana como condicion ejecuta rama falsa`() {
+        val ast =
+            listOf(
+                VariableDeclarationNode("flag", "boolean", boolFalse(), pos()),
+                IfElseNode(
+                    ifBranch = listOf(PrintStatementNode(str("then"), pos())),
+                    elseBranch = listOf(PrintStatementNode(str("else"), pos())),
+                    condition = id("flag"),
+                ),
+            )
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertEquals(listOf("else"), out.lines)
     }
 }
