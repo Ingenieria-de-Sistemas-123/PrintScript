@@ -17,18 +17,6 @@ import org.printscript.parser.node.PrintStatementNode
 @DisplayName("Interpreter – Errores")
 class InterpreterErrorsIT : BaseInterpreterIT() {
     @Test
-    fun `string + number falla ( '+' estricto )`() {
-        val ast =
-            listOf(
-                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
-                PrintStatementNode(plus(id("s"), num(2025.0)), pos()),
-            )
-        val (interpreter, _) = newInterpreterWithBuffer()
-        val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
-        assertTrue(ex.message!!.contains("Operador '+' no definido"))
-    }
-
-    @Test
     fun `division por cero`() {
         val ast = listOf(PrintStatementNode(slash(num(1.0), num(0.0)), pos()))
         val (interpreter, _) = newInterpreterWithBuffer()
@@ -76,7 +64,6 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
     fun `readInput sin datos lanza error`() {
         val ctx = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(emptyMap()))
         val ast = listOf(PrintStatementNode(readInput(str("Prompt")), pos()))
-
         val (interpreter, _) = newInterpreterWithBuffer(ctx)
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("readInput"))
@@ -86,7 +73,6 @@ class InterpreterErrorsIT : BaseInterpreterIT() {
     fun `readEnv inexistente lanza error`() {
         val ctx = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(emptyMap()))
         val ast = listOf(PrintStatementNode(readEnv(str("MISSING")), pos()))
-
         val (interpreter, _) = newInterpreterWithBuffer(ctx)
         val ex = assertThrows(RuntimeError::class.java) { interpreter.execute(ast) }
         assertTrue(ex.message!!.contains("MISSING"))

@@ -45,10 +45,9 @@ class EvaluatorTest {
     }
 
     @Test
-    fun `string + number lanza error en '+' estricto`() {
-        assertThrows(RuntimeError::class.java) {
-            plus(str("hola"), num(2025.0)).accept(Evaluator(Environment(), TestIO.empty))
-        }
+    fun `string + number concatena - hola + 2025 = hola2025`() {
+        val v = plus(str("hola"), num(2025.0)).accept(Evaluator(Environment(), TestIO.empty))
+        assertEquals(Value.Str("hola2025"), v)
     }
 
     @Test

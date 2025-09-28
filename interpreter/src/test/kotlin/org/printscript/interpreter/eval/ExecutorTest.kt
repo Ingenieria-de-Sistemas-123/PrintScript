@@ -71,9 +71,10 @@ class ExecutorTest {
     }
 
     @Test
-    fun `string + number en println falla (tipado estricto en '+')`() {
+    fun `string + number en println concatena`() {
         val env = Environment()
-        val exec = Executor(env, {}, TestIO.empty)
+        val out = mutableListOf<String>()
+        val exec = Executor(env, { text -> out += text }, TestIO.empty)
 
         val prog =
             listOf<StmtIR>(
@@ -81,11 +82,9 @@ class ExecutorTest {
                 print(plus(id("s"), num(2025.0))),
             )
 
-        val ex =
-            assertThrows(RuntimeError::class.java) {
-                prog.forEach { it.accept(exec) }
-            }
-        assertTrue(ex.message!!.contains("Operador '+' no definido"))
+        prog.forEach { it.accept(exec) }
+
+        assertEquals(listOf("hola2025"), out)
     }
 
     @Test

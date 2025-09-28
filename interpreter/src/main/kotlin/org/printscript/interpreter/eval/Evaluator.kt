@@ -15,6 +15,7 @@ import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.Value.Num
 import org.printscript.interpreter.runtime.Value.Str
+import org.printscript.interpreter.runtime.asString
 
 internal class Evaluator(
     private val env: Environment,
@@ -49,7 +50,7 @@ internal class Evaluator(
             Op.PLUS ->
                 when {
                     l is Num && r is Num -> Num(l.v + r.v)
-                    l is Str && r is Str -> Str(l.v + r.v)
+                    l is Str || r is Str -> Str(l.asString() + r.asString())
                     else -> throw RuntimeError(
                         "Operador '+' no definido para ${typeName(l)} y ${typeName(r)}",
                     )

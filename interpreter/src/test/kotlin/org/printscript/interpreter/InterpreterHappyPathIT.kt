@@ -12,6 +12,8 @@ import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.parser.node.VariableDeclarationNode
+import kotlin.text.get
+import kotlin.text.lines
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
@@ -123,5 +125,30 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
 
         assertEquals(listOf("octavia"), out.lines)
         assertEquals("octavia", interpreter.environmentSnapshot()["user"])
+    }
+
+    @Test
+    fun `concatena string + number`() {
+        val ast =
+            listOf(
+                ConstantDeclarationNode("s", "string", str("hola!"), pos()),
+                PrintStatementNode(plus(id("s"), num(2025.0)), pos()),
+            )
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertEquals(listOf("hola!2025"), out.lines)
+    }
+
+    @Test
+    fun `print de variable declarada imprime su valor`() {
+        val ast =
+            listOf(
+                VariableDeclarationNode("x", "number", num(42.0), pos()),
+                PrintStatementNode(id("x"), pos()),
+            )
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertEquals(listOf("42"), out.lines)
+        assertEquals("42", interpreter.environmentSnapshot()["x"])
     }
 }
