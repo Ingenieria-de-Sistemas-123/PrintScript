@@ -73,4 +73,20 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
 
         assertEquals(listOf("then"), out.lines)
     }
+
+    @Test
+    fun `if con variable booleana como condicion ejecuta rama falsa`() {
+        val ast =
+            listOf(
+                VariableDeclarationNode("flag", "boolean", boolFalse(), pos()),
+                IfElseNode(
+                    ifBranch = listOf(PrintStatementNode(str("then"), pos())),
+                    elseBranch = listOf(PrintStatementNode(str("else"), pos())),
+                    condition = id("flag"),
+                ),
+            )
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+        assertEquals(listOf("else"), out.lines)
+    }
 }
