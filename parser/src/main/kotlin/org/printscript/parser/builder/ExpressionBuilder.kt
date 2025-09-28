@@ -70,7 +70,7 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
             i++
         }
 
-        return result!!
+        return requireNotNull(result) { "No suitable operator found at top-level (parenCount=0) in the provided operators list" }
     }
 
     private fun getPrecedence(op: String): Int =
