@@ -128,4 +128,52 @@ class RunnerTest {
         assertEquals(mapOf("pi" to "3"), interpreter.environmentSnapshot())
         assertEquals(emptyList(), capturedOutput)
     }
+
+    @Test
+    fun `run 1_1 program executes if true branch`() {
+        val capturedOutput = mutableListOf<String>()
+        val interpreter = Interpreter { capturedOutput += it }
+        val runner =
+            Runner(
+                tokenProvider = PreConfiguredTokens.TOKENS_1_1,
+                parser = DefaultParser(),
+                interpreter = interpreter,
+            )
+
+        val stream = requireNotNull(javaClass.getResourceAsStream("/programs/v1_1/if-true.ps"))
+        stream.use { runner.run(it) }
+
+        assertEquals(
+            mapOf(
+                "shouldGreet" to "true",
+                "greeting" to "Hola!",
+            ),
+            interpreter.environmentSnapshot(),
+        )
+        assertEquals(listOf("Hola!"), capturedOutput)
+    }
+
+    @Test
+    fun `run 1_1 program executes else branch when condition is false`() {
+        val capturedOutput = mutableListOf<String>()
+        val interpreter = Interpreter { capturedOutput += it }
+        val runner =
+            Runner(
+                tokenProvider = PreConfiguredTokens.TOKENS_1_1,
+                parser = DefaultParser(),
+                interpreter = interpreter,
+            )
+
+        val stream = requireNotNull(javaClass.getResourceAsStream("/programs/v1_1/if-false.ps"))
+        stream.use { runner.run(it) }
+
+        assertEquals(
+            mapOf(
+                "shouldGreet" to "false",
+                "message" to "Hola!",
+            ),
+            interpreter.environmentSnapshot(),
+        )
+        assertEquals(listOf("Chau"), capturedOutput)
+    }
 }

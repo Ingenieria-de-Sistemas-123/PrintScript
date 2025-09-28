@@ -135,4 +135,25 @@ class TokenHandlerTest {
         assertEquals(")", expr.last().value)
         assertTrue(expr.none { it.value == ";" })
     }
+
+    @Test
+    fun collectExpressionTokensInParenthesis_missing_closing_parenthesis_throws_parse_exception() {
+        val tokens =
+            listOf(
+                TestUtils.syntax("("),
+                TestUtils.token(TokenType.NUMBER, "1"),
+                TestUtils.token(TokenType.PLUS, "+"),
+                TestUtils.token(TokenType.NUMBER, "2"),
+                TestUtils.eof(),
+            )
+        val handler = TokenHandler(tokens)
+        handler.advance()
+
+        val exception =
+            assertFailsWith<ParseException> {
+                handler.collectExpressionTokensInParenthesis()
+            }
+
+        assertTrue(exception.message!!.contains("Paréntesis desbalanceados"))
+    }
 }
