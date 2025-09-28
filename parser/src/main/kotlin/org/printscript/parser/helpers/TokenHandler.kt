@@ -111,17 +111,6 @@ data class TokenHandler(val line: List<Token>) {
         return previous()
     }
 
-    fun expect(
-        expected: TokenType,
-        expectedValue: String,
-        message: String,
-    ): Token {
-        val t = peek()
-        if (t.type != expected || t.value != expectedValue) throw ParseException(message, t.line, t.column)
-        advance()
-        return previous()
-    }
-
     /**
      * Valida y consume un punto y coma \(';'\).
      * Lanza ParseException si el token actual no es ';'.

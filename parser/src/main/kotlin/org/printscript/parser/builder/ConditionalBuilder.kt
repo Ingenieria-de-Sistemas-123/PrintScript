@@ -27,8 +27,11 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
     }
 
     private fun parseCondition(h: TokenHandler): String {
-        // usa expect para validar tipo y lexema en un único paso
-        val lp = h.expect(TokenType.SYNTAX, "(", "Se esperaba '('")
+        val lp = h.peek()
+        if (lp.type != TokenType.SYNTAX || lp.value != "(") {
+            throw ParseException("Se esperaba '('", lp.line, lp.column)
+        }
+        h.advance()
 
         if (h.peek().type != TokenType.IDENTIFIER) {
             val t = h.peek()
@@ -36,15 +39,21 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
         }
         val ident = h.consume(TokenType.IDENTIFIER, "Se esperaba un identificador").value
 
-        // validar paréntesis de cierre con expect
-        h.expect(TokenType.SYNTAX, ")", "Se esperaba ')'")
+        val rp = h.peek()
+        if (rp.type != TokenType.SYNTAX || rp.value != ")") {
+            throw ParseException("Se esperaba ')'", rp.line, rp.column)
+        }
+        h.advance()
 
         return ident
     }
 
     private fun parseBlock(h: TokenHandler): List<ASTNode> {
-        // usar expect para validar '{'
-        h.expect(TokenType.SYNTAX, "{", "Se esperaba '{'")
+        val lb = h.peek()
+        if (lb.type != TokenType.SYNTAX || lb.value != "{") {
+            throw ParseException("Se esperaba '{'", lb.line, lb.column)
+        }
+        h.advance()
 
         val out = mutableListOf<ASTNode>()
         val gen = ASTGenerator()
@@ -64,8 +73,11 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
             out += gen.createAST(stmt)
         }
 
-        // usar expect para '}' también
-        h.expect(TokenType.SYNTAX, "}", "Se esperaba '}'")
+        val rb = h.peek()
+        if (rb.type != TokenType.SYNTAX || rb.value != "}") {
+            throw ParseException("Se esperaba '}'", rb.line, rb.column)
+        }
+        h.advance()
         return out
     }
 }
