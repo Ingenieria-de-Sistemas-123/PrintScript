@@ -7,6 +7,7 @@ import org.printscript.interpreter.ir.ConstDeclIR
 import org.printscript.interpreter.ir.DeclIR
 import org.printscript.interpreter.ir.ExprIR
 import org.printscript.interpreter.ir.IdRef
+import org.printscript.interpreter.ir.IfIR
 import org.printscript.interpreter.ir.NumLit
 import org.printscript.interpreter.ir.Op
 import org.printscript.interpreter.ir.PrintIR
@@ -18,6 +19,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.token.TokenType
@@ -47,6 +49,12 @@ class ASTtoIR {
             }
 
             is PrintStatementNode -> PrintIR(toExpr(n.expression))
+            is IfElseNode -> {
+                val condition = toExpr(n.condition)
+                val thenBranch = n.ifBranch.map { toStmt(it) }
+                val elseBranch = n.elseBranch.map { toStmt(it) }.takeIf { it.isNotEmpty() }
+                IfIR(condition, thenBranch, elseBranch)
+            }
             else -> error("Nodo de sentencia no soportado: ${n::class.simpleName}")
         }
 
