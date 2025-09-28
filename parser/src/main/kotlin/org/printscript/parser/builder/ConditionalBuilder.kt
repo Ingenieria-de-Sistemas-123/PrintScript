@@ -23,7 +23,8 @@ class ConditionalBuilder(private val line: List<Token>) : Builder {
                 emptyList()
             }
 
-        return IfElseNode(thenBranch, elseBranch, LiteralNode(cond, TokenType.IDENTIFIER))
+        val conditionLiteral = LiteralNode(value = cond, tokenType = TokenType.IDENTIFIER)
+        return IfElseNode(thenBranch, elseBranch, conditionLiteral)
     }
 
     private fun parseCondition(h: TokenHandler): String {

@@ -20,6 +20,8 @@ abstract class BaseInterpreterIT {
 
     protected fun id(name: String) = LiteralNode(name, TokenType.IDENTIFIER)
 
+    protected fun bool(value: Boolean) = LiteralNode(value, if (value) TokenType.TRUE else TokenType.FALSE)
+
     protected fun plus(
         l: ASTNode,
         r: ASTNode,

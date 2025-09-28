@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
+import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.parser.node.VariableDeclarationNode
 
@@ -53,5 +54,23 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
         assertEquals(listOf("ab!cd!"), out.lines)
+    }
+
+    @Test
+    fun `if con variable booleana como condición ejecuta rama verdadera`() {
+        val ast =
+            listOf(
+                VariableDeclarationNode("flag", "boolean", bool(true), pos()),
+                IfElseNode(
+                    ifBranch = listOf(PrintStatementNode(str("then"), pos())),
+                    elseBranch = listOf(PrintStatementNode(str("else"), pos())),
+                    condition = id("flag"),
+                ),
+            )
+
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+
+        assertEquals(listOf("then"), out.lines)
     }
 }
