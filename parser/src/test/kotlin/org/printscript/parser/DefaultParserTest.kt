@@ -166,6 +166,8 @@ class DefaultParserTest {
         val ifn = ast[0] as IfElseNode
         assertEquals(1, ifn.ifBranch.size)
         assertEquals(1, ifn.elseBranch.size)
+        assertEquals(TokenType.IDENTIFIER, ifn.condition.tokenType)
+        assertEquals("cond", ifn.condition.value)
     }
 
     @Test
@@ -190,6 +192,8 @@ class DefaultParserTest {
         val ifn = ast[0] as IfElseNode
         assertEquals(1, ifn.ifBranch.size)
         assertEquals(0, ifn.elseBranch.size)
+        assertEquals(TokenType.IDENTIFIER, ifn.condition.tokenType)
+        assertEquals("ok", ifn.condition.value)
     }
 
     @Test

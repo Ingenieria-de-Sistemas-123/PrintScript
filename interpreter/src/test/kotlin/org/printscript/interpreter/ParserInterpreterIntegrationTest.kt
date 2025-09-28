@@ -34,6 +34,24 @@ class ParserInterpreterIntegrationTest {
         assertEquals(listOf("hello"), output)
     }
 
+    @Test
+    fun `if condition reads boolean variable`() {
+        val source =
+            """
+            let shouldGreet: boolean = true;
+            if (shouldGreet) {
+                println("Hola!");
+            } else {
+                println("Chau");
+            }
+            """.trimIndent()
+
+        val (output, interpreter) = runScript(source)
+
+        assertEquals(listOf("Hola!"), output)
+        assertEquals("true", interpreter.environmentSnapshot()["shouldGreet"])
+    }
+
     private fun runScript(source: String): Pair<List<String>, Interpreter> {
         val lexer = Lexer(PreConfiguredTokens.TOKENS_1_1)
         val tokens = lexer.lex(StringReader(source))
