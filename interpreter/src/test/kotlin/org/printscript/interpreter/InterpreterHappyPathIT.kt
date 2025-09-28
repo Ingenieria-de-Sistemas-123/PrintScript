@@ -12,8 +12,6 @@ import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.parser.node.VariableDeclarationNode
-import kotlin.text.get
-import kotlin.text.lines
 
 @Tag("integration")
 @DisplayName("Interpreter – Happy Path")
