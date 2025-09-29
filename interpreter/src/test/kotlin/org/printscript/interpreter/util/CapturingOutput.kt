@@ -11,7 +11,7 @@ class CapturingOutput : OutputProvider {
     val lines: List<String>
         get() = buffer.map { it.removeSuffix("\n") }
 
-    override fun println(s: String) {
-        buffer += s + "\n"
+    override fun println(text: String) {
+        buffer += text
     }
 }

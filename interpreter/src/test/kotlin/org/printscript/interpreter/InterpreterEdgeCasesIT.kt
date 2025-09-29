@@ -124,4 +124,19 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
 
         assertEquals(listOf("Java heap space"), handler.errors)
     }
+
+    @Test
+    fun `acepta secuencia perezosa sin materializar todo`() {
+        val astSequence =
+            sequenceOf(
+                PrintStatementNode(str("a"), pos()),
+                PrintStatementNode(str("b"), pos()),
+                PrintStatementNode(str("c"), pos()),
+            )
+        val (interpreter, out) = newInterpreterWithBuffer()
+
+        interpreter.execute(astSequence)
+
+        assertEquals(listOf("a", "b", "c"), out.lines)
+    }
 }

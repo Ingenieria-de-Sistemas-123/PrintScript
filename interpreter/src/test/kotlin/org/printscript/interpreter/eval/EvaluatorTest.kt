@@ -131,7 +131,7 @@ class EvaluatorTest {
         var output = ""
         val env = Environment()
         // OutputProvider que acumula en 'output'
-        val executor = Executor(env, { s: String -> output += s + "\n" }, TestIO.empty)
+        val executor = Executor(env, { s: String -> output += s }, TestIO.empty)
         val printStmt = PrintIR(NumLit(7.0))
         printStmt.accept(executor)
         assertEquals("7\n", output)

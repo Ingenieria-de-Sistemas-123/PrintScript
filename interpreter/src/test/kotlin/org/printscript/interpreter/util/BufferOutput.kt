@@ -12,6 +12,6 @@ class BufferOutput : OutputProvider {
         get() = buffer.map { it.removeSuffix("\n") }
 
     override fun println(text: String) {
-        buffer += text + "\n"
+        buffer += text
     }
 }

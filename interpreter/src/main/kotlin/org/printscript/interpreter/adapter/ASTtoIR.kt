@@ -32,7 +32,9 @@ import org.printscript.token.TokenType
 class ASTtoIR {
     fun transform(program: List<ASTNode>): List<StmtIR> = program.map { toStmt(it) }
 
-    private fun toStmt(n: ASTNode): StmtIR =
+    fun transform(program: Sequence<ASTNode>): Sequence<StmtIR> = program.map { toStmt(it) }
+
+    fun toStmt(n: ASTNode): StmtIR =
         when (n) {
             is ConstantDeclarationNode -> {
                 val name = n.identifier

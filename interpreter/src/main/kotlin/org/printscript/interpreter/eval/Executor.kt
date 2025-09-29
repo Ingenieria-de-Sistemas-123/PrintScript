@@ -39,9 +39,8 @@ internal class Executor(
     }
 
     override fun visitPrint(p: PrintIR) {
-        val v = p.expr.accept(eval)
-        when (v) {
-            is Value.Num, is Value.Str -> output.println(v.asString())
+        when (val v = p.expr.accept(eval)) {
+            is Value.Num, is Value.Str -> output.println(v.asString() + "\n")
             else -> throw RuntimeError("println solo acepta valores de tipo number o string")
         }
     }

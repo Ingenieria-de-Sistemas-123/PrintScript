@@ -15,7 +15,7 @@ class RunnerTest {
     @Test
     fun `run 1_0 program populates environment and prints`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_0,
@@ -39,7 +39,7 @@ class RunnerTest {
     @Test
     fun `run 1_1 program executes const declarations`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -63,7 +63,7 @@ class RunnerTest {
     @Test
     fun `run 1_0 program handles arithmetic operations`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_0,
@@ -88,7 +88,7 @@ class RunnerTest {
     @Test
     fun `run 1_1 program handles boolean declarations`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -112,7 +112,7 @@ class RunnerTest {
     @Test
     fun `run 1_1 program fails when const is reassigned`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -135,7 +135,7 @@ class RunnerTest {
     @Test
     fun `run 1_1 program executes if true branch`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -159,7 +159,7 @@ class RunnerTest {
     @Test
     fun `run 1_1 program executes else branch when condition is false`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,

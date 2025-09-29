@@ -1,3 +1,5 @@
+package org.printscript.runner
+
 import org.printscript.interpreter.Interpreter
 import org.printscript.interpreter.io.EnvProvider
 import org.printscript.interpreter.io.FileInputProvider
@@ -5,7 +7,6 @@ import org.printscript.interpreter.io.IOContext
 import org.printscript.interpreter.io.OutputProvider
 import org.printscript.lexer.pattern.PreConfiguredTokens
 import org.printscript.parser.DefaultParser
-import org.printscript.runner.Runner
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +30,7 @@ class RunnerFileIOTest {
                     else -> null
                 }
             }
-        val outputProvider = OutputProvider { text -> outputFile.appendText(text + "\n") }
+        val outputProvider = OutputProvider { text -> outputFile.appendText(text) }
         val ioContext = IOContext(inputProvider, envProvider)
         val interpreter = Interpreter(output = outputProvider, ioContext = ioContext)
         val runner =

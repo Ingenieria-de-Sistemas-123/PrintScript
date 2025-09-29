@@ -62,8 +62,7 @@ class ExecutorTest {
     fun `string + number en println concatena`() {
         val env = Environment()
         val out = mutableListOf<String>()
-        // OutputProvider agrega newline
-        val exec = Executor(env, { text -> out += text + "\n" }, TestIO.empty)
+        val exec = Executor(env, { text -> out += text }, TestIO.empty)
 
         val prog =
             listOf<StmtIR>(

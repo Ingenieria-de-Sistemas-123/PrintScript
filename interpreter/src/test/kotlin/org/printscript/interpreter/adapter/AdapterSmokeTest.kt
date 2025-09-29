@@ -51,8 +51,7 @@ class AdapterSmokeTest {
         val ir = ASTtoIR().transform(progAst)
 
         val out = StringBuilder()
-        // Evitar doble \n: Executor ya agrega uno
-        val exec = Executor(Environment(), { out.append(it).append("\n") }, TestIO.empty)
+        val exec = Executor(Environment(), { out.append(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("3\n", out.toString())
@@ -83,7 +82,7 @@ class AdapterSmokeTest {
         assertIs<BoolLit>(secondIf.condition)
 
         val out = StringBuilder()
-        val exec = Executor(Environment(), { out.append(it).append("\n") }, TestIO.empty)
+        val exec = Executor(Environment(), { out.append(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("Si\nSiempre\n", out.toString())

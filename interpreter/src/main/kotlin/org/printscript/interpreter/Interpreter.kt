@@ -17,12 +17,14 @@ class Interpreter(
     private val adapter = ASTtoIR()
 
     fun execute(
-        ast: List<ASTNode>,
+        ast: Iterable<ASTNode>,
         errorHandler: ErrorHandler? = null,
     ) {
         try {
-            val irProgram = adapter.transform(ast)
-            irProgram.forEach { stmt -> stmt.accept(exec) }
+            for (node in ast) {
+                val stmt = adapter.toStmt(node)
+                stmt.accept(exec)
+            }
         } catch (oom: OutOfMemoryError) {
             val handler = errorHandler ?: throw oom
             handler.reportError(oom.message ?: "Java heap space")
@@ -31,6 +33,11 @@ class Interpreter(
             handler.reportError(ex.message ?: ex.toString())
         }
     }
+
+    fun execute(
+        ast: Sequence<ASTNode>,
+        errorHandler: ErrorHandler? = null,
+    ) = execute(ast.asIterable(), errorHandler)
 
     fun environmentSnapshot(): Map<String, String> = env.snapshot()
 }

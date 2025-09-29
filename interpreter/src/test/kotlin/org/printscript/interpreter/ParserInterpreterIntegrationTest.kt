@@ -71,7 +71,7 @@ class ParserInterpreterIntegrationTest {
         val tokens = lexer.lex(StringReader(source))
         val ast = DefaultParser().parse(tokens)
         val buffer = mutableListOf<String>()
-        // Normaliza quitando el \n que agrega Executor
+        // Normaliza quitando el \n final provisto al OutputProvider
         val interpreter = Interpreter(output = { printed -> buffer += printed.removeSuffix("\n") })
         interpreter.execute(ast)
         return buffer.toList() to interpreter
