@@ -31,15 +31,13 @@ internal class Evaluator(
 
     override fun visitReadInput(r: ReadInput): Value {
         val prompt = requireString(r.prompt.accept(this), "readInput")
-        val line = io.input.readLine(prompt) ?: throw RuntimeError("Fin de la entrada: readInput no recibió más datos")
+        val line = io.input.readLine(prompt) ?: ""
         return Str(line)
     }
 
     override fun visitReadEnv(r: ReadEnv): Value {
         val key = requireString(r.key.accept(this), "readEnv")
-        val value =
-            io.env.get(key)
-                ?: throw RuntimeError("Variable de entorno '$key' no encontrada")
+        val value = io.env.get(key) ?: ""
         return Str(value)
     }
 
@@ -50,7 +48,9 @@ internal class Evaluator(
             Op.PLUS ->
                 when {
                     l is Num && r is Num -> Num(l.v + r.v)
-                    l is Str || r is Str -> Str(l.asString() + r.asString())
+                    l is Str && r is Str -> Str(l.v + r.v)
+                    l is Str && r is Num -> Str(l.v + r.asString())
+                    l is Num && r is Str -> Str(l.asString() + r.v)
                     else -> throw RuntimeError(
                         "Operador '+' no definido para ${typeName(l)} y ${typeName(r)}",
                     )

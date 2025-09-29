@@ -6,8 +6,10 @@ import org.printscript.formatter.config.FormatterConfig
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.VariableDeclarationNode
 import org.printscript.token.TokenType
 import kotlin.test.assertEquals
 
@@ -126,5 +128,16 @@ class CodeFormatterIT {
         val first = f.format(ast, cfg)
         val second = f.format(ast, cfg)
         assertEquals(first, second)
+    }
+
+    @Test
+    fun `declaracion sin inicializador no imprime igual`() {
+        val decl = VariableDeclarationNode("name", "string", EmptyExpressionNode, pos())
+        val ast = listOf(decl)
+        val cfg = FormatterConfig(spaceAfterColon = true)
+
+        val pretty = CodeFormatter().format(ast, cfg)
+
+        assertEquals("let name: string;\n", pretty)
     }
 }

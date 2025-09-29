@@ -7,6 +7,7 @@ import org.printscript.interpreter.util.BufferOutput
 import org.printscript.interpreter.util.TestIO
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.ReadEnvNode
 import org.printscript.parser.node.ReadInputNode
@@ -47,6 +48,8 @@ abstract class BaseInterpreterIT {
         l: ASTNode,
         r: ASTNode,
     ) = DoubleExpressionNode(l, "/", r, pos())
+
+    protected fun emptyExpr(): ASTNode = EmptyExpressionNode
 
     protected fun readInput(arg: ASTNode) = ReadInputNode(arg, pos())
 

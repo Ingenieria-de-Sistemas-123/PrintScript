@@ -15,7 +15,7 @@ class RunnerTest {
     @Test
     fun `run 1_0 program populates environment and prints`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_0,
@@ -33,13 +33,13 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Hola mundo"), capturedOutput)
+        assertEquals(listOf("Hola mundo\n"), capturedOutput)
     }
 
     @Test
     fun `run 1_1 program executes const declarations`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -57,13 +57,13 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Hola", "Hola!"), capturedOutput)
+        assertEquals(listOf("Hola\n", "Hola!\n"), capturedOutput)
     }
 
     @Test
     fun `run 1_0 program handles arithmetic operations`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_0,
@@ -82,13 +82,13 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("7", "3"), capturedOutput)
+        assertEquals(listOf("7\n", "3\n"), capturedOutput)
     }
 
     @Test
     fun `run 1_1 program handles boolean declarations`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -106,13 +106,13 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("true", "done"), capturedOutput)
+        assertEquals(listOf("true\n", "done\n"), capturedOutput)
     }
 
     @Test
     fun `run 1_1 program fails when const is reassigned`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -135,7 +135,7 @@ class RunnerTest {
     @Test
     fun `run 1_1 program executes if true branch`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -153,13 +153,13 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Hola!"), capturedOutput)
+        assertEquals(listOf("Hola!\n"), capturedOutput)
     }
 
     @Test
     fun `run 1_1 program executes else branch when condition is false`() {
         val capturedOutput = mutableListOf<String>()
-        val interpreter = Interpreter({ capturedOutput += it }, ioContext)
+        val interpreter = Interpreter({ capturedOutput += it + "\n" }, ioContext)
         val runner =
             Runner(
                 tokenProvider = PreConfiguredTokens.TOKENS_1_1,
@@ -177,6 +177,6 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Chau"), capturedOutput)
+        assertEquals(listOf("Chau\n"), capturedOutput)
     }
 }

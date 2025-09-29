@@ -29,7 +29,7 @@ class RunnerFileIOTest {
                     else -> null
                 }
             }
-        val outputProvider = OutputProvider { text -> outputFile.appendText("$text\n") }
+        val outputProvider = OutputProvider { text -> outputFile.appendText(text + "\n") }
         val ioContext = IOContext(inputProvider, envProvider)
         val interpreter = Interpreter(output = outputProvider, ioContext = ioContext)
         val runner =

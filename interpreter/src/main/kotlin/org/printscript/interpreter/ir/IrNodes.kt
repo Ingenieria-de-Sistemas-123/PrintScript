@@ -7,7 +7,7 @@ sealed interface StmtIR {
     fun <R> accept(v: StmtVisitor<R>): R
 }
 
-data class DeclIR(val name: String, val declaredType: RType, val initializer: ExprIR) : StmtIR {
+data class DeclIR(val name: String, val declaredType: RType, val initializer: ExprIR?) : StmtIR {
     override fun <R> accept(v: StmtVisitor<R>): R = v.visitDecl(this)
 }
 

@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.ir.StmtIR
 import org.printscript.interpreter.runtime.Environment
 import org.printscript.interpreter.runtime.RType
 import org.printscript.interpreter.runtime.RuntimeError
+import org.printscript.interpreter.util.BufferOutput
 import org.printscript.interpreter.util.TestIO
 import org.printscript.interpreter.util.assign
 import org.printscript.interpreter.util.decl
@@ -23,14 +23,7 @@ class ExecutorTest {
     @Test
     fun `declara x y lo imprime`() {
         val env = Environment()
-        val out =
-            object : OutputProvider {
-                val lines = mutableListOf<String>()
-
-                override fun println(text: String) {
-                    lines += text
-                }
-            }
+        val out = BufferOutput()
         val exec = Executor(env, out, TestIO.empty)
 
         val prog =
@@ -42,20 +35,14 @@ class ExecutorTest {
         prog.forEach { it.accept(exec) }
 
         assertEquals(listOf("7"), out.lines)
+        assertEquals(listOf("7\n"), out.raw)
         assertEquals(mapOf("x" to "7"), env.snapshot())
     }
 
     @Test
     fun `concatena string+string en println`() {
         val env = Environment()
-        val out =
-            object : OutputProvider {
-                val lines = mutableListOf<String>()
-
-                override fun println(text: String) {
-                    lines += text
-                }
-            }
+        val out = BufferOutput()
         val exec = Executor(env, out, TestIO.empty)
 
         val prog =
@@ -67,6 +54,7 @@ class ExecutorTest {
         prog.forEach { it.accept(exec) }
 
         assertEquals(listOf("hola2025"), out.lines)
+        assertEquals(listOf("hola2025\n"), out.raw)
         assertEquals(mapOf("s" to "hola"), env.snapshot())
     }
 
@@ -74,7 +62,8 @@ class ExecutorTest {
     fun `string + number en println concatena`() {
         val env = Environment()
         val out = mutableListOf<String>()
-        val exec = Executor(env, { text -> out += text }, TestIO.empty)
+        // OutputProvider agrega newline
+        val exec = Executor(env, { text -> out += text + "\n" }, TestIO.empty)
 
         val prog =
             listOf<StmtIR>(
@@ -84,7 +73,7 @@ class ExecutorTest {
 
         prog.forEach { it.accept(exec) }
 
-        assertEquals(listOf("hola2025"), out)
+        assertEquals(listOf("hola2025\n"), out)
     }
 
     @Test
@@ -102,6 +91,17 @@ class ExecutorTest {
                 prog.forEach { it.accept(exec) }
             }
         assertTrue(ex.message!!.contains("Inicialización incompatible"))
+    }
+
+    @Test
+    fun `declaracion sin inicializador deja variable sin inicializar`() {
+        val env = Environment()
+        val exec = Executor(env, {}, TestIO.empty)
+
+        decl("s", RType.STRING, null).accept(exec)
+
+        val error = assertThrows(RuntimeError::class.java) { env.read("s") }
+        assertTrue(error.message!!.contains("antes de inicializar"))
     }
 
     @Test

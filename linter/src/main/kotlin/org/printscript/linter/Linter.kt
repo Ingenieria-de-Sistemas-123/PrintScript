@@ -7,6 +7,7 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
@@ -26,7 +27,7 @@ class Linter(
         fun visit(node: ASTNode) {
             applyRules(node)
             when (node) {
-                is DeclarationNode -> visit(node.expression)
+                is DeclarationNode -> if (node.expression !== EmptyExpressionNode) visit(node.expression)
                 is AssignationNode -> visit(node.expression)
                 is DoubleExpressionNode -> {
                     visit(node.left)

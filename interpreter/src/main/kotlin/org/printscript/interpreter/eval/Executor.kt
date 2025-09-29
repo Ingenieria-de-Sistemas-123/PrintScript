@@ -9,6 +9,7 @@ import org.printscript.interpreter.ir.IfIR
 import org.printscript.interpreter.ir.PrintIR
 import org.printscript.interpreter.ir.StmtVisitor
 import org.printscript.interpreter.runtime.Environment
+import org.printscript.interpreter.runtime.RuntimeError
 import org.printscript.interpreter.runtime.Value
 import org.printscript.interpreter.runtime.asString
 import org.printscript.interpreter.runtime.runtimeTypeOf
@@ -22,10 +23,12 @@ internal class Executor(
     private val eval = Evaluator(env, io)
 
     override fun visitDecl(d: DeclIR) {
-        val init = d.initializer.accept(eval)
-        val actualType = runtimeTypeOf(init)
-        require(actualType == d.declaredType) {
-            "Inicialización incompatible de '${d.name}': se esperaba ${d.declaredType} y se recibió $actualType"
+        val init = d.initializer?.accept(eval)
+        if (init != null) {
+            val actualType = runtimeTypeOf(init)
+            require(actualType == d.declaredType) {
+                "Inicialización incompatible de '${d.name}': se esperaba ${d.declaredType} y se recibió $actualType"
+            }
         }
         env.declare(d.name, d.declaredType, init)
     }
@@ -37,7 +40,10 @@ internal class Executor(
 
     override fun visitPrint(p: PrintIR) {
         val v = p.expr.accept(eval)
-        output.println(v.asString())
+        when (v) {
+            is Value.Num, is Value.Str -> output.println(v.asString())
+            else -> throw RuntimeError("println solo acepta valores de tipo number o string")
+        }
     }
 
     override fun visitIf(i: IfIR) {

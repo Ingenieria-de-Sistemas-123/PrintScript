@@ -5,7 +5,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.runtime.RuntimeError
+import org.printscript.interpreter.util.CollectingErrorHandler
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
@@ -43,16 +45,23 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
     }
 
     @Test
-    fun `print de booleanos y string vacio`() {
-        val ast =
-            listOf(
-                PrintStatementNode(LiteralNode(true, TokenType.TRUE), pos()),
-                PrintStatementNode(LiteralNode(false, TokenType.FALSE), pos()),
-                PrintStatementNode(str(""), pos()),
-            )
+    fun `println de booleano produce error`() {
+        val ast = listOf(PrintStatementNode(LiteralNode(true, TokenType.TRUE), pos()))
+        val (interpreter, out) = newInterpreterWithBuffer()
+        val handler = CollectingErrorHandler()
+
+        interpreter.execute(ast, handler)
+
+        assertEquals(emptyList<String>(), out.lines)
+        assertEquals(listOf("println solo acepta valores de tipo number o string"), handler.errors)
+    }
+
+    @Test
+    fun `println de string vacio imprime linea vacia`() {
+        val ast = listOf(PrintStatementNode(str(""), pos()))
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
-        assertEquals(listOf("true", "false", ""), out.lines)
+        assertEquals(listOf(""), out.lines)
     }
 
     @Test
@@ -102,5 +111,17 @@ class InterpreterEdgeCasesIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
         assertEquals(listOf("-1000000", "10000000000"), out.lines)
+    }
+
+    @Test
+    fun `out of memory se reporta en handler`() {
+        val ast = listOf(PrintStatementNode(str("boom"), pos()))
+        val failingOutput = OutputProvider { throw OutOfMemoryError("Java heap space") }
+        val interpreter = Interpreter(output = failingOutput)
+        val handler = CollectingErrorHandler()
+
+        interpreter.execute(ast, handler)
+
+        assertEquals(listOf("Java heap space"), handler.errors)
     }
 }

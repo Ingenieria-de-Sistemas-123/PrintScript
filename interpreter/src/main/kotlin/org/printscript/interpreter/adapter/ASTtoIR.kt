@@ -21,6 +21,7 @@ import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
@@ -43,7 +44,12 @@ class ASTtoIR {
             is DeclarationNode -> {
                 val name = n.identifier
                 val declaredType = mapType(n.valueType)
-                val init = toExpr(n.expression)
+                val init =
+                    if (n.expression === EmptyExpressionNode) {
+                        null
+                    } else {
+                        toExpr(n.expression)
+                    }
                 DeclIR(name, declaredType, init)
             }
 

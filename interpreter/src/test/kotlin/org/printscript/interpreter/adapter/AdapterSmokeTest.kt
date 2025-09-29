@@ -51,7 +51,8 @@ class AdapterSmokeTest {
         val ir = ASTtoIR().transform(progAst)
 
         val out = StringBuilder()
-        val exec = Executor(Environment(), { out.appendLine(it) }, TestIO.empty)
+        // Evitar doble \n: Executor ya agrega uno
+        val exec = Executor(Environment(), { out.append(it).append("\n") }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("3\n", out.toString())
@@ -63,25 +64,13 @@ class AdapterSmokeTest {
         val programAst =
             listOf(
                 IfElseNode(
-                    ifBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("Si", TokenType.STRING), pos),
-                        ),
-                    elseBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("No", TokenType.STRING), pos),
-                        ),
+                    ifBranch = listOf(PrintStatementNode(LiteralNode("Si", TokenType.STRING), pos)),
+                    elseBranch = listOf(PrintStatementNode(LiteralNode("No", TokenType.STRING), pos)),
                     condition = LiteralNode(true, TokenType.TRUE),
                 ),
                 IfElseNode(
-                    ifBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("Nunca", TokenType.STRING), pos),
-                        ),
-                    elseBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("Siempre", TokenType.STRING), pos),
-                        ),
+                    ifBranch = listOf(PrintStatementNode(LiteralNode("Nunca", TokenType.STRING), pos)),
+                    elseBranch = listOf(PrintStatementNode(LiteralNode("Siempre", TokenType.STRING), pos)),
                     condition = LiteralNode(false, TokenType.FALSE),
                 ),
             )
@@ -94,7 +83,7 @@ class AdapterSmokeTest {
         assertIs<BoolLit>(secondIf.condition)
 
         val out = StringBuilder()
-        val exec = Executor(Environment(), { out.appendLine(it) }, TestIO.empty)
+        val exec = Executor(Environment(), { out.append(it).append("\n") }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("Si\nSiempre\n", out.toString())

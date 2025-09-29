@@ -30,6 +30,7 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
         assertEquals(listOf("7", "hola!2025", "8"), out.lines)
+        assertEquals(listOf("7\n", "hola!2025\n", "8\n"), out.raw)
     }
 
     @Test
@@ -148,5 +149,21 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         interpreter.execute(ast)
         assertEquals(listOf("42"), out.lines)
         assertEquals("42", interpreter.environmentSnapshot()["x"])
+    }
+
+    @Test
+    fun `declaracion sin inicializador permite asignar luego`() {
+        val ast =
+            listOf(
+                VariableDeclarationNode("name", "string", emptyExpr(), pos()),
+                AssignationNode("name", str("PrintScript"), pos()),
+                PrintStatementNode(id("name"), pos()),
+            )
+
+        val (interpreter, out) = newInterpreterWithBuffer()
+        interpreter.execute(ast)
+
+        assertEquals(listOf("PrintScript"), out.lines)
+        assertEquals("PrintScript", interpreter.environmentSnapshot()["name"])
     }
 }

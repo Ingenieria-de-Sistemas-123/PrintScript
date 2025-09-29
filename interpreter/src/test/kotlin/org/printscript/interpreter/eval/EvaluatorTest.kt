@@ -39,15 +39,30 @@ class EvaluatorTest {
     }
 
     @Test
-    fun `string + string concatena - hola + 2025 = hola2025`() {
-        val v = plus(str("hola"), str("2025")).accept(Evaluator(Environment(), TestIO.empty))
-        assertEquals(Value.Str("hola2025"), v)
+    fun `string + string concatena - hola + mundo = holamundo`() {
+        val v = plus(str("hola"), str("mundo")).accept(Evaluator(Environment(), TestIO.empty))
+        assertEquals(Value.Str("holamundo"), v)
     }
 
     @Test
     fun `string + number concatena - hola + 2025 = hola2025`() {
         val v = plus(str("hola"), num(2025.0)).accept(Evaluator(Environment(), TestIO.empty))
         assertEquals(Value.Str("hola2025"), v)
+    }
+
+    @Test
+    fun `number + string concatena - 2025 + hola = 2025hola`() {
+        val v = plus(num(2025.0), str("hola")).accept(Evaluator(Environment(), TestIO.empty))
+        assertEquals(Value.Str("2025hola"), v)
+    }
+
+    @Test
+    fun `plus con booleano lanza error`() {
+        val env = Environment()
+        val ev = Evaluator(env, TestIO.empty)
+        val expr = plus(str("hola"), BoolLit(true))
+
+        assertThrows(RuntimeError::class.java) { expr.accept(ev) }
     }
 
     @Test
@@ -116,10 +131,10 @@ class EvaluatorTest {
         var output = ""
         val env = Environment()
         // OutputProvider que acumula en 'output'
-        val executor = Executor(env, { s: String -> output += s }, TestIO.empty)
+        val executor = Executor(env, { s: String -> output += s + "\n" }, TestIO.empty)
         val printStmt = PrintIR(NumLit(7.0))
         printStmt.accept(executor)
-        assertEquals("7", output)
+        assertEquals("7\n", output)
     }
 
     @Test
@@ -155,10 +170,30 @@ class EvaluatorTest {
     @Test
     fun `readEnv devuelve el valor del env provider`() {
         val env = Environment()
-        val io = IOContext.systemDefault()
+        val io = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(mapOf("USER" to "octavia")))
         val ev = Evaluator(env, io)
         val expr = ReadEnv(StrLit("USER"))
         val v = expr.accept(ev)
-        assertEquals(Value.Str("tais"), v)
+        assertEquals(Value.Str("octavia"), v)
+    }
+
+    @Test
+    fun `readInput sin datos devuelve string vacio`() {
+        val env = Environment()
+        val io = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(emptyMap()))
+        val ev = Evaluator(env, io)
+        val expr = ReadInput(StrLit("Prompt"))
+        val v = expr.accept(ev)
+        assertEquals(Value.Str(""), v)
+    }
+
+    @Test
+    fun `readEnv inexistente devuelve string vacio`() {
+        val env = Environment()
+        val io = IOContext(QueueInputProvider(emptyList()), MapEnvProvider(emptyMap()))
+        val ev = Evaluator(env, io)
+        val expr = ReadEnv(StrLit("MISSING"))
+        val v = expr.accept(ev)
+        assertEquals(Value.Str(""), v)
     }
 }
