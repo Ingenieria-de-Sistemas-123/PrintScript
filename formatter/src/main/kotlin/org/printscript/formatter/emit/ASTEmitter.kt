@@ -19,6 +19,7 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 
@@ -39,8 +40,10 @@ class ASTEmitter(private val cfg: FormatterConfig) {
                 sink += Ident(n.identifier)
                 sink += Colon
                 sink += TypeName(n.valueType)
-                sink += Equals
-                emitExpr(n.expression, sink)
+                if (n.expression !== EmptyExpressionNode) {
+                    sink += Equals
+                    emitExpr(n.expression, sink)
+                }
                 sink += Semicolon
             }
 

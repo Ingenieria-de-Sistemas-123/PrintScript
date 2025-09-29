@@ -1,6 +1,7 @@
 package org.printscript.parser.builder
 
 import org.printscript.common.Position
+import org.printscript.parser.ParseException
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
@@ -20,57 +21,90 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
     }
 
     private fun addNodes(tokens: List<Token>): ASTNode {
+        if (tokens.isEmpty()) {
+            throw ParseException("Expresión vacía o incompleta", 0, 0)
+        }
         if (tokens.size == 1) return literalFrom(tokens.first())
 
         if (tokens.first().value == "(" && tokens.last().value == ")") {
-            return addNodes(tokens.subList(1, tokens.size - 1))
+            // verificar que el paréntesis inicial cierra exactamente en el último índice
+            var depth = 0
+            var closesAtEnd = false
+            for (i in tokens.indices) {
+                val v = tokens[i].value
+                if (v == "(") {
+                    depth++
+                } else if (v == ")") {
+                    depth--
+                }
+                if (depth == 0) {
+                    closesAtEnd = (i == tokens.lastIndex)
+                    break
+                }
+            }
+            if (closesAtEnd) {
+                return addNodes(tokens.subList(1, tokens.size - 1))
+            }
         }
 
-        val operators = mutableListOf<Pair<Token, Int>>()
-        tokens.forEachIndexed { idx, tok -> if (operatorsToCheck(tok)) operators += tok to idx }
+        // detectar llamada a readEnv / readInput como expresión primaria
+        if (tokens.size >= 3 &&
+            (tokens.first().type == TokenType.READ_ENV || tokens.first().type == TokenType.READ_INPUT) &&
+            tokens[1].value == "(" && tokens.last().value == ")"
+        ) {
+            return when (tokens.first().type) {
+                TokenType.READ_ENV -> ReadEnvBuilder(tokens).build()
+                TokenType.READ_INPUT -> ReadInputBuilder(tokens).build()
+                else -> error("Caso imposible por guard previo")
+            }
+        }
 
-        val (operator, index) = findLowestPrecedenceOperator(operators)
+        var bestIndex = -1
+        var bestPrec = Int.MAX_VALUE
+        var depth = 0
+        for (i in tokens.indices) {
+            val tok = tokens[i]
+            if (tok.value == "(") {
+                depth++
+                continue
+            }
+            if (tok.value == ")") {
+                depth--
+                continue
+            }
+            if (depth == 0 && tok.value in listOf("+", "-", "*", "/")) {
+                val prec = getPrecedence(tok.value)
+                if (prec <= bestPrec) { // asociatividad izquierda: último de misma precedencia
+                    bestPrec = prec
+                    bestIndex = i
+                }
+            }
+        }
 
-        val leftTokens = tokens.subList(0, index)
-        val rightTokens = tokens.subList(index + 1, tokens.size)
+        if (bestIndex == -1) {
+            // Puede ser un caso no soportado por ExpressionBuilder (ej: llamada a función) o sintaxis inválida
+            throw ParseException("No se encontró operador en la expresión", tokens.first().line, tokens.first().column)
+        }
 
+        val operator = tokens[bestIndex]
+        val leftTokens = tokens.subList(0, bestIndex)
+        val rightTokens = tokens.subList(bestIndex + 1, tokens.size)
+
+        if (rightTokens.isEmpty()) {
+            throw ParseException("Falta operando a la derecha del operador '${operator.value}'", operator.line, operator.column)
+        }
         val rightNode = addNodes(rightTokens)
 
         if (leftTokens.isEmpty() && operator.value == "-") {
             val pos = Position(operator.line, operator.column)
             return DoubleExpressionNode(LiteralNode(0, TokenType.NUMBER), "-", rightNode, pos)
         }
-
+        if (leftTokens.isEmpty()) {
+            throw ParseException("Falta operando a la izquierda del operador '${operator.value}'", operator.line, operator.column)
+        }
         val leftNode = addNodes(leftTokens)
         val pos = Position(operator.line, operator.column)
         return DoubleExpressionNode(leftNode, operator.value, rightNode, pos)
-    }
-
-    private fun findLowestPrecedenceOperator(operators: List<Pair<Token, Int>>): Pair<Token, Int> {
-        if (operators.isEmpty()) {
-            throw IllegalStateException("No se encontró operador en la expresión")
-        }
-
-        var result: Pair<Token, Int>? = null
-        var i = 0
-        var parenCount = 0
-
-        while (i < operators.size) {
-            val (token, index) = operators[i]
-
-            if (token.value == "(") {
-                parenCount++
-            } else if (token.value == ")") {
-                parenCount--
-            } else if (parenCount == 0) {
-                if (result == null || getPrecedence(token.value) <= getPrecedence(result.first.value)) {
-                    result = token to index
-                }
-            }
-            i++
-        }
-
-        return requireNotNull(result) { "No suitable operator found at top-level (parenCount=0) in the provided operators list" }
     }
 
     private fun getPrecedence(op: String): Int =
@@ -80,8 +114,6 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
             else -> Int.MAX_VALUE
         }
 
-    private fun operatorsToCheck(token: Token): Boolean = token.value in listOf("/", "*", "(", ")", "+", "-")
-
     private fun literalFrom(token: Token): LiteralNode<*> =
         when (token.type) {
             TokenType.NUMBER -> {
@@ -89,8 +121,10 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
                     val doubleValue = token.value.toDouble()
                     LiteralNode(doubleValue, TokenType.NUMBER)
                 } catch (e: NumberFormatException) {
-                    throw IllegalArgumentException(
-                        "Invalid number format for token value: '${token.value}' at line ${token.line}, column ${token.column}",
+                    throw ParseException(
+                        "Invalid number format for token value: '${token.value}'",
+                        token.line,
+                        token.column,
                     )
                 }
             }
@@ -98,7 +132,9 @@ class ExpressionBuilder(private val line: List<Token>) : Builder {
             TokenType.TRUE -> LiteralNode(true, TokenType.TRUE)
             TokenType.FALSE -> LiteralNode(false, TokenType.FALSE)
             TokenType.IDENTIFIER -> LiteralNode(token.value, TokenType.IDENTIFIER)
-            else -> LiteralNode(token.value, token.type)
+            TokenType.READ_ENV -> LiteralNode(token.value, TokenType.READ_ENV)
+            TokenType.SYNTAX -> throw ParseException("Token de sintaxis inesperado: ${token.value}", token.line, token.column)
+            else -> throw ParseException("Token inesperado en literal: ${token.type}", token.line, token.column)
         }
 
     private fun unescapeString(raw: String): String {

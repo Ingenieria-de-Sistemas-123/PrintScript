@@ -8,8 +8,10 @@ import org.printscript.formatter.rules.FormatToken
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.VariableDeclarationNode
 import org.printscript.token.TokenType
 
 class ASTEmitterTest {
@@ -75,6 +77,21 @@ class ASTEmitterTest {
                 FormatToken.OpenParen,
                 FormatToken.StringLit("x"),
                 FormatToken.CloseParen,
+                FormatToken.Semicolon,
+            )
+        assertEquals(expected, tokens)
+    }
+
+    @Test
+    fun `declaracion sin inicializador no emite igual`() {
+        val decl = VariableDeclarationNode("name", "string", EmptyExpressionNode, pos())
+        val tokens = ASTEmitter(FormatterConfig()).emitProgram(listOf(decl))
+        val expected =
+            listOf(
+                FormatToken.Keyword("let"),
+                FormatToken.Ident("name"),
+                FormatToken.Colon,
+                FormatToken.TypeName("string"),
                 FormatToken.Semicolon,
             )
         assertEquals(expected, tokens)

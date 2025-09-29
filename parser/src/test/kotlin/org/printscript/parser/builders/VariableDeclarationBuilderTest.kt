@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.printscript.parser.builder.VariableDeclarationBuilder
 import org.printscript.parser.node.DoubleExpressionNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.ReadInputNode
 import org.printscript.parser.node.VariableDeclarationNode
@@ -65,5 +66,23 @@ class VariableDeclarationBuilderTest {
         assertTrue(readInput.expression is LiteralNode<*>)
         val literal = readInput.expression as LiteralNode<*>
         assertEquals("Name?", literal.value)
+    }
+
+    @Test
+    fun build_without_initializer_uses_empty_expression_node() {
+        val tokens =
+            listOf(
+                TestUtils.token(TokenType.LET),
+                TestUtils.token(TokenType.IDENTIFIER, "x"),
+                TestUtils.syntax(":"),
+                TestUtils.token(TokenType.NUMBER_TYPE),
+                TestUtils.syntax(";"),
+            )
+
+        val node = VariableDeclarationBuilder(tokens).build()
+
+        assertTrue(node is VariableDeclarationNode)
+        val decl = node as VariableDeclarationNode
+        assertTrue(decl.expression === EmptyExpressionNode)
     }
 }

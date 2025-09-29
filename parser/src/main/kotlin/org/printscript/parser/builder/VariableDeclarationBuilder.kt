@@ -5,6 +5,7 @@ import org.printscript.parser.ParseException
 import org.printscript.parser.helpers.TokenHandler
 import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.ConstantDeclarationNode
+import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.VariableDeclarationNode
 import org.printscript.token.Token
 import org.printscript.token.TokenType
@@ -50,11 +51,14 @@ class VariableDeclarationBuilder(private val line: List<Token>) : Builder {
             if (isConst) throw ParseException("La constante '$name' requiere un inicializador", identifier.line, identifier.column)
             handler.consume(TokenType.SYNTAX, "Se esperaba ';' después de la declaración.")
 
-            return VariableDeclarationNode(name, type, ExpressionBuilder(emptyList()).build(), position)
+            return VariableDeclarationNode(name, type, EmptyExpressionNode, position)
         }
 
         handler.consume(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable.")
         val exprTokens = handler.collectExpressionTokens(false)
+        if (exprTokens.isEmpty()) {
+            throw ParseException("Se esperaba una expresión después de '='", identifier.line, identifier.column)
+        }
         val semi = handler.consume(TokenType.SYNTAX, "Se esperaba ';' después de la declaración.")
         if (semi.value != ";") throw ParseException("Se esperaba ';' pero encontré '${semi.value}'", semi.line, semi.column)
 

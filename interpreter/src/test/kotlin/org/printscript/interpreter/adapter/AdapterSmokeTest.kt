@@ -6,6 +6,7 @@ import org.printscript.interpreter.eval.Executor
 import org.printscript.interpreter.ir.BoolLit
 import org.printscript.interpreter.ir.IfIR
 import org.printscript.interpreter.runtime.Environment
+import org.printscript.interpreter.util.TestIO
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.IfElseNode
@@ -50,7 +51,7 @@ class AdapterSmokeTest {
         val ir = ASTtoIR().transform(progAst)
 
         val out = StringBuilder()
-        val exec = Executor(Environment()) { s -> out.appendLine(s) }
+        val exec = Executor(Environment(), { out.append(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("3\n", out.toString())
@@ -62,25 +63,13 @@ class AdapterSmokeTest {
         val programAst =
             listOf(
                 IfElseNode(
-                    ifBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("Si", TokenType.STRING), pos),
-                        ),
-                    elseBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("No", TokenType.STRING), pos),
-                        ),
+                    ifBranch = listOf(PrintStatementNode(LiteralNode("Si", TokenType.STRING), pos)),
+                    elseBranch = listOf(PrintStatementNode(LiteralNode("No", TokenType.STRING), pos)),
                     condition = LiteralNode(true, TokenType.TRUE),
                 ),
                 IfElseNode(
-                    ifBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("Nunca", TokenType.STRING), pos),
-                        ),
-                    elseBranch =
-                        listOf(
-                            PrintStatementNode(LiteralNode("Siempre", TokenType.STRING), pos),
-                        ),
+                    ifBranch = listOf(PrintStatementNode(LiteralNode("Nunca", TokenType.STRING), pos)),
+                    elseBranch = listOf(PrintStatementNode(LiteralNode("Siempre", TokenType.STRING), pos)),
                     condition = LiteralNode(false, TokenType.FALSE),
                 ),
             )
@@ -93,7 +82,7 @@ class AdapterSmokeTest {
         assertIs<BoolLit>(secondIf.condition)
 
         val out = StringBuilder()
-        val exec = Executor(Environment()) { out.appendLine(it) }
+        val exec = Executor(Environment(), { out.append(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
         assertEquals("Si\nSiempre\n", out.toString())

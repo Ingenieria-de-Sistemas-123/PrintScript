@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.printscript'
-version = '1.2-SNAPSHOT'
+version = '1.3-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -16,4 +16,12 @@ dependencies {
     implementation project(':lexer')
     implementation project(':parser')
     implementation project(':interpreter')
+}
+
+test {
+    minHeapSize = "64m"
+    maxHeapSize = "128m"
+    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+    environment "USER", "tais"
+    environment "MY_VAR", "valor"
 }

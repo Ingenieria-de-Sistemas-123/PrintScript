@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.printscript'
-version = '1.7-SNAPSHOT'
+version = '1.8-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -21,4 +21,6 @@ test {
     minHeapSize = "64m"
     maxHeapSize = "128m"
     jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+    environment "USER", "tais"
+    environment "MY_VAR", "valor"
 }

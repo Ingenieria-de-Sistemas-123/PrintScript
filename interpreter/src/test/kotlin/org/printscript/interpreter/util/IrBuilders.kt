@@ -40,7 +40,7 @@ fun slash(
 fun decl(
     name: String,
     type: RType,
-    init: ExprIR,
+    init: ExprIR?,
 ) = DeclIR(name, type, init)
 
 fun assign(

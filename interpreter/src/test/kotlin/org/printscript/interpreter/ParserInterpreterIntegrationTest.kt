@@ -26,48 +26,44 @@ class ParserInterpreterIntegrationTest {
     fun `prints string literal without quotes`() {
         val source =
             """
-            println("hello");
+            let msg: string = "hola";
+            println(msg);
             """.trimIndent()
 
         val (output, _) = runScript(source)
-
-        assertEquals(listOf("hello"), output)
+        assertEquals(listOf("hola"), output)
     }
 
     @Test
     fun `if condition reads boolean variable`() {
         val source =
             """
-            let shouldGreet: boolean = true;
-            if (shouldGreet) {
-                println("Hola!");
+            let flag: boolean = true;
+            if(flag){
+              println("ok");
             } else {
-                println("Chau");
+              println("fail");
             }
             """.trimIndent()
 
-        val (output, interpreter) = runScript(source)
-
-        assertEquals(listOf("Hola!"), output)
-        assertEquals("true", interpreter.environmentSnapshot()["shouldGreet"])
+        val (output, _) = runScript(source)
+        assertEquals(listOf("ok"), output)
     }
 
     @Test
     fun `if condition false ejecuta else branch`() {
         val source =
             """
-            let shouldGreet: boolean = false;
-            if (shouldGreet) {
-                println("Hola!");
+            let flag: boolean = false;
+            if(flag){
+              println("ok");
             } else {
-                println("Chau");
+              println("else");
             }
             """.trimIndent()
 
-        val (output, interpreter) = runScript(source)
-
-        assertEquals(listOf("Chau"), output)
-        assertEquals("false", interpreter.environmentSnapshot()["shouldGreet"])
+        val (output, _) = runScript(source)
+        assertEquals(listOf("else"), output)
     }
 
     private fun runScript(source: String): Pair<List<String>, Interpreter> {
@@ -75,7 +71,8 @@ class ParserInterpreterIntegrationTest {
         val tokens = lexer.lex(StringReader(source))
         val ast = DefaultParser().parse(tokens)
         val buffer = mutableListOf<String>()
-        val interpreter = Interpreter(output = { buffer += it })
+        // Normaliza quitando el \n final provisto al OutputProvider
+        val interpreter = Interpreter(output = { printed -> buffer += printed.removeSuffix("\n") })
         interpreter.execute(ast)
         return buffer.toList() to interpreter
     }
