@@ -30,7 +30,7 @@ class RunnerFileIOTest {
                     else -> null
                 }
             }
-        val outputProvider = OutputProvider { text -> outputFile.appendText(text) }
+        val outputProvider = OutputProvider { text -> outputFile.appendText("$text\n") }
         val ioContext = IOContext(inputProvider, envProvider)
         val interpreter = Interpreter(output = outputProvider, ioContext = ioContext)
         val runner =
@@ -45,7 +45,7 @@ class RunnerFileIOTest {
 
         // Verifica el output
         val outputLines = outputFile.readLines()
-        assertEquals(listOf("Ada"), outputLines)
+        assertEquals(listOf("Nombre:", "Ada"), outputLines)
 
         // Limpieza
         inputFile.delete()

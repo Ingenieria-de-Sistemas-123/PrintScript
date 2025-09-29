@@ -106,7 +106,7 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer(ctx)
         interpreter.execute(ast)
 
-        assertEquals(listOf("Ada"), out.lines)
+        assertEquals(listOf("Nombre:", "Ada"), out.lines)
         assertEquals("Ada", interpreter.environmentSnapshot()["name"])
     }
 
