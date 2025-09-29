@@ -54,7 +54,7 @@ class AdapterSmokeTest {
         val exec = Executor(Environment(), { out.append(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
-        assertEquals("3\n", out.toString())
+        assertEquals("3", out.toString())
     }
 
     @Test
@@ -85,7 +85,7 @@ class AdapterSmokeTest {
         val exec = Executor(Environment(), { out.append(it) }, TestIO.empty)
         ir.forEach { it.accept(exec) }
 
-        assertEquals("Si\nSiempre\n", out.toString())
+        assertEquals("SiSiempre", out.toString())
     }
 
     @Test

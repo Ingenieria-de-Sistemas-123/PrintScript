@@ -30,7 +30,7 @@ class InterpreterHappyPathIT : BaseInterpreterIT() {
         val (interpreter, out) = newInterpreterWithBuffer()
         interpreter.execute(ast)
         assertEquals(listOf("7", "hola!2025", "8"), out.lines)
-        assertEquals(listOf("7\n", "hola!2025\n", "8\n"), out.raw)
+        assertEquals(listOf("7", "hola!2025", "8"), out.raw)
     }
 
     @Test

@@ -33,7 +33,7 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Hola mundo\n"), capturedOutput)
+        assertEquals(listOf("Hola mundo"), capturedOutput)
     }
 
     @Test
@@ -57,7 +57,7 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Hola\n", "Hola!\n"), capturedOutput)
+        assertEquals(listOf("Hola", "Hola!"), capturedOutput)
     }
 
     @Test
@@ -82,7 +82,7 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("7\n", "3\n"), capturedOutput)
+        assertEquals(listOf("7", "3"), capturedOutput)
     }
 
     @Test
@@ -106,7 +106,7 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("true\n", "done\n"), capturedOutput)
+        assertEquals(listOf("true", "done"), capturedOutput)
     }
 
     @Test
@@ -153,7 +153,7 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Hola!\n"), capturedOutput)
+        assertEquals(listOf("Hola!"), capturedOutput)
     }
 
     @Test
@@ -177,6 +177,6 @@ class RunnerTest {
             ),
             interpreter.environmentSnapshot(),
         )
-        assertEquals(listOf("Chau\n"), capturedOutput)
+        assertEquals(listOf("Chau"), capturedOutput)
     }
 }

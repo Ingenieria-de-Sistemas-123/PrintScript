@@ -40,7 +40,7 @@ internal class Executor(
 
     override fun visitPrint(p: PrintIR) {
         when (val v = p.expr.accept(eval)) {
-            is Value.Num, is Value.Str -> output.println(v.asString() + "\n")
+            is Value.Num, is Value.Str -> output.println(v.asString())
             else -> throw RuntimeError("println solo acepta valores de tipo number o string")
         }
     }
