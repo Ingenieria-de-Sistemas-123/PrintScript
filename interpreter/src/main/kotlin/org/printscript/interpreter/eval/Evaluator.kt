@@ -1,6 +1,7 @@
 package org.printscript.interpreter.eval
 
 import org.printscript.interpreter.io.IOContext
+import org.printscript.interpreter.io.OutputProvider
 import org.printscript.interpreter.ir.Binary
 import org.printscript.interpreter.ir.BoolLit
 import org.printscript.interpreter.ir.ExprVisitor
@@ -19,6 +20,7 @@ import org.printscript.interpreter.runtime.asString
 
 internal class Evaluator(
     private val env: Environment,
+    private val output: OutputProvider,
     private val io: IOContext,
 ) : ExprVisitor<Value> {
     override fun visitNum(n: NumLit): Value = Num(n.value)
@@ -31,6 +33,9 @@ internal class Evaluator(
 
     override fun visitReadInput(r: ReadInput): Value {
         val prompt = requireString(r.prompt.accept(this), "readInput")
+        if (prompt.isNotEmpty()) {
+            output.println(prompt)
+        }
         val line = io.input.readLine(prompt) ?: ""
         return Str(line)
     }

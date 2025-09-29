@@ -20,7 +20,7 @@ internal class Executor(
     private val output: OutputProvider,
     private val io: IOContext,
 ) : StmtVisitor<Unit> {
-    private val eval = Evaluator(env, io)
+    private val eval = Evaluator(env, output, io)
 
     override fun visitDecl(d: DeclIR) {
         val init = d.initializer?.accept(eval)
