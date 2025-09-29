@@ -18,7 +18,7 @@ class LexerTest {
             """.trimIndent()
 
         val lexer = Lexer(PreConfiguredTokens.TOKENS_1_1)
-        val tokens = lexer.lex(StringReader(code))
+        val tokens = lexer.lex(StringReader(code)).toList()
         val types = tokens.map { it.type }
 
         assertTrue(types.contains(TokenType.LET))
@@ -47,7 +47,7 @@ class LexerTest {
             """.trimIndent()
 
         val lexer = Lexer(PreConfiguredTokens.TOKENS_1_1)
-        val it = lexer.lexLines(StringReader(code))
+        val it = lexer.lexLines(StringReader(code)).iterator()
 
         val l1 = it.next()
         assertEquals(TokenType.LET, l1.first().type)
@@ -63,7 +63,7 @@ class LexerTest {
         val code = "let x: number = $ 10;"
         val lexer = Lexer(PreConfiguredTokens.TOKENS_1_1)
         assertFailsWith<IllegalStateException> {
-            lexer.lex(StringReader(code))
+            lexer.lex(StringReader(code)).toList()
         }
     }
 }
