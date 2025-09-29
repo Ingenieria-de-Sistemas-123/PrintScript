@@ -39,5 +39,21 @@ class Interpreter(
         errorHandler: ErrorHandler? = null,
     ) = execute(ast.asIterable(), errorHandler)
 
+    fun executeNode(
+        node: ASTNode,
+        errorHandler: ErrorHandler? = null,
+    ) {
+        try {
+            val stmt = adapter.toStmt(node)
+            stmt.accept(exec)
+        } catch (oom: OutOfMemoryError) {
+            val handler = errorHandler ?: throw oom
+            handler.reportError(oom.message ?: "Java heap space")
+        } catch (ex: Exception) {
+            val handler = errorHandler ?: throw ex
+            handler.reportError(ex.message ?: ex.toString())
+        }
+    }
+
     fun environmentSnapshot(): Map<String, String> = env.snapshot()
 }
