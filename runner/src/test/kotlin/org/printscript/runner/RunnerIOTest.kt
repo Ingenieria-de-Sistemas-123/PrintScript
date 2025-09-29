@@ -36,7 +36,7 @@ class RunnerIOTest {
         val stream = requireNotNull(javaClass.getResourceAsStream("/programs/v1_1/read-env.ps"))
         stream.use { runner.run(it) }
 
-        assertEquals(listOf(System.getenv("USER")?.plus("\n") ?: "\n"), output)
+        assertEquals(listOf(System.getenv("USER")?.plus("") ?: ""), output)
     }
 
     @Test
@@ -54,6 +54,6 @@ class RunnerIOTest {
         val stream = requireNotNull(javaClass.getResourceAsStream("/programs/v1_1/read-input.ps"))
         stream.use { runner.run(it) }
 
-        assertEquals(listOf("Ada\n"), output)
+        assertEquals(listOf("Ada"), output)
     }
 }

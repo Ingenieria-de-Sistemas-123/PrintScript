@@ -35,7 +35,7 @@ class ExecutorTest {
         prog.forEach { it.accept(exec) }
 
         assertEquals(listOf("7"), out.lines)
-        assertEquals(listOf("7\n"), out.raw)
+        assertEquals(listOf("7"), out.raw)
         assertEquals(mapOf("x" to "7"), env.snapshot())
     }
 
@@ -54,7 +54,7 @@ class ExecutorTest {
         prog.forEach { it.accept(exec) }
 
         assertEquals(listOf("hola2025"), out.lines)
-        assertEquals(listOf("hola2025\n"), out.raw)
+        assertEquals(listOf("hola2025"), out.raw)
         assertEquals(mapOf("s" to "hola"), env.snapshot())
     }
 
@@ -72,7 +72,7 @@ class ExecutorTest {
 
         prog.forEach { it.accept(exec) }
 
-        assertEquals(listOf("hola2025\n"), out)
+        assertEquals(listOf("hola2025"), out)
     }
 
     @Test
