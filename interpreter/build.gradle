@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.printscript'
-version = '1.9-SNAPSHOT'
+version = '2.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
