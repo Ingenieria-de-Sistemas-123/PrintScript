@@ -17,6 +17,8 @@ class Runner(
         val reader = InputStreamReader(inputStream)
         val tokens = lexer.lex(reader)
         val ast = parser.parse(tokens)
-        interpreter.execute(ast)
+        for (node in ast) {
+            interpreter.executeNode(node)
+        }
     }
 }
