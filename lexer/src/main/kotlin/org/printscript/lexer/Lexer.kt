@@ -7,78 +7,66 @@ import java.io.BufferedReader
 import java.io.Reader
 
 class Lexer(private val tokenProvider: TokenProvider) {
-    fun lexLines(reader: Reader): Iterator<List<Token>> = LineIterator(reader)
+    fun lexLines(reader: Reader): Sequence<List<Token>> =
+        sequence {
+            val bufferedReader: BufferedReader = reader.buffered()
+            var lineNumber = 0
 
-    fun lex(reader: Reader): List<Token> {
-        val flat = mutableListOf<Token>()
-        val it = lexLines(reader)
-        while (it.hasNext()) flat += it.next()
-        val eofPos = if (flat.isEmpty()) 1 else flat.last().column
-        val eofLine = if (flat.isEmpty()) 1 else flat.last().line
-        flat += Token(TokenType.EOF, "", eofLine, eofPos)
-        return flat
-    }
+            while (true) {
+                val rawLine = bufferedReader.readLine() ?: break
+                lineNumber++
+                if (rawLine.isBlank()) continue
 
-    private inner class LineIterator(reader: Reader) : Iterator<List<Token>> {
-        private val bufferedReader: BufferedReader = reader.buffered()
-        private var lineText: String? = null
-        private var lineNumber = 0
-        private var column = 1
-
-        init {
-            nextLine()
+                val tokens = tokenize(rawLine, lineNumber)
+                if (tokens.isNotEmpty()) yield(tokens)
+            }
         }
 
-        private fun nextLine() {
-            lineText = bufferedReader.readLine()
-            lineNumber++
-            column = 1
-        }
-
-        private fun skipBlankLines() {
-            while (lineText != null && lineText!!.isBlank()) nextLine()
-        }
-
-        override fun hasNext(): Boolean {
-            skipBlankLines()
-            return lineText != null
-        }
-
-        override fun next(): List<Token> {
-            if (!hasNext()) throw NoSuchElementException("No more lines to read")
-            val tokens = tokenize(lineText!!)
-            nextLine()
-            return tokens
-        }
-
-        private fun tokenize(line: String): List<Token> {
-            val tokens = mutableListOf<Token>()
-            var pos = 0
-            var col = 1
-
-            fun skipSpace() {
-                while (pos < line.length && line[pos].isWhitespace()) {
-                    pos++
-                    col++
+    fun lex(reader: Reader): Sequence<Token> =
+        sequence {
+            var lastToken: Token? = null
+            for (lineTokens in lexLines(reader)) {
+                for (token in lineTokens) {
+                    lastToken = token
+                    yield(token)
                 }
             }
-
-            while (pos < line.length) {
-                skipSpace()
-                if (pos >= line.length) break
-
-                val match =
-                    tokenProvider.getTokenFor(line, pos)
-                        ?: error("Unexpected character at line $lineNumber, column $col")
-
-                val (lexeme, type) = match
-                val value = lexeme
-                tokens += Token(type, value, lineNumber, col)
-
-                pos += lexeme.length
-                col += lexeme.length
-            }
-            return tokens
+            val eofLine = lastToken?.line ?: 1
+            val eofColumn = lastToken?.column ?: 1
+            yield(Token(TokenType.EOF, "", eofLine, eofColumn))
         }
+
+    fun lexToList(reader: Reader): List<Token> = lex(reader).toList()
+
+    private fun tokenize(
+        line: String,
+        lineNumber: Int,
+    ): List<Token> {
+        val tokens = mutableListOf<Token>()
+        var pos = 0
+        var col = 1
+
+        fun skipSpace() {
+            while (pos < line.length && line[pos].isWhitespace()) {
+                pos++
+                col++
+            }
+        }
+
+        while (pos < line.length) {
+            skipSpace()
+            if (pos >= line.length) break
+
+            val match =
+                tokenProvider.getTokenFor(line, pos)
+                    ?: error("Unexpected character at line $lineNumber, column $col")
+
+            val (lexeme, type) = match
+            tokens += Token(type, lexeme, lineNumber, col)
+
+            pos += lexeme.length
+            col += lexeme.length
+        }
+        return tokens
     }
 }

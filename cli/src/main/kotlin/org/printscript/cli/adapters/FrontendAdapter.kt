@@ -25,23 +25,17 @@ class FrontendAdapter(
     ): Result<List<ASTNode>> {
         val provider = tokenProvider ?: providerFor(languageVersion)
 
-        val tokens =
-            try {
-                val lexer = Lexer(provider)
-                val output = lexer.lex(StringReader(source))
-                println("Lexing: 100%")
-                output
-            } catch (e: LexicalException) {
-                return Result.failure(toCliFailure(e.message ?: "Lexical error", e.line, e.column, sourcePath))
-            } catch (e: Exception) {
-                return Result.failure(toCliFailure(e.message ?: "Lexical error", 1, 1, sourcePath))
-            }
-
         val parser = DefaultParser()
         return try {
-            val ast = parser.parse(tokens)
+            val lexer = Lexer(provider)
+            val tokenStream = lexer.lex(StringReader(source))
+            println("Lexing: 100%")
+
+            val ast = parser.parse(tokenStream).toList()
             println("Parsing: 100%")
             Result.success(ast)
+        } catch (e: LexicalException) {
+            Result.failure(toCliFailure(e.message ?: "Lexical error", e.line, e.column, sourcePath))
         } catch (e: ParseException) {
             Result.failure(toCliFailure(e.message ?: "Parsing error", e.line, e.column, sourcePath))
         } catch (e: Exception) {

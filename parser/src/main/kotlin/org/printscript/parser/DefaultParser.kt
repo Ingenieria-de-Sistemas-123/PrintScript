@@ -1,25 +1,25 @@
 package org.printscript.parser
 
 import org.printscript.parser.helpers.ASTGenerator
-import org.printscript.parser.helpers.TokenHandler
 import org.printscript.parser.node.ASTNode
 import org.printscript.token.Token
 import org.printscript.token.TokenType
 
 class DefaultParser : Parser {
-    override fun parse(list: List<Token>): List<ASTNode> {
-        val handler = TokenHandler(list)
-        val nodes = mutableListOf<ASTNode>()
-        val generator = ASTGenerator()
+    override fun parse(tokens: Sequence<Token>): Sequence<ASTNode> =
+        sequence {
+            val handler = ProgramTokenCursor(tokens)
+            val generator = ASTGenerator()
 
-        while (!handler.isAtEnd() && handler.peek().type != TokenType.EOF) {
-            val statementTokens = collectStatement(handler)
-            nodes += generator.createAST(statementTokens)
+            while (!handler.isAtEnd() && handler.peek().type != TokenType.EOF) {
+                val statementTokens = collectStatement(handler)
+                if (statementTokens.isNotEmpty()) {
+                    yield(generator.createAST(statementTokens))
+                }
+            }
         }
-        return nodes
-    }
 
-    private fun collectStatement(handler: TokenHandler): List<Token> {
+    private fun collectStatement(handler: ProgramTokenCursor): List<Token> {
         val statement = mutableListOf<Token>()
 
         fun take(): Token {
@@ -83,5 +83,37 @@ class DefaultParser : Parser {
             if (t.type == TokenType.SYNTAX && t.value == ";") break
         }
         return statement
+    }
+
+    private class ProgramTokenCursor(tokens: Sequence<Token>) {
+        private val iterator = tokens.iterator()
+        private var lookahead: Token? = null
+        private var exhausted = false
+        private var last: Token = Token(TokenType.EOF, "", 1, 1)
+
+        fun peek(): Token {
+            if (lookahead == null) {
+                lookahead =
+                    if (iterator.hasNext()) {
+                        iterator.next().also { if (it.type == TokenType.EOF) exhausted = true }
+                    } else {
+                        exhausted = true
+                        Token(TokenType.EOF, "", last.line, last.column)
+                    }
+            }
+            return lookahead!!
+        }
+
+        fun advance(): Token {
+            val current = peek()
+            lookahead = null
+            last = current
+            return current
+        }
+
+        fun isAtEnd(): Boolean {
+            val token = peek()
+            return exhausted && token.type == TokenType.EOF
+        }
     }
 }
