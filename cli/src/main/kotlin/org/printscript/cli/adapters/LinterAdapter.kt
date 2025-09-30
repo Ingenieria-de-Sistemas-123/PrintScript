@@ -3,8 +3,10 @@ package org.printscript.cli.adapters
 import org.printscript.linter.LintConfig
 import org.printscript.linter.Linter
 import org.printscript.linter.issue.Issue
+import org.printscript.linter.rules.IdentifierStyleRule
 import org.printscript.linter.rules.NoDuplicateVariableRule
 import org.printscript.linter.rules.PrintlnRestrictionRule
+import org.printscript.linter.rules.ReadInputPromptRule
 import org.printscript.linter.rules.StringNumberConcatRule
 import org.printscript.parser.node.ASTNode
 
@@ -15,8 +17,10 @@ class LinterAdapter(
             rules =
                 listOf(
                     NoDuplicateVariableRule(),
+                    IdentifierStyleRule(),
                     PrintlnRestrictionRule(),
                     StringNumberConcatRule(),
+                    ReadInputPromptRule(),
                 ),
             config = config,
         ),

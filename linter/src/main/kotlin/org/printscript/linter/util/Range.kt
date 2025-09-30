@@ -7,6 +7,7 @@ import org.printscript.parser.node.DeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.ReadInputNode
 
 data class Range(val sl: Int, val sc: Int, val el: Int, val ec: Int)
 
@@ -19,6 +20,7 @@ fun rangeOf(node: ASTNode): Range =
         is PrintStatementNode -> p(node.position)
         is DoubleExpressionNode -> p(node.position)
         is LiteralNode<*> -> Range(1, 1, 1, 1)
+        is ReadInputNode -> p(node.position)
         else -> Range(1, 1, 1, 1)
     }
 

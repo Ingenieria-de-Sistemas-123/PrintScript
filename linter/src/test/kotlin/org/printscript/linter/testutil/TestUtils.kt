@@ -9,6 +9,7 @@ import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.ReadInputNode
 import org.printscript.parser.node.VariableDeclarationNode
 import org.printscript.token.TokenType
 
@@ -21,6 +22,8 @@ object TestUtils {
     fun num(n: Number) = LiteralNode(n, TokenType.NUMBER)
 
     fun str(s: String) = LiteralNode(s, TokenType.STRING)
+
+    fun identifier(name: String) = LiteralNode(name, TokenType.IDENTIFIER)
 
     fun bool(b: Boolean) = LiteralNode(b, if (b) TokenType.TRUE else TokenType.FALSE)
 
@@ -57,6 +60,12 @@ object TestUtils {
         line: Int = 1,
         col: Int = 1,
     ) = PrintStatementNode(expr, pos(line, col))
+
+    fun readInput(
+        expr: ASTNode,
+        line: Int = 1,
+        col: Int = 1,
+    ) = ReadInputNode(expr, pos(line, col))
 
     fun declVar(
         name: String,

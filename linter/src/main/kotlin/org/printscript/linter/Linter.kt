@@ -11,6 +11,7 @@ import org.printscript.parser.node.EmptyExpressionNode
 import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
+import org.printscript.parser.node.ReadInputNode
 
 class Linter(
     private val rules: List<Rule>,
@@ -38,6 +39,7 @@ class Linter(
                     node.ifBranch.forEach(::visit)
                     node.elseBranch.forEach(::visit)
                 }
+                is ReadInputNode -> visit(node.expression)
                 is LiteralNode<*> -> { }
                 else -> { }
             }
