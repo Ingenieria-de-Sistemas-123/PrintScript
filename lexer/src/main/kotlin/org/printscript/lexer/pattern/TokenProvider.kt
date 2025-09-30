@@ -14,9 +14,7 @@ sealed interface TokenProvider {
 
     companion object {
         infix fun builder(tokenMap: Map<String, TokenType>): TokenProvider {
-            val linked = java.util.LinkedHashMap<String, TokenType>()
-            tokenMap.forEach { (k, v) -> linked[k] = v }
-            return TokenProviderImplementation(linked)
+            return TokenProviderImplementation.from(tokenMap)
         }
     }
 }

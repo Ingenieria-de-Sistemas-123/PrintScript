@@ -23,17 +23,11 @@ class FrontendAdapter(
         source: String,
         sourcePath: String,
     ): Result<List<ASTNode>> {
-        val provider = tokenProvider ?: providerFor(languageVersion)
-
-        val parser = DefaultParser()
+        val seqResult = parseProgramSequence(source, sourcePath)
+        if (seqResult.isFailure) return Result.failure(seqResult.exceptionOrNull()!!)
+        val seq = seqResult.getOrThrow()
         return try {
-            val lexer = Lexer(provider)
-            val tokenStream = lexer.lex(StringReader(source))
-            println("Lexing: 100%")
-
-            val ast = parser.parse(tokenStream).toList()
-            println("Parsing: 100%")
-            Result.success(ast)
+            Result.success(seq.toList())
         } catch (e: LexicalException) {
             Result.failure(toCliFailure(e.message ?: "Lexical error", e.line, e.column, sourcePath))
         } catch (e: ParseException) {
@@ -41,6 +35,48 @@ class FrontendAdapter(
         } catch (e: Exception) {
             Result.failure(toCliFailure(e.message ?: "Parsing error", 1, 1, sourcePath))
         }
+    }
+
+    /**
+     * Devuelve Sequence<ASTNode> sin materializar.
+     * Detecta inmediatamente caracteres de control no permitidos y retorna failure.
+     * El resto de errores léxicos/parsing se propagan de forma lazy al consumir la secuencia.
+     */
+    fun parseProgramSequence(
+        source: String,
+        sourcePath: String,
+    ): Result<Sequence<ASTNode>> {
+        // Detección temprana (contrato de test: control chars producen failure inmediato)
+        val badChar = source.firstOrNull { isIllegalControl(it) }
+        if (badChar != null) {
+            return Result.failure(
+                toCliFailure(
+                    "Lexical error: invalid control character 0x${badChar.code.toString(16)}",
+                    1,
+                    1,
+                    sourcePath,
+                ),
+            )
+        }
+        return try {
+            val provider = tokenProvider ?: providerFor(languageVersion)
+            val lexer = Lexer(provider)
+            val tokenStream = lexer.lex(StringReader(source)) // Sequence<Token>
+            val parser = DefaultParser()
+            val astSeq = parser.parse(tokenStream) // Sequence<ASTNode> (lazy)
+            Result.success(astSeq)
+        } catch (e: LexicalException) {
+            // errores léxicos no cubiertos por control-char (si el lexer lanza temprano)
+            Result.failure(toCliFailure(e.message ?: "Lexical error", e.line, e.column, sourcePath))
+        } catch (e: Exception) {
+            Result.failure(toCliFailure(e.message ?: e.toString(), 1, 1, sourcePath))
+        }
+    }
+
+    private fun isIllegalControl(c: Char): Boolean {
+        val code = c.code
+        // Permitimos tab (9), LF (10), CR (13) y cualquier >= 32
+        return code < 32 && code != 9 && code != 10 && code != 13
     }
 
     private fun providerFor(version: String): TokenProvider =
