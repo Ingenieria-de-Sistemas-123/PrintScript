@@ -62,8 +62,7 @@ class RuleApplier(
             }
         }
 
-        if (out.isNotEmpty() && out.last() != '\n') out.append('\n')
-        return out.toString()
+        return out.toString().replace(Regex("\\R+\\z"), "")
     }
 
     private fun renderRaw(t: FormatToken): String =
