@@ -72,7 +72,7 @@ class CodeFormatterIT {
             "let x: number = 1.0 + 2.0 * 3.0;\n" +
                 "println(\"x\");\n" +
                 "x = \"x\" + 1.0;\n" +
-                "println(\"x\");\n"
+                "println(\"x\");"
         assertEquals(expected, pretty)
     }
 
@@ -97,7 +97,7 @@ class CodeFormatterIT {
                 spaceAfterColon = true,
             )
         val pretty = CodeFormatter().format(ast, cfg)
-        assertEquals("let a: number = 5.0;println(\"a\");\n", pretty)
+        assertEquals("let a: number = 5.0;println(\"a\");", pretty)
     }
 
     @Test
@@ -138,6 +138,6 @@ class CodeFormatterIT {
 
         val pretty = CodeFormatter().format(ast, cfg)
 
-        assertEquals("let name: string;\n", pretty)
+        assertEquals("let name: string;", pretty)
     }
 }

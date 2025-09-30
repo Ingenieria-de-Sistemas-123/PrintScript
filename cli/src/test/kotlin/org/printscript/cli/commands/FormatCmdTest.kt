@@ -124,7 +124,7 @@ class FormatCmdTest {
 
     @Test
     fun formatApplyOnAlreadyFormattedPrintsOK() {
-        val src = "let a: string = \"x\";\nprintln(\"x\");\n" // 👈 incluye \n final
+        val src = "let a: string = \"x\";\nprintln(\"x\");"
         val f = temp.resolve("apply_ok.ps").apply { writeText(src) }
 
         val r = CommandRunner.run("format", "-f", f.path, "--apply")
