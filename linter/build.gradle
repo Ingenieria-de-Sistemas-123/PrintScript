@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.printscript'
-version = '1.4-SNAPSHOT'
+version = '1.5-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -14,6 +14,7 @@ dependencies {
     implementation project(':common')
     implementation project(':lexer')
     implementation project(':token')
+    implementation "com.google.code.gson:gson:2.11.0"
 
     testImplementation(project(":lexer"))
     testImplementation 'org.jetbrains.kotlin:kotlin-test'

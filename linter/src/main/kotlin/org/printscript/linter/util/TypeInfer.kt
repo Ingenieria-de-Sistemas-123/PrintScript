@@ -5,6 +5,7 @@ import org.printscript.parser.node.ASTNode
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.LiteralNode
+import org.printscript.parser.node.ReadInputNode
 
 fun inferType(
     expr: ASTNode,
@@ -39,6 +40,7 @@ fun inferType(
             }
 
         is AssignationNode -> inferType(expr.expression, lintContext)
+        is ReadInputNode -> "string"
 
         else -> null
     }

@@ -4,15 +4,19 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.printscript.linter.issue.Severity
+import org.printscript.linter.rules.IdentifierStyleRule
 import org.printscript.linter.rules.LintContext
 import org.printscript.linter.rules.NoDuplicateVariableRule
 import org.printscript.linter.rules.PrintlnRestrictionRule
+import org.printscript.linter.rules.ReadInputPromptRule
 import org.printscript.linter.rules.StringNumberConcatRule
 import org.printscript.linter.testutil.TestUtils.declConst
 import org.printscript.linter.testutil.TestUtils.declVar
+import org.printscript.linter.testutil.TestUtils.identifier
 import org.printscript.linter.testutil.TestUtils.num
 import org.printscript.linter.testutil.TestUtils.plus
 import org.printscript.linter.testutil.TestUtils.printlnNode
+import org.printscript.linter.testutil.TestUtils.readInput
 import org.printscript.linter.testutil.TestUtils.str
 
 class RulesTest {
@@ -70,5 +74,42 @@ class RulesTest {
         assertEquals("string-number-concat", i2.first().ruleId)
         assertTrue(i3.isEmpty())
         assertTrue(i4.isEmpty())
+    }
+
+    @Test
+    fun `IdentifierStyleRule honours config`() {
+        val camelRule = IdentifierStyleRule()
+        val camelCtx = LintContext(LintConfig(identifierStyle = IdentifierStyle.CAMEL_CASE))
+        val snakeRule = IdentifierStyleRule()
+        val snakeCtx = LintContext(LintConfig(identifierStyle = IdentifierStyle.SNAKE_CASE))
+
+        val camelOk = declVar("validName", "string", str("ok"), 1, 1)
+        val camelBad = declVar("invalid_name", "string", str("ok"), 2, 1)
+        val snakeOk = declVar("valid_name", "string", str("ok"), 3, 1)
+        val snakeBad = declVar("invalidName", "string", str("ok"), 4, 1)
+
+        assertTrue(camelRule.check(camelOk, camelCtx).isEmpty())
+        assertEquals(1, camelRule.check(camelBad, camelCtx).size)
+
+        assertTrue(snakeRule.check(snakeOk, snakeCtx).isEmpty())
+        assertEquals(1, snakeRule.check(snakeBad, snakeCtx).size)
+    }
+
+    @Test
+    fun `ReadInputPromptRule forbids complex expressions`() {
+        val rule = ReadInputPromptRule()
+        val ctx = LintContext(LintConfig())
+
+        val literalPrompt = readInput(str("nombre"))
+        val identifierPrompt = readInput(identifier("prompt"))
+        val invalidPrompt = readInput(plus(str("a"), str("b")))
+
+        assertTrue(rule.check(literalPrompt, ctx).isEmpty())
+        assertTrue(rule.check(identifierPrompt, ctx).isEmpty())
+
+        val issues = rule.check(invalidPrompt, ctx)
+        assertEquals(1, issues.size)
+        assertEquals("read-input-prompt", issues.first().ruleId)
+        assertEquals(Severity.ERROR, issues.first().severity)
     }
 }
