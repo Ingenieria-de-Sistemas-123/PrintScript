@@ -13,25 +13,18 @@ class IdentifierStyleRule : Rule {
         node: ASTNode,
         lintContext: LintContext,
     ): List<Issue> {
-        val identifier: String
-        val position =
+        val style = lintContext.config.identifierStyle ?: return emptyList() // sin estilo -> no aplica
+
+        val (identifier, position) =
             when (node) {
-                is DeclarationNode -> {
-                    identifier = node.identifier
-                    node.position
-                }
-                is AssignationNode -> {
-                    identifier = node.variable
-                    node.position
-                }
+                is DeclarationNode -> node.identifier to node.position
+                is AssignationNode -> node.variable to node.position
                 else -> return emptyList()
             }
 
-        val style = lintContext.config.identifierStyle
         if (isValid(identifier, style)) return emptyList()
 
         val range = idRange(identifier, position)
-
         val expected =
             when (style) {
                 IdentifierStyle.CAMEL_CASE -> "camelCase"
@@ -52,16 +45,16 @@ class IdentifierStyleRule : Rule {
     }
 
     private fun isValid(
-        identifier: String,
+        name: String,
         style: IdentifierStyle,
     ): Boolean =
         when (style) {
-            IdentifierStyle.CAMEL_CASE -> CAMEL_CASE.matches(identifier)
-            IdentifierStyle.SNAKE_CASE -> SNAKE_CASE.matches(identifier)
+            IdentifierStyle.CAMEL_CASE -> CAMEL_REGEX.matches(name)
+            IdentifierStyle.SNAKE_CASE -> SNAKE_REGEX.matches(name)
         }
 
     companion object {
-        private val CAMEL_CASE = Regex("^[a-z][A-Za-z0-9]*\$")
-        private val SNAKE_CASE = Regex("^[a-z]+(?:_[a-z0-9]+)*\$")
+        private val CAMEL_REGEX = Regex("^[a-z]+(?:[A-Z][a-z0-9]*)*$")
+        private val SNAKE_REGEX = Regex("^[a-z]+(?:_[a-z0-9]+)*$")
     }
 }
