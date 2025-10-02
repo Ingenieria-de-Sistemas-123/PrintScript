@@ -209,7 +209,7 @@ class ASTEmitter(private val cfg: FormatterConfig) {
             }
 
             TokenType.NUMBER -> {
-                acc.add(FormatToken.NumberLit(node.value.toString()))
+                acc.add(FormatToken.NumberLit(formatNumber(node.value.toString())))
                 return
             }
 
@@ -223,7 +223,7 @@ class ASTEmitter(private val cfg: FormatterConfig) {
         }
 
         when (val value = node.value) {
-            is Number -> acc.add(FormatToken.NumberLit(value.toString()))
+            is Number -> acc.add(FormatToken.NumberLit(formatNumber(value.toString())))
             is Boolean -> acc.add(FormatToken.Ident(value.toString()))
             is String -> {
                 val normalized = unquoteAndUnescape(value)
@@ -290,6 +290,8 @@ class ASTEmitter(private val cfg: FormatterConfig) {
                 i++
             }
         }
+
+    private fun formatNumber(raw: String): String = raw.removeSuffix(".0")
 
     private inner class TokenAccumulator {
         val tokens: MutableList<FormatToken> = mutableListOf()
