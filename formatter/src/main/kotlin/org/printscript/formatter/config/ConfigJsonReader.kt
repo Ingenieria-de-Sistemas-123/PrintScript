@@ -22,14 +22,32 @@ class ConfigJsonReader {
         val defaults = FormatterConfig(braceStyle = BraceStyle.SAME_LINE)
 
         return FormatterConfig(
-            spaceBeforeColon = obj.optBoolean("spaceBeforeColon") ?: defaults.spaceBeforeColon,
-            spaceAfterColon = obj.optBoolean("spaceAfterColon") ?: defaults.spaceAfterColon,
-            spaceAroundEquals = obj.optBoolean("spaceAroundEquals") ?: defaults.spaceAroundEquals,
-            spaceAroundOperators = obj.optBoolean("spaceAroundOperators") ?: defaults.spaceAroundOperators,
-            lineJumpBeforePrintln = obj.optInt("lineJumpBeforePrintln") ?: defaults.lineJumpBeforePrintln,
+            spaceBeforeColon = obj.optBoolean("spaceBeforeColon", "spaceBeforeTypeColon", "spaceBeforeType") ?: defaults.spaceBeforeColon,
+            spaceAfterColon = obj.optBoolean("spaceAfterColon", "spaceAfterTypeColon", "spaceAfterType") ?: defaults.spaceAfterColon,
+            spaceAroundEquals =
+                obj.optBoolean(
+                    "spaceAroundEquals",
+                    "spaceAroundAssignment",
+                    "spaceAroundAssign",
+                ) ?: defaults.spaceAroundEquals,
+            spaceAroundOperators =
+                obj.optBoolean(
+                    "spaceAroundOperators",
+                    "spaceAroundOps",
+                    "spaceAroundBinaryOperators",
+                ) ?: defaults.spaceAroundOperators,
+            lineJumpBeforePrintln =
+                obj.optInt(
+                    "lineJumpBeforePrintln",
+                    "printlnLeadingLineJumps",
+                ) ?: defaults.lineJumpBeforePrintln,
             lineJumpAfterSemicolon =
-                obj.optBoolean("lineJumpAfterSemicolon") ?: defaults.lineJumpAfterSemicolon,
-            indentSize = obj.optInt("indentSize") ?: defaults.indentSize,
+                obj.optBoolean(
+                    "lineJumpAfterSemicolon",
+                    "newlineAfterSemicolon",
+                    "lineBreakAfterStatement",
+                ) ?: defaults.lineJumpAfterSemicolon,
+            indentSize = obj.optInt("indentSize", "indent", "indentSpaces") ?: defaults.indentSize,
             braceStyle = obj.optBraceStyle() ?: defaults.braceStyle,
         )
     }

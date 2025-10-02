@@ -28,7 +28,7 @@ class ASTEmitterTest {
             )
         val ast = listOf<ASTNode>(decl)
 
-        val tokens = ASTEmitter(FormatterConfig()).emitProgram(ast)
+        val tokens = ASTEmitter(FormatterConfig(braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE)).emitProgram(ast)
         val expected =
             listOf(
                 FormatToken.Keyword("let"),
@@ -36,7 +36,7 @@ class ASTEmitterTest {
                 FormatToken.Colon,
                 FormatToken.TypeName("number"),
                 FormatToken.Equals,
-                FormatToken.NumberLit("42.0"),
+                FormatToken.NumberLit("42"),
                 FormatToken.Semicolon,
             )
         assertEquals(expected, tokens)
@@ -52,12 +52,12 @@ class ASTEmitterTest {
                     position = pos(),
                 ),
             )
-        val tokens = ASTEmitter(FormatterConfig()).emitProgram(ast)
+        val tokens = ASTEmitter(FormatterConfig(braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE)).emitProgram(ast)
         val expected =
             listOf(
                 FormatToken.Ident("x"),
                 FormatToken.Equals,
-                FormatToken.NumberLit("1.0"),
+                FormatToken.NumberLit("1"),
                 FormatToken.Semicolon,
             )
         assertEquals(expected, tokens)
@@ -69,7 +69,10 @@ class ASTEmitterTest {
             listOf<ASTNode>(
                 PrintStatementNode(LiteralNode("x", TokenType.STRING), pos()),
             )
-        val tokens = ASTEmitter(FormatterConfig(lineJumpBeforePrintln = 1)).emitProgram(ast)
+        val tokens =
+            ASTEmitter(
+                FormatterConfig(lineJumpBeforePrintln = 1, braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE),
+            ).emitProgram(ast)
         val expected =
             listOf(
                 FormatToken.NewLine(1),
@@ -85,7 +88,10 @@ class ASTEmitterTest {
     @Test
     fun `declaracion sin inicializador no emite igual`() {
         val decl = VariableDeclarationNode("name", "string", EmptyExpressionNode, pos())
-        val tokens = ASTEmitter(FormatterConfig()).emitProgram(listOf(decl))
+        val tokens =
+            ASTEmitter(
+                FormatterConfig(braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE),
+            ).emitProgram(listOf(decl))
         val expected =
             listOf(
                 FormatToken.Keyword("let"),

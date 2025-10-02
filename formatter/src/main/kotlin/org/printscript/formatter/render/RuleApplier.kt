@@ -29,8 +29,10 @@ class RuleApplier(
                 is FormatToken.NewLine -> repeat(t.count) { out.append('\n') }
                 is FormatToken.Indent -> out.append(" ".repeat(t.spaces))
 
+                // Revert heuristics: no forced spaces before/after parentheses; emit raw
                 is FormatToken.OpenParen -> out.append('(')
                 is FormatToken.CloseParen -> out.append(')')
+
                 is FormatToken.Comma -> out.append(", ")
                 is FormatToken.Semicolon -> {
                     out.append(';')
@@ -51,7 +53,6 @@ class RuleApplier(
                             next is FormatToken.TypeName ||
                             next is FormatToken.NumberLit ||
                             next is FormatToken.StringLit
-
                     if (needsSpaceAfterKeyword) {
                         if (out.isEmpty() || out.last() != ' ') out.append(' ')
                     }
@@ -69,9 +70,7 @@ class RuleApplier(
 
                 is FormatToken.OpenBrace -> {
                     if (config.braceStyle == BraceStyle.SAME_LINE) {
-                        if (out.isNotEmpty() && out.last() != ' ' && out.last() != '\n') {
-                            out.append(' ')
-                        }
+                        if (out.isNotEmpty() && out.last() != ' ' && out.last() != '\n') out.append(' ')
                     }
                     out.append('{')
                 }
@@ -79,7 +78,6 @@ class RuleApplier(
                 is FormatToken.CloseBrace -> out.append('}')
             }
         }
-
         return out.toString().replace(Regex("\\R+\\z"), "")
     }
 

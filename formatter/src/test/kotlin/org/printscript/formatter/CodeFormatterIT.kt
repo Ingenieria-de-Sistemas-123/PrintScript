@@ -72,9 +72,9 @@ class CodeFormatterIT {
 
         val pretty = CodeFormatter().format(ast, cfg)
         val expected =
-            "let x: number = 1.0 + 2.0 * 3.0;\n" +
+            "let x: number = 1 + 2 * 3;\n" +
                 "println(\"x\");\n" +
-                "x = \"x\" + 1.0;\n" +
+                "x = \"x\" + 1;\n" +
                 "println(\"x\");"
         assertEquals(expected, pretty)
     }
@@ -105,7 +105,7 @@ class CodeFormatterIT {
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val pretty = CodeFormatter().format(ast, cfg)
-        assertEquals("let a: number = 5.0;println(\"a\");", pretty)
+        assertEquals("let a: number = 5;println(\"a\");", pretty)
     }
 
     @Test
