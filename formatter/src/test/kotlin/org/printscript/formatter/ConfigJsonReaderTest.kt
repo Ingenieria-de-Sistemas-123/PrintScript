@@ -2,6 +2,7 @@ package org.printscript.formatter
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.printscript.formatter.config.BraceStyle
 import org.printscript.formatter.config.ConfigJsonReader
 import java.nio.file.Files
 
@@ -18,7 +19,8 @@ class ConfigJsonReaderTest {
               "spaceAroundOperators": true,
               "lineJumpBeforePrintln": 2,
               "lineJumpAfterSemicolon": false,
-              "indentSize": 2
+              "indentSize": 2,
+              "braceStyle": "next_line"
             }
             """.trimIndent(),
         )
@@ -31,6 +33,7 @@ class ConfigJsonReaderTest {
         assertEquals(2, cfg.lineJumpBeforePrintln)
         assertEquals(false, cfg.lineJumpAfterSemicolon)
         assertEquals(2, cfg.indentSize)
+        assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
     }
 
     @Test
@@ -46,5 +49,22 @@ class ConfigJsonReaderTest {
         assertEquals(0, cfg.lineJumpBeforePrintln)
         assertEquals(true, cfg.lineJumpAfterSemicolon)
         assertEquals(8, cfg.indentSize)
+        assertEquals(BraceStyle.SAME_LINE, cfg.braceStyle)
+    }
+
+    @Test
+    fun `brace style interpreta alias`() {
+        val tmp = Files.createTempFile("fmt-", ".json").toFile()
+        tmp.writeText(
+            """
+            {
+              "braceOnNewLine": true,
+              "ifBraceSameLine": false
+            }
+            """.trimIndent(),
+        )
+
+        val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
     }
 }

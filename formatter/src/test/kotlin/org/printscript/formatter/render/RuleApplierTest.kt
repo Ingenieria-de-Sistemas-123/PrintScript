@@ -2,6 +2,7 @@ package org.printscript.formatter.render
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.printscript.formatter.config.BraceStyle
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.formatter.rules.FormatToken
 import org.printscript.formatter.rules.FormatToken.Colon
@@ -17,7 +18,7 @@ import org.printscript.formatter.rules.FormatToken.TypeName
 class RuleApplierTest {
     @Test
     fun `espacios alrededor de '=' on`() {
-        val toks = listOf(FormatToken.Ident("x"), Equals, NumberLit("5.0"), Semicolon)
+        val toks = listOf(Ident("x"), Equals, NumberLit("5.0"), Semicolon)
         val out = RuleApplier(FormatterConfig(spaceAroundEquals = true)).apply(toks)
         assertEquals("x = 5.0;", out)
     }
@@ -35,22 +36,22 @@ class RuleApplierTest {
         val rhs = listOf(TypeName("number"), Semicolon)
 
         val both =
-            RuleApplier(FormatterConfig(spaceBeforeColon = true, spaceAfterColon = true))
+            RuleApplier(FormatterConfig(spaceBeforeColon = true, spaceAfterColon = true, braceStyle = BraceStyle.SAME_LINE))
                 .apply(lhs + Colon + rhs)
         assertEquals("let a : number;", both)
 
         val onlyAfter =
-            RuleApplier(FormatterConfig(spaceBeforeColon = false, spaceAfterColon = true))
+            RuleApplier(FormatterConfig(spaceBeforeColon = false, spaceAfterColon = true, braceStyle = BraceStyle.SAME_LINE))
                 .apply(lhs + Colon + rhs)
         assertEquals("let a: number;", onlyAfter)
 
         val onlyBefore =
-            RuleApplier(FormatterConfig(spaceBeforeColon = true, spaceAfterColon = false))
+            RuleApplier(FormatterConfig(spaceBeforeColon = true, spaceAfterColon = false, braceStyle = BraceStyle.SAME_LINE))
                 .apply(lhs + Colon + rhs)
         assertEquals("let a :number;", onlyBefore)
 
         val none =
-            RuleApplier(FormatterConfig(spaceBeforeColon = false, spaceAfterColon = false))
+            RuleApplier(FormatterConfig(spaceBeforeColon = false, spaceAfterColon = false, braceStyle = BraceStyle.SAME_LINE))
                 .apply(lhs + Colon + rhs)
         assertEquals("let a:number;", none)
     }
@@ -59,21 +60,21 @@ class RuleApplierTest {
     fun `operadores con espacios y deteccion de '-' unario`() {
         // Caso binario: "1 + 2"
         val bin =
-            RuleApplier(FormatterConfig(spaceAroundOperators = true)).apply(
+            RuleApplier(FormatterConfig(spaceAroundOperators = true, braceStyle = BraceStyle.SAME_LINE)).apply(
                 listOf(NumberLit("1.0"), Op(OpKind.PLUS), NumberLit("2.0"), Semicolon),
             )
         assertEquals("1.0 + 2.0;", bin)
 
         // Caso unario tras '=': "x = -1"
         val unary =
-            RuleApplier(FormatterConfig(spaceAroundOperators = true)).apply(
+            RuleApplier(FormatterConfig(spaceAroundOperators = true, braceStyle = BraceStyle.SAME_LINE)).apply(
                 listOf(Ident("x"), Equals, Op(OpKind.MINUS), NumberLit("1.0"), Semicolon),
             )
         assertEquals("x = -1.0;", unary)
 
         // Sin espacios alrededor de operadores
         val noSpaces =
-            RuleApplier(FormatterConfig(spaceAroundOperators = false)).apply(
+            RuleApplier(FormatterConfig(spaceAroundOperators = false, braceStyle = BraceStyle.SAME_LINE)).apply(
                 listOf(NumberLit("3.0"), Op(OpKind.STAR), NumberLit("4.0"), Semicolon),
             )
         assertEquals("3.0*4.0;", noSpaces)
@@ -93,8 +94,58 @@ class RuleApplierTest {
                 Semicolon,
             )
         val out =
-            RuleApplier(FormatterConfig(lineJumpAfterSemicolon = false, spaceAroundEquals = true))
+            RuleApplier(FormatterConfig(lineJumpAfterSemicolon = false, spaceAroundEquals = true, braceStyle = BraceStyle.SAME_LINE))
                 .apply(toks)
         assertEquals("a = 1.0;b = 2.0;", out)
+    }
+
+    @Test
+    fun `open brace same line agrega espacios`() {
+        val toks =
+            listOf(
+                Keyword("if"),
+                FormatToken.Space,
+                FormatToken.OpenParen,
+                NumberLit("1"),
+                FormatToken.CloseParen,
+                FormatToken.Space,
+                FormatToken.OpenBrace,
+                FormatToken.NewLine(),
+                FormatToken.Indent(4),
+                Keyword("println"),
+                FormatToken.OpenParen,
+                FormatToken.StringLit("ok"),
+                FormatToken.CloseParen,
+                Semicolon,
+                FormatToken.CloseBrace,
+            )
+
+        val out = RuleApplier(FormatterConfig(braceStyle = BraceStyle.SAME_LINE)).apply(toks)
+        assertEquals("if (1) {\n    println(\"ok\");\n}", out)
+    }
+
+    @Test
+    fun `open brace en nueva linea`() {
+        val toks =
+            listOf(
+                Keyword("if"),
+                FormatToken.Space,
+                FormatToken.OpenParen,
+                Ident("cond"),
+                FormatToken.CloseParen,
+                FormatToken.NewLine(),
+                FormatToken.OpenBrace,
+                FormatToken.NewLine(),
+                FormatToken.Indent(2),
+                Ident("x"),
+                Equals,
+                NumberLit("1"),
+                Semicolon,
+                FormatToken.CloseBrace,
+            )
+
+        val out =
+            RuleApplier(FormatterConfig(braceStyle = BraceStyle.NEXT_LINE, indentSize = 2)).apply(toks)
+        assertEquals("if (cond)\n{\n  x = 1;\n}", out)
     }
 }

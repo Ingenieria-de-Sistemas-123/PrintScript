@@ -1,6 +1,7 @@
 package org.printscript.cli.adapters
 
 import org.printscript.formatter.CodeFormatter
+import org.printscript.formatter.config.BraceStyle
 import org.printscript.formatter.config.ConfigJsonReader
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.parser.node.ASTNode
@@ -10,7 +11,7 @@ class FormatterAdapter {
 
     fun loadConfig(path: String?): FormatterConfig =
         if (path.isNullOrBlank()) {
-            FormatterConfig()
+            FormatterConfig(braceStyle = BraceStyle.SAME_LINE)
         } else {
             ConfigJsonReader().readFromFile(path)
         }
