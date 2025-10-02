@@ -67,4 +67,34 @@ class ConfigJsonReaderTest {
         val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
         assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
     }
+
+    @Test
+    fun `interpreta alias de TCK`() {
+        val tmp = Files.createTempFile("fmt-", ".json").toFile()
+        tmp.writeText(
+            """
+            {
+              "mandatory-single-space-separation": true,
+              "enforce-spacing-before-colon-in-declaration": true,
+              "enforce-spacing-after-colon-in-declaration": false,
+              "enforce-no-spacing-around-equals": true,
+              "mandatory-space-surrounding-operations": false,
+              "line-breaks-after-println": 2,
+              "mandatory-line-break-after-statement": false,
+              "indent-inside-if": 2,
+              "if-brace-below-line": true
+            }
+            """.trimIndent(),
+        )
+
+        val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(true, cfg.spaceBeforeColon)
+        assertEquals(false, cfg.spaceAfterColon)
+        assertEquals(false, cfg.spaceAroundEquals)
+        assertEquals(false, cfg.spaceAroundOperators)
+        assertEquals(2, cfg.lineJumpBeforePrintln)
+        assertEquals(false, cfg.lineJumpAfterSemicolon)
+        assertEquals(2, cfg.indentSize)
+        assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
+    }
 }
