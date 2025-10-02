@@ -2,11 +2,13 @@ package org.printscript.formatter
 
 import org.junit.jupiter.api.Test
 import org.printscript.common.Position
+import org.printscript.formatter.config.BraceStyle
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.parser.node.AssignationNode
 import org.printscript.parser.node.ConstantDeclarationNode
 import org.printscript.parser.node.DoubleExpressionNode
 import org.printscript.parser.node.EmptyExpressionNode
+import org.printscript.parser.node.IfElseNode
 import org.printscript.parser.node.LiteralNode
 import org.printscript.parser.node.PrintStatementNode
 import org.printscript.parser.node.VariableDeclarationNode
@@ -65,6 +67,7 @@ class CodeFormatterIT {
                 lineJumpBeforePrintln = 0,
                 lineJumpAfterSemicolon = true,
                 indentSize = 4,
+                braceStyle = BraceStyle.SAME_LINE,
             )
 
         val pretty = CodeFormatter().format(ast, cfg)
@@ -95,6 +98,11 @@ class CodeFormatterIT {
                 lineJumpAfterSemicolon = false,
                 spaceAroundEquals = true,
                 spaceAfterColon = true,
+                spaceBeforeColon = false,
+                spaceAroundOperators = true,
+                lineJumpBeforePrintln = 0,
+                indentSize = 4,
+                braceStyle = BraceStyle.SAME_LINE,
             )
         val pretty = CodeFormatter().format(ast, cfg)
         assertEquals("let a: number = 5.0;println(\"a\");", pretty)
@@ -122,7 +130,7 @@ class CodeFormatterIT {
                     pos(),
                 ),
             )
-        val cfg = FormatterConfig()
+        val cfg = FormatterConfig(braceStyle = BraceStyle.SAME_LINE)
 
         val f = CodeFormatter()
         val first = f.format(ast, cfg)
@@ -134,10 +142,60 @@ class CodeFormatterIT {
     fun `declaracion sin inicializador no imprime igual`() {
         val decl = VariableDeclarationNode("name", "string", EmptyExpressionNode, pos())
         val ast = listOf(decl)
-        val cfg = FormatterConfig(spaceAfterColon = true)
+        val cfg = FormatterConfig(spaceAfterColon = true, braceStyle = BraceStyle.SAME_LINE)
 
         val pretty = CodeFormatter().format(ast, cfg)
 
         assertEquals("let name: string;", pretty)
+    }
+
+    @Test
+    fun `if con braces en misma linea`() {
+        val ifNode =
+            IfElseNode(
+                ifBranch = listOf(PrintStatementNode(LiteralNode("then", TokenType.STRING), pos())),
+                elseBranch = listOf(PrintStatementNode(LiteralNode("else", TokenType.STRING), pos())),
+                condition = LiteralNode("flag", TokenType.IDENTIFIER),
+            )
+
+        val cfg =
+            FormatterConfig(
+                braceStyle = BraceStyle.SAME_LINE,
+                indentSize = 4,
+            )
+
+        val pretty = CodeFormatter().format(listOf(ifNode), cfg)
+        val expected =
+            "if (flag) {\n" +
+                "    println(\"then\");\n" +
+                "} else {\n" +
+                "    println(\"else\");\n" +
+                "}"
+        assertEquals(expected, pretty)
+    }
+
+    @Test
+    fun `if con braces debajo e indent custom`() {
+        val ifNode =
+            IfElseNode(
+                ifBranch = listOf(PrintStatementNode(LiteralNode("body", TokenType.STRING), pos())),
+                elseBranch = emptyList(),
+                condition = LiteralNode("cond", TokenType.IDENTIFIER),
+            )
+
+        val cfg =
+            FormatterConfig(
+                braceStyle = BraceStyle.NEXT_LINE,
+                indentSize = 2,
+                lineJumpAfterSemicolon = false,
+            )
+
+        val pretty = CodeFormatter().format(listOf(ifNode), cfg)
+        val expected =
+            "if (cond)\n" +
+                "{\n" +
+                "  println(\"body\");\n" +
+                "}"
+        assertEquals(expected, pretty)
     }
 }

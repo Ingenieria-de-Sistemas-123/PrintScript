@@ -1,5 +1,6 @@
 package org.printscript.formatter.render
 
+import org.printscript.formatter.config.BraceStyle
 import org.printscript.formatter.config.FormatterConfig
 import org.printscript.formatter.rules.ApplyContext
 import org.printscript.formatter.rules.CodeFormatRule
@@ -36,6 +37,12 @@ class RuleApplier(
                     if (config.lineJumpAfterSemicolon) out.append('\n')
                 }
 
+                is FormatToken.Space -> {
+                    if (out.isNotEmpty() && out.last() != ' ' && out.last() != '\n') {
+                        out.append(' ')
+                    }
+                }
+
                 is FormatToken.Keyword -> {
                     out.append(t.text)
                     val next = ctx.next
@@ -59,6 +66,17 @@ class RuleApplier(
                     val rule = rules.firstOrNull { it.matches(t) }
                     if (rule != null) rule.apply(t, ctx) else out.append(renderRaw(t))
                 }
+
+                is FormatToken.OpenBrace -> {
+                    if (config.braceStyle == BraceStyle.SAME_LINE) {
+                        if (out.isNotEmpty() && out.last() != ' ' && out.last() != '\n') {
+                            out.append(' ')
+                        }
+                    }
+                    out.append('{')
+                }
+
+                is FormatToken.CloseBrace -> out.append('}')
             }
         }
 

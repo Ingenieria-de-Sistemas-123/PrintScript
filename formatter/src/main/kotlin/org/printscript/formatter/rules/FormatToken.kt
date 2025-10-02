@@ -1,9 +1,9 @@
 package org.printscript.formatter.rules
 
 /**
- * Tokens de FORMATEO (no confundir con tokens del lexer).
+ * Tokens de FORMATEO (NO confundir con tokens del lexer).
  * Los emite el "emitter" a partir del AST del parser.
- * Mantienen semántica (ident, tipo, operadores, etc.) para decidir spacing.
+ * Mantienen semántica (ident, tipo, operadores, etc.) para decidir spacing dsps.
  */
 sealed interface FormatToken {
     // contenido
@@ -16,6 +16,8 @@ sealed interface FormatToken {
     data class NumberLit(val raw: String) : FormatToken
 
     data class StringLit(val raw: String) : FormatToken
+
+    data object Space : FormatToken
 
     // símbolos a los que solemos aplicar reglas
     data object Colon : FormatToken
@@ -31,6 +33,10 @@ sealed interface FormatToken {
     data object OpenParen : FormatToken
 
     data object CloseParen : FormatToken
+
+    data object OpenBrace : FormatToken
+
+    data object CloseBrace : FormatToken
 
     data object Comma : FormatToken
 
