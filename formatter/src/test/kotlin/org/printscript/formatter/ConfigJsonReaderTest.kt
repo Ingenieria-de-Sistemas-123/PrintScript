@@ -97,4 +97,78 @@ class ConfigJsonReaderTest {
         assertEquals(2, cfg.indentSize)
         assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
     }
+
+    @Test
+    fun `interpreta print-x-line-breaks-after y if-indent-inside-x`() {
+        val tmp = Files.createTempFile("fmt-", ".json").toFile()
+        tmp.writeText(
+            """
+            {
+              "print-0-line-breaks-after": true,
+              "print-1-line-breaks-after": true,
+              "print-2-line-breaks-after": true,
+              "if-indent-inside-4": true,
+              "if-indent-inside-8": false
+            }
+            """.trimIndent(),
+        )
+
+        val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(2, cfg.lineJumpBeforePrintln) // Debe tomar el mayor valor true
+        assertEquals(4, cfg.indentSize) // Solo el true
+    }
+
+    @Test
+    fun `interpreta println-x-line-breaks-after`() {
+        val tmp = Files.createTempFile("fmt-", ".json").toFile()
+        tmp.writeText(
+            """
+            {
+              "println-1-line-breaks-after": true
+            }
+            """.trimIndent(),
+        )
+        val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(1, cfg.lineJumpBeforePrintln)
+    }
+
+    @Test
+    fun `interpreta enforce-decl-spacing-before-colon y after-colon`() {
+        val tmp = Files.createTempFile("fmt-", ".json").toFile()
+        tmp.writeText(
+            """
+            {
+              "enforce-decl-spacing-before-colon": true,
+              "enforce-decl-spacing-after-colon": false
+            }
+            """.trimIndent(),
+        )
+        val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(true, cfg.spaceBeforeColon)
+        assertEquals(false, cfg.spaceAfterColon)
+    }
+
+    @Test
+    fun `interpreta if-brace-same-line y if-brace-below-line`() {
+        val tmp = Files.createTempFile("fmt-", ".json").toFile()
+        tmp.writeText(
+            """
+            {
+              "if-brace-same-line": true
+            }
+            """.trimIndent(),
+        )
+        val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(BraceStyle.SAME_LINE, cfg.braceStyle)
+
+        tmp.writeText(
+            """
+            {
+              "if-brace-below-line": true
+            }
+            """.trimIndent(),
+        )
+        val cfg2 = ConfigJsonReader().readFromFile(tmp.absolutePath)
+        assertEquals(BraceStyle.NEXT_LINE, cfg2.braceStyle)
+    }
 }
