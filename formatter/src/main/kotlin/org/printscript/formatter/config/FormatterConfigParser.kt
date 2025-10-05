@@ -95,7 +95,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         singleSpaceSeparation = true
     }
 
-    // 2) Line breaks después de println (TCK: print/println-*-line-breaks-after, line-breaks-after-println)
+    // 2) Line breaks after println (TCK: print/println-*-line-breaks-after, line-breaks-after-println)
     val printLineBreaksAfter =
         pickPrintLineBreaksAfter() // lee print/println-X-line-breaks-after y line-breaks-after-println
             ?: optInt("line-breaks-after-println")
