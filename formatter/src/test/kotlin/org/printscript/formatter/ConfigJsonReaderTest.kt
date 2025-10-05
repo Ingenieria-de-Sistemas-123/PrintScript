@@ -119,7 +119,7 @@ class ConfigJsonReaderTest {
         )
 
         val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
-        assertEquals(2, cfg.printLineBreaksAfter) // Debe tomar el mayor valor true
+        assertEquals(2, cfg.printLineBreaksAfter) // Should take the highest true value
         assertEquals(4, cfg.indentSize) // Solo el true
     }
 
