@@ -54,7 +54,7 @@ class RuleApplierAdditionalTest {
     }
 
     @Test
-    fun `single space separation respeta literales`() {
+    fun `single space separation respects literals`() {
         val toks = listOf(Keyword("println"), OpenParen, StringLit("a b"), CloseParen, Semicolon)
         val cfg = FormatterConfig(singleSpaceSeparation = true, braceStyle = BraceStyle.SAME_LINE)
 
