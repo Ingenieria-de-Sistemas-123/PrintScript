@@ -23,6 +23,7 @@ data class FormatterConfig(
     val spaceAroundEquals: Boolean = true,
     val spaceAroundOperators: Boolean = true,
     val lineJumpBeforePrintln: Int = 0,
+    val singleSpaceSeparation: Boolean = false,
     val lineJumpAfterSemicolon: Boolean = true,
     val indentSize: Int = 4,
     val braceStyle: BraceStyle = BraceStyle.SAME_LINE,
