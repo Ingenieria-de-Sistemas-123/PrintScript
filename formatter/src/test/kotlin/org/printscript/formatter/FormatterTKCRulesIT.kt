@@ -57,7 +57,7 @@ class FormatterTKCRulesIT {
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val out = CodeFormatter().format(ast, cfg)
-        // Un espacio antes de '(', entre tokens, antes de ')' y antes de ';'
+        // One space before '(', between tokens, before ')' and before ';'
         assertEquals("println ( s ) ;", out, "Actual='$out'")
     }
 
