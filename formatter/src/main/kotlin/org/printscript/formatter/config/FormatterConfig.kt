@@ -7,8 +7,9 @@ package org.printscript.formatter.config
  * - spaceAfterColon: Espacio después de ':' en declaraciones
  * - spaceAroundEquals: Espacio alrededor de '='
  * - spaceAroundOperators: Espacio alrededor de operadores aritméticos
- * - lineJumpBeforePrintln: Saltos de línea que se insertan ANTES de un println (0..2). Alias/compatibilidad con varias claves TCK.
+ * - printLineBreaksAfter: Cantidad de líneas en blanco EXTRA después de cada println (0..2), según TCK.
  * - lineJumpAfterSemicolon: Salto de línea tras ';' para cada sentencia
+ * - singleSpaceSeparation: Un espacio entre tokens visibles (incluye antes de '(', ')' y ';')
  * - indentSize: Cantidad de espacios para indentación en bloques.
  * - braceStyle: Estilo de llaves en bloques if/else (solo v1.1).
  */
@@ -22,7 +23,7 @@ data class FormatterConfig(
     val spaceAfterColon: Boolean = true,
     val spaceAroundEquals: Boolean = true,
     val spaceAroundOperators: Boolean = true,
-    val lineJumpBeforePrintln: Int = 0,
+    val printLineBreaksAfter: Int = 0,
     val singleSpaceSeparation: Boolean = false,
     val lineJumpAfterSemicolon: Boolean = true,
     val indentSize: Int = 4,

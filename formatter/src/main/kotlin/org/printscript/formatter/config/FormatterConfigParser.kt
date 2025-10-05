@@ -61,18 +61,18 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
             "enforce-spacing-after-colon-in-declaration",
         ) ?: spaceAfterColon
 
-    // equals: soporta 'enforce-equals-spacing' y su opuesto 'enforce-no-spacing-around-equals'
+    // equals: soporta 'enforce-spacing-around-equals' y su opuesto 'enforce-no-spacing-around-equals'
     val equalsProvided =
         hasAny(
             "spaceAroundEquals",
-            "enforce-equals-spacing",
+            "enforce-spacing-around-equals",
             "enforce-no-spacing-around-equals",
         )
     val noEqSpaces = optBoolean("enforce-no-spacing-around-equals")
     spaceAroundEquals =
         when {
             noEqSpaces == true -> false
-            else -> optBoolean("enforce-equals-spacing") ?: spaceAroundEquals
+            else -> optBoolean("enforce-spacing-around-equals") ?: spaceAroundEquals
         }
 
     // operadores: alias TCK
@@ -95,13 +95,12 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         singleSpaceSeparation = true
     }
 
-    // 2) Line breaks around println (our model: before the println)
-    val directPrintBreaks = this["lineJumpBeforePrintln"]?.asInt
-    val lineJumpBeforePrintln =
+    // 2) Line breaks después de println (TCK: print/println-*-line-breaks-after, line-breaks-after-println)
+    val printLineBreaksAfter =
         pickPrintLineBreaksAfter() // lee print/println-X-line-breaks-after y line-breaks-after-println
-            ?: optInt("print-n-line-breaks-before", "line-breaks-before-println")
-            ?: directPrintBreaks
-            ?: defaults.lineJumpBeforePrintln
+            ?: optInt("line-breaks-after-println")
+            ?: this["lineJumpBeforePrintln"]?.asInt // compat legacy key
+            ?: defaults.printLineBreaksAfter
 
     // 3) Salto de línea luego de ';' (alias TCK + direct key)
     val lineJumpAfterSemicolon =
@@ -137,7 +136,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         spaceAfterColon = spaceAfterColon,
         spaceAroundEquals = spaceAroundEquals,
         spaceAroundOperators = spaceAroundOperators,
-        lineJumpBeforePrintln = lineJumpBeforePrintln,
+        printLineBreaksAfter = printLineBreaksAfter,
         singleSpaceSeparation = singleSpaceSeparation,
         lineJumpAfterSemicolon = lineJumpAfterSemicolon,
         indentSize = indentSize,

@@ -32,7 +32,7 @@ class ConfigJsonReaderTest {
         assertEquals(false, cfg.spaceAroundEquals)
         assertEquals(true, cfg.spaceAroundOperators)
         assertEquals(true, cfg.singleSpaceSeparation)
-        assertEquals(2, cfg.lineJumpBeforePrintln)
+        assertEquals(2, cfg.printLineBreaksAfter)
         assertEquals(false, cfg.lineJumpAfterSemicolon)
         assertEquals(2, cfg.indentSize)
         assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
@@ -49,7 +49,7 @@ class ConfigJsonReaderTest {
         assertEquals(true, cfg.spaceAroundEquals)
         assertEquals(true, cfg.spaceAroundOperators)
         assertEquals(false, cfg.singleSpaceSeparation)
-        assertEquals(0, cfg.lineJumpBeforePrintln)
+        assertEquals(0, cfg.printLineBreaksAfter)
         assertEquals(true, cfg.lineJumpAfterSemicolon)
         assertEquals(8, cfg.indentSize)
         assertEquals(BraceStyle.SAME_LINE, cfg.braceStyle)
@@ -97,7 +97,7 @@ class ConfigJsonReaderTest {
         assertEquals(false, cfg.spaceAroundEquals)
         assertEquals(false, cfg.spaceAroundOperators)
         assertEquals(true, cfg.singleSpaceSeparation)
-        assertEquals(2, cfg.lineJumpBeforePrintln)
+        assertEquals(2, cfg.printLineBreaksAfter)
         assertEquals(false, cfg.lineJumpAfterSemicolon)
         assertEquals(2, cfg.indentSize)
         assertEquals(BraceStyle.NEXT_LINE, cfg.braceStyle)
@@ -119,7 +119,7 @@ class ConfigJsonReaderTest {
         )
 
         val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
-        assertEquals(2, cfg.lineJumpBeforePrintln) // Debe tomar el mayor valor true
+        assertEquals(2, cfg.printLineBreaksAfter) // Debe tomar el mayor valor true
         assertEquals(4, cfg.indentSize) // Solo el true
     }
 
@@ -134,7 +134,7 @@ class ConfigJsonReaderTest {
             """.trimIndent(),
         )
         val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
-        assertEquals(1, cfg.lineJumpBeforePrintln)
+        assertEquals(1, cfg.printLineBreaksAfter)
     }
 
     @Test

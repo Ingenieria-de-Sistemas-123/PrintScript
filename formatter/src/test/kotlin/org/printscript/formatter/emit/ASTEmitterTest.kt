@@ -71,16 +71,16 @@ class ASTEmitterTest {
             )
         val tokens =
             ASTEmitter(
-                FormatterConfig(lineJumpBeforePrintln = 1, braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE),
+                FormatterConfig(printLineBreaksAfter = 1, braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE),
             ).emitProgram(ast)
         val expected =
             listOf(
-                FormatToken.NewLine(1),
                 FormatToken.Keyword("println"),
                 FormatToken.OpenParen,
                 FormatToken.StringLit("x"),
                 FormatToken.CloseParen,
                 FormatToken.Semicolon,
+                FormatToken.NewLine(2),
             )
         assertEquals(expected, tokens)
     }

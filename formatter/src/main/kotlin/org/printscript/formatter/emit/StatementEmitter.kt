@@ -77,12 +77,15 @@ class StatementEmitter(
         node: PrintStatementNode,
         buffer: TokenBuffer,
     ) {
-        buffer.newline(config.lineJumpBeforePrintln)
         buffer.addKeyword("println")
         buffer.add(FormatToken.OpenParen)
         expressionEmitter.emit(node.expression, buffer)
         buffer.add(FormatToken.CloseParen)
         buffer.add(FormatToken.Semicolon)
+        // Ahora respetamos lineJumpAfterSemicolon; totalAfter = (1 si está activo) + extras
+        val base = if (config.lineJumpAfterSemicolon) 1 else 0
+        val totalAfter = base + config.printLineBreaksAfter
+        if (totalAfter > 0) buffer.newline(totalAfter)
     }
 
     private fun emitIfElse(
