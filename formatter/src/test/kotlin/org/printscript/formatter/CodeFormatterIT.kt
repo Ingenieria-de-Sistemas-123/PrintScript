@@ -150,6 +150,50 @@ class CodeFormatterIT {
     }
 
     @Test
+    fun `space before colon rule does not alter trailing spacing`() {
+        val decl =
+            ConstantDeclarationNode(
+                identifier = "value",
+                valueType = "number",
+                expression = LiteralNode(5.0, TokenType.NUMBER),
+                position = pos(),
+            )
+        val cfg =
+            FormatterConfig(
+                spaceBeforeColon = true,
+                spaceAfterColon = false,
+                lineJumpAfterSemicolon = false,
+                braceStyle = BraceStyle.SAME_LINE,
+            )
+
+        val pretty = CodeFormatter().format(listOf(decl), cfg)
+
+        assertEquals("let value :number = 5;", pretty)
+    }
+
+    @Test
+    fun `space after colon rule preserves leading spacing`() {
+        val decl =
+            ConstantDeclarationNode(
+                identifier = "value",
+                valueType = "number",
+                expression = LiteralNode(5.0, TokenType.NUMBER),
+                position = pos(),
+            )
+        val cfg =
+            FormatterConfig(
+                spaceBeforeColon = false,
+                spaceAfterColon = true,
+                lineJumpAfterSemicolon = false,
+                braceStyle = BraceStyle.SAME_LINE,
+            )
+
+        val pretty = CodeFormatter().format(listOf(decl), cfg)
+
+        assertEquals("let value: number = 5;", pretty)
+    }
+
+    @Test
     fun `if con braces en misma linea`() {
         val ifNode =
             IfElseNode(
