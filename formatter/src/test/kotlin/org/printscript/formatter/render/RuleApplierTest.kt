@@ -148,4 +148,14 @@ class RuleApplierTest {
             RuleApplier(FormatterConfig(braceStyle = BraceStyle.NEXT_LINE, indentSize = 2)).apply(toks)
         assertEquals("if (cond)\n{\n  x = 1;\n}", out)
     }
+
+    @Test
+    fun `single space separation agrega espacio entre tokens`() {
+        val toks = listOf(Keyword("println"), FormatToken.OpenParen, Ident("value"), FormatToken.CloseParen, Semicolon)
+        val cfg = FormatterConfig(singleSpaceSeparation = true, braceStyle = BraceStyle.SAME_LINE)
+
+        val out = RuleApplier(cfg).apply(toks)
+
+        assertEquals("println ( value ) ;", out)
+    }
 }

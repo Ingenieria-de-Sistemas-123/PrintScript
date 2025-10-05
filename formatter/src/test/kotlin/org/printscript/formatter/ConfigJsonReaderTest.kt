@@ -17,6 +17,7 @@ class ConfigJsonReaderTest {
               "spaceAfterColon": false,
               "spaceAroundEquals": false,
               "spaceAroundOperators": true,
+              "singleSpaceSeparation": true,
               "lineJumpBeforePrintln": 2,
               "lineJumpAfterSemicolon": false,
               "indentSize": 2,
@@ -30,6 +31,7 @@ class ConfigJsonReaderTest {
         assertEquals(false, cfg.spaceAfterColon)
         assertEquals(false, cfg.spaceAroundEquals)
         assertEquals(true, cfg.spaceAroundOperators)
+        assertEquals(true, cfg.singleSpaceSeparation)
         assertEquals(2, cfg.lineJumpBeforePrintln)
         assertEquals(false, cfg.lineJumpAfterSemicolon)
         assertEquals(2, cfg.indentSize)
@@ -46,6 +48,7 @@ class ConfigJsonReaderTest {
         assertEquals(true, cfg.spaceAfterColon)
         assertEquals(true, cfg.spaceAroundEquals)
         assertEquals(true, cfg.spaceAroundOperators)
+        assertEquals(false, cfg.singleSpaceSeparation)
         assertEquals(0, cfg.lineJumpBeforePrintln)
         assertEquals(true, cfg.lineJumpAfterSemicolon)
         assertEquals(8, cfg.indentSize)
@@ -79,6 +82,7 @@ class ConfigJsonReaderTest {
               "enforce-spacing-after-colon-in-declaration": false,
               "enforce-no-spacing-around-equals": true,
               "mandatory-space-surrounding-operations": false,
+              "enforce-single-space-separation": true,
               "line-breaks-after-println": 2,
               "mandatory-line-break-after-statement": false,
               "indent-inside-if": 2,
@@ -92,6 +96,7 @@ class ConfigJsonReaderTest {
         assertEquals(false, cfg.spaceAfterColon)
         assertEquals(false, cfg.spaceAroundEquals)
         assertEquals(false, cfg.spaceAroundOperators)
+        assertEquals(true, cfg.singleSpaceSeparation)
         assertEquals(2, cfg.lineJumpBeforePrintln)
         assertEquals(false, cfg.lineJumpAfterSemicolon)
         assertEquals(2, cfg.indentSize)

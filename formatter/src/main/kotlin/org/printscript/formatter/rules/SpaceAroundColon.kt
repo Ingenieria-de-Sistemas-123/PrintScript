@@ -7,8 +7,26 @@ class SpaceAroundColon : CodeFormatRule {
         t: FormatToken,
         ctx: ApplyContext,
     ) {
-        val before = if (ctx.cfg.spaceBeforeColon) " " else ""
-        val after = if (ctx.cfg.spaceAfterColon) " " else ""
-        ctx.out.append(before).append(":").append(after)
+        val builder = ctx.out
+        if (ctx.cfg.spaceBeforeColon) {
+            builder.trimTrailingSpaces()
+            if (builder.isNotEmpty() && builder.last() != '\n') {
+                builder.append(' ')
+            }
+        } else {
+            builder.trimTrailingSpaces()
+        }
+
+        builder.append(':')
+
+        if (ctx.cfg.spaceAfterColon) {
+            builder.append(' ')
+        }
+    }
+}
+
+private fun StringBuilder.trimTrailingSpaces() {
+    while (this.isNotEmpty() && this[this.length - 1] == ' ') {
+        deleteCharAt(this.length - 1)
     }
 }

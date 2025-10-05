@@ -12,8 +12,8 @@ import org.printscript.formatter.rules.FormatToken
  */
 class RuleApplier(
     private val config: FormatterConfig,
-    private val rules: List<CodeFormatRule> = DefaultRules.standard(),
     private val fallbackRenderer: FormatTokenRenderer = DefaultTokenRenderer(),
+    private val rules: List<CodeFormatRule> = DefaultRules.standard(fallbackRenderer),
 ) {
     fun apply(tokens: List<FormatToken>): String {
         val out = StringBuilder()

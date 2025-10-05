@@ -20,6 +20,10 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
     var spaceAfterColon = this["spaceAfterColon"]?.asBoolean ?: defaults.spaceAfterColon
     var spaceAroundEquals = this["spaceAroundEquals"]?.asBoolean ?: defaults.spaceAroundEquals
     var spaceAroundOperators = this["spaceAroundOperators"]?.asBoolean ?: defaults.spaceAroundOperators
+    var singleSpaceSeparation =
+        this["singleSpaceSeparation"]?.asBoolean
+            ?: this["enforceSingleSpaceSeparation"]?.asBoolean
+            ?: defaults.singleSpaceSeparation
 
     // Bandera maestra (no debe sobrescribir configuraciones explícitas)
     val singleSpaceMaster =
@@ -27,6 +31,10 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
             "enforce-single-space-separation",
             "mandatory-single-space-separation",
         ) == true
+
+    singleSpaceSeparation =
+        optBoolean("enforce-single-space-separation", "mandatory-single-space-separation")
+            ?: singleSpaceSeparation
 
     // Aliases TCK para ':'
     val beforeColonProvided =
@@ -84,6 +92,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         if (!afterColonProvided) spaceAfterColon = true
         if (!equalsProvided) spaceAroundEquals = true
         if (!operatorsProvided) spaceAroundOperators = true
+        singleSpaceSeparation = true
     }
 
     // 2) Saltos de línea alrededor de println (nuestro modelo: antes del println)
@@ -129,6 +138,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         spaceAroundEquals = spaceAroundEquals,
         spaceAroundOperators = spaceAroundOperators,
         lineJumpBeforePrintln = lineJumpBeforePrintln,
+        singleSpaceSeparation = singleSpaceSeparation,
         lineJumpAfterSemicolon = lineJumpAfterSemicolon,
         indentSize = indentSize,
         braceStyle = braceStyle,

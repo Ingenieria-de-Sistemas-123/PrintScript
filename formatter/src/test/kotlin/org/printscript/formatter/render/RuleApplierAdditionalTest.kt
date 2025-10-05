@@ -52,4 +52,14 @@ class RuleApplierAdditionalTest {
         val out = RuleApplier(FormatterConfig(braceStyle = BraceStyle.SAME_LINE)).apply(toks)
         assertEquals("if (cond) {\n    println(\"ok\");\n}", out)
     }
+
+    @Test
+    fun `single space separation respeta literales`() {
+        val toks = listOf(Keyword("println"), OpenParen, StringLit("a b"), CloseParen, Semicolon)
+        val cfg = FormatterConfig(singleSpaceSeparation = true, braceStyle = BraceStyle.SAME_LINE)
+
+        val out = RuleApplier(cfg).apply(toks)
+
+        assertEquals("println ( \"a b\" ) ;", out)
+    }
 }
