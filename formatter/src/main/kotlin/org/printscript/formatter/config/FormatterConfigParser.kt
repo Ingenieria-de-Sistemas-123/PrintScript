@@ -95,7 +95,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         singleSpaceSeparation = true
     }
 
-    // 2) Saltos de línea alrededor de println (nuestro modelo: antes del println)
+    // 2) Line breaks around println (our model: before the println)
     val directPrintBreaks = this["lineJumpBeforePrintln"]?.asInt
     val lineJumpBeforePrintln =
         pickPrintLineBreaksAfter() // lee print/println-X-line-breaks-after y line-breaks-after-println
