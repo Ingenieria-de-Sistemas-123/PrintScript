@@ -74,7 +74,7 @@ class FormatterTKCRulesIT {
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val out = CodeFormatter().format(ast, cfg)
-        // Entre prints debe haber dos líneas en blanco => tres newlines totales tras el primero
+        // Between prints there should be two blank lines => three total newlines after the first
         val expected = "println(\"a\");\n\n\nprintln(\"b\");"
         assertEquals(expected, out)
     }
