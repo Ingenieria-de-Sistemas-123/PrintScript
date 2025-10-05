@@ -150,7 +150,7 @@ class RuleApplierTest {
     }
 
     @Test
-    fun `single space separation agrega espacio entre tokens`() {
+    fun `single space separation adds space between tokens`() {
         val toks = listOf(Keyword("println"), FormatToken.OpenParen, Ident("value"), FormatToken.CloseParen, Semicolon)
         val cfg = FormatterConfig(singleSpaceSeparation = true, braceStyle = BraceStyle.SAME_LINE)
 
