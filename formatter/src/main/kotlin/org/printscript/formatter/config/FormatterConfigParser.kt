@@ -25,7 +25,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
             ?: this["enforceSingleSpaceSeparation"]?.asBoolean
             ?: defaults.singleSpaceSeparation
 
-    // Bandera maestra (no debe sobrescribir configuraciones explícitas)
+    // Master flag (should not override explicit configurations)
     val singleSpaceMaster =
         optBoolean(
             "enforce-single-space-separation",
