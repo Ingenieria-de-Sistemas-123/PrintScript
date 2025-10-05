@@ -13,8 +13,6 @@ class SpaceAroundColon : CodeFormatRule {
             if (builder.isNotEmpty() && builder.last() != '\n') {
                 builder.append(' ')
             }
-        } else {
-            builder.trimTrailingSpaces()
         }
 
         builder.append(':')
