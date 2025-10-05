@@ -64,7 +64,7 @@ class CodeFormatterIT {
                 spaceAfterColon = true,
                 spaceAroundEquals = true,
                 spaceAroundOperators = true,
-                lineJumpBeforePrintln = 0,
+                printLineBreaksAfter = 0,
                 lineJumpAfterSemicolon = true,
                 indentSize = 4,
                 braceStyle = BraceStyle.SAME_LINE,
@@ -100,7 +100,7 @@ class CodeFormatterIT {
                 spaceAfterColon = true,
                 spaceBeforeColon = false,
                 spaceAroundOperators = true,
-                lineJumpBeforePrintln = 0,
+                printLineBreaksAfter = 0,
                 indentSize = 4,
                 braceStyle = BraceStyle.SAME_LINE,
             )
