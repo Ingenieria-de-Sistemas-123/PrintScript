@@ -36,7 +36,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         optBoolean("enforce-single-space-separation", "mandatory-single-space-separation")
             ?: singleSpaceSeparation
 
-    // Aliases TCK para ':'
+    // TCK aliases for ':'
     val beforeColonProvided =
         hasAny(
             "spaceBeforeColon",
