@@ -2,6 +2,7 @@ package org.printscript.formatter.render
 
 import org.printscript.formatter.rules.ApplyContext
 import org.printscript.formatter.rules.FormatToken
+import org.printscript.formatter.rules.trimTrailingSpaces
 
 /**
  * Renderizador por defecto para todos los tokens que no tienen una regla
@@ -14,7 +15,12 @@ class DefaultTokenRenderer : FormatTokenRenderer {
         ctx: ApplyContext,
     ) {
         when (token) {
-            is FormatToken.NewLine -> repeat(token.count) { ctx.out.append('\n') }
+            is FormatToken.NewLine -> {
+                repeat(token.count) {
+                    ctx.out.trimTrailingSpaces()
+                    ctx.out.append('\n')
+                }
+            }
             is FormatToken.Indent -> ctx.out.append(" ".repeat(token.spaces))
             is FormatToken.OpenParen -> ctx.out.append('(')
             is FormatToken.CloseParen -> ctx.out.append(')')

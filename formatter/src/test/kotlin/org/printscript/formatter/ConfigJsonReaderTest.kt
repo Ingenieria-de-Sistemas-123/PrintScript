@@ -45,12 +45,12 @@ class ConfigJsonReaderTest {
 
         val cfg = ConfigJsonReader().readFromFile(tmp.absolutePath)
         assertEquals(false, cfg.spaceBeforeColon)
-        assertEquals(true, cfg.spaceAfterColon)
+        assertEquals(false, cfg.spaceAfterColon)
         assertEquals(true, cfg.spaceAroundEquals)
-        assertEquals(true, cfg.spaceAroundOperators)
+        assertEquals(false, cfg.spaceAroundOperators)
         assertEquals(false, cfg.singleSpaceSeparation)
         assertEquals(0, cfg.printLineBreaksAfter)
-        assertEquals(true, cfg.lineJumpAfterSemicolon)
+        assertEquals(false, cfg.lineJumpAfterSemicolon)
         assertEquals(8, cfg.indentSize)
         assertEquals(BraceStyle.SAME_LINE, cfg.braceStyle)
     }

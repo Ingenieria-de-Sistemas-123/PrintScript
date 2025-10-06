@@ -71,7 +71,11 @@ class ASTEmitterTest {
             )
         val tokens =
             ASTEmitter(
-                FormatterConfig(printLineBreaksAfter = 1, braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE),
+                FormatterConfig(
+                    printLineBreaksAfter = 1,
+                    lineJumpAfterSemicolon = true,
+                    braceStyle = org.printscript.formatter.config.BraceStyle.SAME_LINE,
+                ),
             ).emitProgram(ast)
         val expected =
             listOf(

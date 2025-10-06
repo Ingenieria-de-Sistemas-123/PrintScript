@@ -22,9 +22,3 @@ class SpaceAroundColon : CodeFormatRule {
         }
     }
 }
-
-private fun StringBuilder.trimTrailingSpaces() {
-    while (this.isNotEmpty() && this[this.length - 1] == ' ') {
-        deleteCharAt(this.length - 1)
-    }
-}

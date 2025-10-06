@@ -71,12 +71,42 @@ class FormatterTKCRulesIT {
         val cfg =
             FormatterConfig(
                 printLineBreaksAfter = 2,
+                lineJumpAfterSemicolon = true,
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val out = CodeFormatter().format(ast, cfg)
         // Between prints there should be two blank lines => three total newlines after the first
         val expected = "println(\"a\");\n\n\nprintln(\"b\");"
         assertEquals(expected, out)
+    }
+
+    @Test
+    fun `println without extra line breaks keeps single separator`() {
+        val ast =
+            listOf(
+                PrintStatementNode(LiteralNode("a", TokenType.STRING), pos()),
+                PrintStatementNode(LiteralNode("b", TokenType.STRING), pos()),
+            )
+        val cfg = FormatterConfig(lineJumpAfterSemicolon = true, braceStyle = BraceStyle.SAME_LINE)
+        val out = CodeFormatter().format(ast, cfg)
+        assertEquals("println(\"a\");\nprintln(\"b\");", out)
+    }
+
+    @Test
+    fun `println with one extra line break`() {
+        val ast =
+            listOf(
+                PrintStatementNode(LiteralNode("a", TokenType.STRING), pos()),
+                PrintStatementNode(LiteralNode("b", TokenType.STRING), pos()),
+            )
+        val cfg =
+            FormatterConfig(
+                printLineBreaksAfter = 1,
+                lineJumpAfterSemicolon = true,
+                braceStyle = BraceStyle.SAME_LINE,
+            )
+        val out = CodeFormatter().format(ast, cfg)
+        assertEquals("println(\"a\");\n\nprintln(\"b\");", out)
     }
 
     @Test
@@ -105,8 +135,24 @@ class FormatterTKCRulesIT {
                     ),
                 position = pos(),
             )
-        val on = CodeFormatter().format(listOf(assign), FormatterConfig(spaceAroundOperators = true, lineJumpAfterSemicolon = false))
-        val off = CodeFormatter().format(listOf(assign), FormatterConfig(spaceAroundOperators = false, lineJumpAfterSemicolon = false))
+        val on =
+            CodeFormatter().format(
+                listOf(assign),
+                FormatterConfig(
+                    spaceAroundOperators = true,
+                    spaceAroundEquals = true,
+                    lineJumpAfterSemicolon = false,
+                ),
+            )
+        val off =
+            CodeFormatter().format(
+                listOf(assign),
+                FormatterConfig(
+                    spaceAroundOperators = false,
+                    spaceAroundEquals = true,
+                    lineJumpAfterSemicolon = false,
+                ),
+            )
         assertEquals("x = 5 + 4 * 3 / 2;", on)
         assertEquals("x = 5+4*3/2;", off)
     }
