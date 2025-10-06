@@ -20,12 +20,12 @@ enum class BraceStyle {
 
 data class FormatterConfig(
     val spaceBeforeColon: Boolean = false,
-    val spaceAfterColon: Boolean = true,
-    val spaceAroundEquals: Boolean = true,
-    val spaceAroundOperators: Boolean = true,
+    val spaceAfterColon: Boolean = false,
+    val spaceAroundEquals: Boolean = false,
+    val spaceAroundOperators: Boolean = false,
     val printLineBreaksAfter: Int = 0,
     val singleSpaceSeparation: Boolean = false,
-    val lineJumpAfterSemicolon: Boolean = true,
+    val lineJumpAfterSemicolon: Boolean = false,
     val indentSize: Int = 4,
     val braceStyle: BraceStyle = BraceStyle.SAME_LINE,
 )

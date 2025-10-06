@@ -162,6 +162,7 @@ class CodeFormatterIT {
             FormatterConfig(
                 spaceBeforeColon = true,
                 spaceAfterColon = false,
+                spaceAroundEquals = true,
                 lineJumpAfterSemicolon = false,
                 braceStyle = BraceStyle.SAME_LINE,
             )
@@ -184,6 +185,7 @@ class CodeFormatterIT {
             FormatterConfig(
                 spaceBeforeColon = false,
                 spaceAfterColon = true,
+                spaceAroundEquals = true,
                 lineJumpAfterSemicolon = false,
                 braceStyle = BraceStyle.SAME_LINE,
             )

@@ -38,8 +38,8 @@ class RuleApplierAdditionalTest {
     fun `space token inicial es ignorado`() {
         val toks = listOf(Space, Keyword("let"), Space, Ident("a"), Colon, TypeName("number"), Semicolon)
         val out = RuleApplier(FormatterConfig(braceStyle = BraceStyle.SAME_LINE)).apply(toks)
-        // Formato esperado con reglas por defecto: no espacio antes de ':', espacio después, salto luego de ';'
-        assertEquals("let a: number;", out)
+        // Reglas por defecto neutrales: no se insertan espacios adicionales
+        assertEquals("let a:number;", out)
     }
 
     @Test
@@ -49,7 +49,13 @@ class RuleApplierAdditionalTest {
                 Keyword("if"), Space, OpenParen, Ident("cond"), CloseParen, Space, OpenBrace, NewLine(),
                 Indent(4), Keyword("println"), OpenParen, StringLit("ok"), CloseParen, Semicolon, CloseBrace,
             )
-        val out = RuleApplier(FormatterConfig(braceStyle = BraceStyle.SAME_LINE)).apply(toks)
+        val out =
+            RuleApplier(
+                FormatterConfig(
+                    braceStyle = BraceStyle.SAME_LINE,
+                    lineJumpAfterSemicolon = true,
+                ),
+            ).apply(toks)
         assertEquals("if (cond) {\n    println(\"ok\");\n}", out)
     }
 

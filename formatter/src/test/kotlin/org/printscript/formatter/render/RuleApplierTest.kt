@@ -67,7 +67,13 @@ class RuleApplierTest {
 
         // Caso unario tras '=': "x = -1"
         val unary =
-            RuleApplier(FormatterConfig(spaceAroundOperators = true, braceStyle = BraceStyle.SAME_LINE)).apply(
+            RuleApplier(
+                FormatterConfig(
+                    spaceAroundOperators = true,
+                    spaceAroundEquals = true,
+                    braceStyle = BraceStyle.SAME_LINE,
+                ),
+            ).apply(
                 listOf(Ident("x"), Equals, Op(OpKind.MINUS), NumberLit("1.0"), Semicolon),
             )
         assertEquals("x = -1.0;", unary)
@@ -120,7 +126,7 @@ class RuleApplierTest {
                 FormatToken.CloseBrace,
             )
 
-        val out = RuleApplier(FormatterConfig(braceStyle = BraceStyle.SAME_LINE)).apply(toks)
+        val out = RuleApplier(FormatterConfig(braceStyle = BraceStyle.SAME_LINE, lineJumpAfterSemicolon = true)).apply(toks)
         assertEquals("if (1) {\n    println(\"ok\");\n}", out)
     }
 
@@ -145,7 +151,14 @@ class RuleApplierTest {
             )
 
         val out =
-            RuleApplier(FormatterConfig(braceStyle = BraceStyle.NEXT_LINE, indentSize = 2)).apply(toks)
+            RuleApplier(
+                FormatterConfig(
+                    braceStyle = BraceStyle.NEXT_LINE,
+                    indentSize = 2,
+                    lineJumpAfterSemicolon = true,
+                    spaceAroundEquals = true,
+                ),
+            ).apply(toks)
         assertEquals("if (cond)\n{\n  x = 1;\n}", out)
     }
 

@@ -14,6 +14,7 @@ class SemicolonLineBreakRule : CodeFormatRule {
         enforceSingleSpaceBefore(t, ctx)
         ctx.out.append(';')
         if (ctx.cfg.lineJumpAfterSemicolon && ctx.next !is FormatToken.NewLine) {
+            ctx.out.trimTrailingSpaces()
             ctx.out.append('\n')
         }
     }
