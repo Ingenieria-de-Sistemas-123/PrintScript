@@ -22,11 +22,14 @@ data class FormatterConfig(
     val spaceBeforeColon: Boolean = false,
     val spaceAfterColon: Boolean = false,
     val spaceAroundEquals: Boolean = false,
-    // Nullable flag that indicates the JSON explicitly requested a policy for '=' spacing.
+    // Nullable flags that indicate the JSON explicitly requested a policy for spacing.
     // null -> no explicit request (preserve original layout when available)
-    // true -> enforce spaces around '='
-    // false -> enforce no spaces around '='
+    // true -> enforce spaces
+    // false -> enforce no spaces
+    val spaceBeforeColonExplicit: Boolean? = null,
+    val spaceAfterColonExplicit: Boolean? = null,
     val spaceAroundEqualsExplicit: Boolean? = null,
+    val singleSpaceSeparationExplicit: Boolean? = null,
     val spaceAroundOperators: Boolean = false,
     val printLineBreaksAfter: Int = 0,
     val singleSpaceSeparation: Boolean = false,

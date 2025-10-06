@@ -32,7 +32,9 @@ internal fun enforceSingleSpaceBefore(
     token: FormatToken,
     ctx: ApplyContext,
 ) {
-    if (!ctx.cfg.singleSpaceSeparation) return
+    // Check explicit request first, then fall back to default
+    val shouldEnforce = ctx.cfg.singleSpaceSeparationExplicit ?: ctx.cfg.singleSpaceSeparation
+    if (!shouldEnforce) return
 
     val prev = ctx.prev ?: return
     if (token is FormatToken.NewLine || token is FormatToken.Indent || token is FormatToken.Space) return
