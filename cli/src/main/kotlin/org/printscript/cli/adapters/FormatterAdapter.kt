@@ -11,7 +11,12 @@ class FormatterAdapter {
 
     fun loadConfig(path: String?): FormatterConfig =
         if (path.isNullOrBlank()) {
-            FormatterConfig(braceStyle = BraceStyle.SAME_LINE)
+            FormatterConfig(
+                spaceAfterColon = true,
+                spaceAroundEquals = true,
+                lineJumpAfterSemicolon = true,
+                braceStyle = BraceStyle.SAME_LINE,
+            )
         } else {
             ConfigJsonReader().readFromFile(path)
         }
