@@ -7,6 +7,15 @@ class SpaceAroundEquals : CodeFormatRule {
         t: FormatToken,
         ctx: ApplyContext,
     ) {
-        if (ctx.cfg.spaceAroundEquals) ctx.out.append(" = ") else ctx.out.append("=")
+        val enforceSpacing = ctx.cfg.spaceAroundEquals || ctx.cfg.singleSpaceSeparation
+        if (enforceSpacing) {
+            if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') {
+                ctx.out.append(' ')
+            }
+            ctx.out.append('=')
+            ctx.out.append(' ')
+        } else {
+            ctx.out.append('=')
+        }
     }
 }
