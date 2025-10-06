@@ -8,21 +8,38 @@ class SpaceAroundEquals : CodeFormatRule {
         ctx: ApplyContext,
     ) {
         val layoutInfo = ctx.layout?.consume(t)
-        // If the config explicitly required a policy for '=', enforce it regardless of layout.
         val explicit = ctx.cfg.spaceAroundEqualsExplicit
-        if ((explicit ?: ctx.cfg.spaceAroundEquals)) {
-            if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') {
+
+        when {
+            // Explicitly requested no spaces around '=' - force no spaces
+            explicit == false -> {
+                ctx.out.append('=')
+            }
+            // Explicitly requested spaces around '=' - force spaces
+            explicit == true -> {
+                if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') {
+                    ctx.out.append(' ')
+                }
+                ctx.out.append('=')
                 ctx.out.append(' ')
             }
-            ctx.out.append('=')
-            ctx.out.append(' ')
-        } else {
-            if (layoutInfo != null) {
-                ctx.out.append(layoutInfo.leading)
-                ctx.out.append('=')
-                ctx.out.append(layoutInfo.trailing)
-            } else {
-                ctx.out.append('=')
+            // No explicit request - use default behavior (preserve layout or use spaceAroundEquals flag)
+            else -> {
+                if (ctx.cfg.spaceAroundEquals) {
+                    if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') {
+                        ctx.out.append(' ')
+                    }
+                    ctx.out.append('=')
+                    ctx.out.append(' ')
+                } else {
+                    if (layoutInfo != null) {
+                        ctx.out.append(layoutInfo.leading)
+                        ctx.out.append('=')
+                        ctx.out.append(layoutInfo.trailing)
+                    } else {
+                        ctx.out.append('=')
+                    }
+                }
             }
         }
     }
