@@ -8,7 +8,9 @@ class SpaceAroundEquals : CodeFormatRule {
         ctx: ApplyContext,
     ) {
         val layoutInfo = ctx.layout?.consume(t)
-        if (ctx.cfg.spaceAroundEquals) {
+        // If the config explicitly required a policy for '=', enforce it regardless of layout.
+        val explicit = ctx.cfg.spaceAroundEqualsExplicit
+        if ((explicit ?: ctx.cfg.spaceAroundEquals)) {
             if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') {
                 ctx.out.append(' ')
             }
