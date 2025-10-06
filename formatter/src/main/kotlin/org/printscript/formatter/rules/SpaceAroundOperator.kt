@@ -27,12 +27,14 @@ class SpaceAroundOperator : CodeFormatRule {
                 FormatToken.OpKind.SLASH -> "/"
             }
 
-        if (!ctx.cfg.spaceAroundOperators || unaryMinus) {
+        val enforceSpacing = ctx.cfg.spaceAroundOperators || ctx.cfg.singleSpaceSeparation
+
+        if (!enforceSpacing || unaryMinus) {
             ctx.out.append(symbol)
             return
         }
 
-        if (ctx.out.isNotEmpty() && ctx.out.last() != ' ') ctx.out.append(' ')
+        if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') ctx.out.append(' ')
         ctx.out.append(symbol)
         ctx.out.append(' ')
     }

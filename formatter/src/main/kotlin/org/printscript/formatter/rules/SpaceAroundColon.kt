@@ -8,16 +8,17 @@ class SpaceAroundColon : CodeFormatRule {
         ctx: ApplyContext,
     ) {
         val builder = ctx.out
-        if (ctx.cfg.spaceBeforeColon) {
-            builder.trimTrailingSpaces()
-            if (builder.isNotEmpty() && builder.last() != '\n') {
-                builder.append(' ')
-            }
+        val needsSpaceBefore = ctx.cfg.spaceBeforeColon || ctx.cfg.singleSpaceSeparation
+        val needsSpaceAfter = ctx.cfg.spaceAfterColon || ctx.cfg.singleSpaceSeparation
+
+        builder.trimTrailingSpaces()
+        if (needsSpaceBefore && builder.isNotEmpty() && builder.last() != '\n') {
+            builder.append(' ')
         }
 
         builder.append(':')
 
-        if (ctx.cfg.spaceAfterColon) {
+        if (needsSpaceAfter) {
             builder.append(' ')
         }
     }
