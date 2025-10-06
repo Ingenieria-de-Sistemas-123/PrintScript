@@ -37,7 +37,7 @@ internal fun enforceSingleSpaceBefore(
     if (!shouldEnforce) return
 
     val prev = ctx.prev ?: return
-    if (token is FormatToken.NewLine || token is FormatToken.Indent || token is FormatToken.Space) return
+    if (token is FormatToken.NewLine || token is FormatToken.Indent || token is FormatToken.Space || token is FormatToken.Semicolon) return
     if (prev is FormatToken.NewLine || prev is FormatToken.Indent) return
 
     val out = ctx.out
