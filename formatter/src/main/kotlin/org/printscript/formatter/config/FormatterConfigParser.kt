@@ -19,6 +19,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
     var spaceBeforeColon = this["spaceBeforeColon"]?.asBoolean ?: defaults.spaceBeforeColon
     var spaceAfterColon = this["spaceAfterColon"]?.asBoolean ?: defaults.spaceAfterColon
     var spaceAroundEquals = this["spaceAroundEquals"]?.asBoolean ?: defaults.spaceAroundEquals
+    var spaceAroundEqualsExplicit: Boolean? = null
     var spaceAroundOperators = this["spaceAroundOperators"]?.asBoolean ?: defaults.spaceAroundOperators
     var singleSpaceSeparation =
         this["singleSpaceSeparation"]?.asBoolean
@@ -74,6 +75,16 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
             noEqSpaces == true -> false
             else -> optBoolean("enforce-spacing-around-equals") ?: spaceAroundEquals
         }
+    // Track explicit intent if any of the equals keys were provided
+    if (equalsProvided) {
+        spaceAroundEqualsExplicit =
+            when {
+                noEqSpaces == true -> false
+                optBoolean("enforce-spacing-around-equals") == true -> true
+                this.has("spaceAroundEquals") -> this["spaceAroundEquals"].asBoolean
+                else -> null
+            }
+    }
 
     // operadores: alias TCK
     val operatorsProvided =
@@ -135,6 +146,7 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         spaceBeforeColon = spaceBeforeColon,
         spaceAfterColon = spaceAfterColon,
         spaceAroundEquals = spaceAroundEquals,
+        spaceAroundEqualsExplicit = spaceAroundEqualsExplicit,
         spaceAroundOperators = spaceAroundOperators,
         printLineBreaksAfter = printLineBreaksAfter,
         singleSpaceSeparation = singleSpaceSeparation,
