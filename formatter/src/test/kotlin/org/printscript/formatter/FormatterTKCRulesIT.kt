@@ -57,7 +57,7 @@ class FormatterTKCRulesIT {
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val out = CodeFormatter().format(ast, cfg)
-        // Un espacio antes de '(', entre tokens, antes de ')' y antes de ';'
+        // One space before '(', between tokens, before ')' and before ';'
         assertEquals("println ( s ) ;", out, "Actual='$out'")
     }
 
@@ -75,7 +75,7 @@ class FormatterTKCRulesIT {
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val out = CodeFormatter().format(ast, cfg)
-        // Entre prints debe haber dos líneas en blanco => tres newlines totales tras el primero
+        // Between prints there should be two blank lines => three total newlines after the first
         val expected = "println(\"a\");\n\n\nprintln(\"b\");"
         assertEquals(expected, out)
     }
