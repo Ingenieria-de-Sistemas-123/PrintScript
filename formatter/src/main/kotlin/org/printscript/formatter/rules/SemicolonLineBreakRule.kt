@@ -11,11 +11,18 @@ class SemicolonLineBreakRule : CodeFormatRule {
         t: FormatToken,
         ctx: ApplyContext,
     ) {
+        val layoutInfo = ctx.layout?.consume(t)
         enforceSingleSpaceBefore(t, ctx)
         ctx.out.append(';')
+
         if (ctx.cfg.lineJumpAfterSemicolon && ctx.next !is FormatToken.NewLine) {
             ctx.out.trimTrailingSpaces()
             ctx.out.append('\n')
+            return
+        }
+
+        if (!ctx.cfg.lineJumpAfterSemicolon && layoutInfo != null) {
+            ctx.out.append(layoutInfo.trailing)
         }
     }
 }

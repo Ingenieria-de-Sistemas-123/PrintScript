@@ -1,6 +1,7 @@
 package org.printscript.formatter.render
 
 import org.printscript.formatter.config.FormatterConfig
+import org.printscript.formatter.layout.OriginalLayoutTracker
 import org.printscript.formatter.rules.ApplyContext
 import org.printscript.formatter.rules.CodeFormatRule
 import org.printscript.formatter.rules.FormatToken
@@ -15,11 +16,21 @@ class RuleApplier(
     private val fallbackRenderer: FormatTokenRenderer = DefaultTokenRenderer(),
     private val rules: List<CodeFormatRule> = DefaultRules.standard(fallbackRenderer),
 ) {
-    fun apply(tokens: List<FormatToken>): String {
+    fun apply(
+        tokens: List<FormatToken>,
+        layout: OriginalLayoutTracker? = null,
+    ): String {
         val out = StringBuilder()
         for (index in tokens.indices) {
             val token = tokens[index]
-            val ctx = ApplyContext(tokens.getOrNull(index - 1), tokens.getOrNull(index + 1), config, out)
+            val ctx =
+                ApplyContext(
+                    prev = tokens.getOrNull(index - 1),
+                    next = tokens.getOrNull(index + 1),
+                    cfg = config,
+                    out = out,
+                    layout = layout,
+                )
             val rule = rules.firstOrNull { it.matches(token) }
             if (rule != null) {
                 rule.apply(token, ctx)

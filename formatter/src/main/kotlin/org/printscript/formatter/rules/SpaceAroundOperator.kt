@@ -26,9 +26,16 @@ class SpaceAroundOperator : CodeFormatRule {
                 FormatToken.OpKind.STAR -> "*"
                 FormatToken.OpKind.SLASH -> "/"
             }
+        val layoutInfo = ctx.layout?.consume(t)
 
         if (!ctx.cfg.spaceAroundOperators || unaryMinus) {
-            ctx.out.append(symbol)
+            if (layoutInfo != null) {
+                ctx.out.append(layoutInfo.leading)
+                ctx.out.append(symbol)
+                ctx.out.append(layoutInfo.trailing)
+            } else {
+                ctx.out.append(symbol)
+            }
             return
         }
 

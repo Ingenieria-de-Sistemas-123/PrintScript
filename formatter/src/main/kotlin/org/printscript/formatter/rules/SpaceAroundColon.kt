@@ -10,7 +10,14 @@ class SpaceAroundColon : CodeFormatRule {
         val builder = ctx.out
         val needsSpaceBefore = ctx.cfg.spaceBeforeColon
         val needsSpaceAfter = ctx.cfg.spaceAfterColon
+        val layoutInfo = ctx.layout?.consume(t)
 
+        if (!needsSpaceBefore && !needsSpaceAfter && layoutInfo != null) {
+            builder.append(layoutInfo.leading)
+            builder.append(':')
+            builder.append(layoutInfo.trailing)
+            return
+        }
         builder.trimTrailingSpaces()
         if (needsSpaceBefore && builder.isNotEmpty() && builder.last() != '\n') {
             builder.append(' ')
