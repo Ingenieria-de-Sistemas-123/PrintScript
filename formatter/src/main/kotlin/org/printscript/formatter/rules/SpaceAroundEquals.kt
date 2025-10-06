@@ -9,7 +9,7 @@ class SpaceAroundEquals : CodeFormatRule {
     ) {
         val layoutInfo = ctx.layout?.consume(t)
         val explicit = ctx.cfg.spaceAroundEqualsExplicit
-        
+
         when {
             // Explicitly requested no spaces around '=' - force no spaces
             explicit == false -> {
