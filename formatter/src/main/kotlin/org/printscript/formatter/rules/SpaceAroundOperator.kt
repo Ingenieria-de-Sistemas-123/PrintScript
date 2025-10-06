@@ -27,9 +27,7 @@ class SpaceAroundOperator : CodeFormatRule {
                 FormatToken.OpKind.SLASH -> "/"
             }
 
-        val enforceSpacing = ctx.cfg.spaceAroundOperators || ctx.cfg.singleSpaceSeparation
-
-        if (!enforceSpacing || unaryMinus) {
+        if (!ctx.cfg.spaceAroundOperators || unaryMinus) {
             ctx.out.append(symbol)
             return
         }
