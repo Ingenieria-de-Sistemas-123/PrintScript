@@ -20,6 +20,9 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
     var spaceAfterColon = this["spaceAfterColon"]?.asBoolean ?: defaults.spaceAfterColon
     var spaceAroundEquals = this["spaceAroundEquals"]?.asBoolean ?: defaults.spaceAroundEquals
     var spaceAroundEqualsExplicit: Boolean? = null
+    var spaceBeforeColonExplicit: Boolean? = null
+    var spaceAfterColonExplicit: Boolean? = null
+    var singleSpaceSeparationExplicit: Boolean? = null
     var spaceAroundOperators = this["spaceAroundOperators"]?.asBoolean ?: defaults.spaceAroundOperators
     var singleSpaceSeparation =
         this["singleSpaceSeparation"]?.asBoolean
@@ -36,6 +39,20 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
     singleSpaceSeparation =
         optBoolean("enforce-single-space-separation", "mandatory-single-space-separation")
             ?: singleSpaceSeparation
+
+    // Track explicit single space separation request
+    val singleSpaceProvided =
+        hasAny(
+            "singleSpaceSeparation",
+            "enforceSingleSpaceSeparation",
+            "enforce-single-space-separation",
+            "mandatory-single-space-separation",
+        )
+    if (singleSpaceProvided) {
+        singleSpaceSeparationExplicit = optBoolean("enforce-single-space-separation", "mandatory-single-space-separation")
+            ?: this["singleSpaceSeparation"]?.asBoolean
+            ?: this["enforceSingleSpaceSeparation"]?.asBoolean
+    }
 
     // TCK aliases for ':'
     val beforeColonProvided =
@@ -61,6 +78,20 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
             "enforce-decl-spacing-after-colon",
             "enforce-spacing-after-colon-in-declaration",
         ) ?: spaceAfterColon
+
+    // Track explicit colon spacing requests
+    if (beforeColonProvided) {
+        spaceBeforeColonExplicit = optBoolean(
+            "enforce-decl-spacing-before-colon",
+            "enforce-spacing-before-colon-in-declaration",
+        ) ?: this["spaceBeforeColon"]?.asBoolean
+    }
+    if (afterColonProvided) {
+        spaceAfterColonExplicit = optBoolean(
+            "enforce-decl-spacing-after-colon",
+            "enforce-spacing-after-colon-in-declaration",
+        ) ?: this["spaceAfterColon"]?.asBoolean
+    }
 
     // equals: soporta 'enforce-spacing-around-equals' y su opuesto 'enforce-no-spacing-around-equals'
     val equalsProvided =
@@ -146,7 +177,10 @@ internal fun JsonObject.toFormatterConfig(): FormatterConfig {
         spaceBeforeColon = spaceBeforeColon,
         spaceAfterColon = spaceAfterColon,
         spaceAroundEquals = spaceAroundEquals,
+        spaceBeforeColonExplicit = spaceBeforeColonExplicit,
+        spaceAfterColonExplicit = spaceAfterColonExplicit,
         spaceAroundEqualsExplicit = spaceAroundEqualsExplicit,
+        singleSpaceSeparationExplicit = singleSpaceSeparationExplicit,
         spaceAroundOperators = spaceAroundOperators,
         printLineBreaksAfter = printLineBreaksAfter,
         singleSpaceSeparation = singleSpaceSeparation,
