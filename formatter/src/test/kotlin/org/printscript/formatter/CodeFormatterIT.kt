@@ -244,4 +244,39 @@ class CodeFormatterIT {
                 "}"
         assertEquals(expected, pretty)
     }
+
+    @Test
+    fun `disabling equals spacing keeps original layout when source is provided`() {
+        val assign = AssignationNode("texto", LiteralNode("valor", TokenType.STRING), pos())
+        val cfg =
+            FormatterConfig(
+                spaceAroundEquals = false,
+                lineJumpAfterSemicolon = false,
+                braceStyle = BraceStyle.SAME_LINE,
+            )
+
+        val original = "texto =\"valor\";"
+        val formatted = CodeFormatter().format(listOf(assign), cfg, original)
+
+        assertEquals(original, formatted)
+    }
+
+    @Test
+    fun `disabling semicolon newline preserves original breaks`() {
+        val ast =
+            listOf(
+                PrintStatementNode(LiteralNode("a", TokenType.STRING), pos()),
+                PrintStatementNode(LiteralNode("b", TokenType.STRING), pos()),
+            )
+        val cfg =
+            FormatterConfig(
+                lineJumpAfterSemicolon = false,
+                braceStyle = BraceStyle.SAME_LINE,
+            )
+        val original = "println(\"a\");\nprintln(\"b\");"
+
+        val formatted = CodeFormatter().format(ast, cfg, original)
+
+        assertEquals(original, formatted)
+    }
 }

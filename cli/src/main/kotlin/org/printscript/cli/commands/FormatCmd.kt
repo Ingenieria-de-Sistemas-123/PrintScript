@@ -42,7 +42,7 @@ class FormatCmd : Callable<Int> {
         return res.fold(
             onSuccess = { ast ->
                 val cfg = fmt.loadConfig(configPath)
-                val formatted = fmt.format(ast, cfg)
+                val formatted = fmt.format(ast, cfg, source)
 
                 if (check) {
                     return if (formatted == source) {

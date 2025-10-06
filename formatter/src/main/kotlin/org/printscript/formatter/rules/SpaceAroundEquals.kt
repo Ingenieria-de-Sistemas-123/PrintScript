@@ -7,6 +7,7 @@ class SpaceAroundEquals : CodeFormatRule {
         t: FormatToken,
         ctx: ApplyContext,
     ) {
+        val layoutInfo = ctx.layout?.consume(t)
         if (ctx.cfg.spaceAroundEquals) {
             if (ctx.out.isNotEmpty() && ctx.out.last() != ' ' && ctx.out.last() != '\n') {
                 ctx.out.append(' ')
@@ -14,7 +15,13 @@ class SpaceAroundEquals : CodeFormatRule {
             ctx.out.append('=')
             ctx.out.append(' ')
         } else {
-            ctx.out.append('=')
+            if (layoutInfo != null) {
+                ctx.out.append(layoutInfo.leading)
+                ctx.out.append('=')
+                ctx.out.append(layoutInfo.trailing)
+            } else {
+                ctx.out.append('=')
+            }
         }
     }
 }

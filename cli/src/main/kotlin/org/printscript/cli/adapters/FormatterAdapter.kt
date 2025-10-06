@@ -24,14 +24,15 @@ class FormatterAdapter {
     fun format(
         ast: List<ASTNode>,
         cfg: FormatterConfig,
-    ): String = formatter.format(ast, cfg)
+        originalSource: String? = null,
+    ): String = formatter.format(ast, cfg, originalSource)
 
     fun check(
         ast: List<ASTNode>,
         cfg: FormatterConfig,
         originalSource: String,
     ): String? {
-        val formatted = format(ast, cfg)
+        val formatted = format(ast, cfg, originalSource)
         return if (formatted == originalSource) null else formatted
     }
 }
