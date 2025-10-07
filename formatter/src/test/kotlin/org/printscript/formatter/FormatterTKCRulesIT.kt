@@ -57,8 +57,8 @@ class FormatterTKCRulesIT {
                 braceStyle = BraceStyle.SAME_LINE,
             )
         val out = CodeFormatter().format(ast, cfg)
-        // One space before '(', between tokens, before ')' and before ';'
-        assertEquals("println ( s ) ;", out, "Actual='$out'")
+        // One space before '(', between tokens, before ')'; semicolon stays attached
+        assertEquals("println ( s );", out, "Actual='$out'")
     }
 
     @Test

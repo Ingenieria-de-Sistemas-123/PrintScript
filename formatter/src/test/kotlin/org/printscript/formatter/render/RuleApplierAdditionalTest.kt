@@ -66,6 +66,6 @@ class RuleApplierAdditionalTest {
 
         val out = RuleApplier(cfg).apply(toks)
 
-        assertEquals("println ( \"a b\" ) ;", out)
+        assertEquals("println ( \"a b\" );", out)
     }
 }

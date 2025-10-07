@@ -1,4 +1,3 @@
-// formatter/src/main/kotlin/org/printscript/formatter/config/ConfigJsonReader.kt
 package org.printscript.formatter.config
 
 import java.io.File
