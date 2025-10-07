@@ -121,7 +121,7 @@ class StatementEmitter(
         if (!isLastInBlock) {
             buffer.newline()
         } else {
-            buffer.markLineStart()
+            buffer.newline()
         }
     }
 
