@@ -44,32 +44,16 @@ cli/build/libs/printscript-cli.jar
 ./gradlew :cli:run --args="validate -f examples/hello.ps"
 ```
 
-## 🧩 Estructura general
-
-```bash
-printscript <comando> [opciones]
-```
-
-**Ejemplo:**
-
-```bash
-printscript format -f main.ps --version 1.1 --check
-```
-
 ## 📜 Comandos disponibles
 
 ### ✅ validate
 
 Verifica si un archivo es sintácticamente válido.
 
-```bash
-printscript validate -f <ruta_archivo> [--version 1.0|1.1]
-```
-
 **Ejemplo:**
 
 ```bash
-printscript validate -f examples/hello.ps --version 1.1
+./gradlew :cli:run --args="validate --file=samples/hello.ps --version=1.1"
 ```
 
 **Salida esperada:**
@@ -87,14 +71,10 @@ OK: examples/hello.ps is valid.
 
 Ejecuta un programa PrintScript.
 
-```bash
-printscript execute -f <ruta_archivo> [--version 1.0|1.1]
-```
-
 **Ejemplo:**
 
 ```bash
-printscript execute -f examples/hello.ps
+./gradlew :cli:run --args="execute -f samples/hello.ps --version=1.0" 
 ```
 
 **Salida esperada:**
@@ -114,12 +94,6 @@ Hello World
 
 Formatea el código según las reglas configuradas.
 
-```bash
-printscript format -f <archivo> [--version 1.0|1.1]
-                   [--check | --apply]
-                   [-c <ruta_config.json>]
-```
-
 **Opciones:**
 
 - `--check` → solo verifica si el archivo está bien formateado (no modifica nada)
@@ -127,17 +101,12 @@ printscript format -f <archivo> [--version 1.0|1.1]
 - `-c / --config` → ruta a un archivo de configuración JSON personalizado
 - `--version` → selecciona versión del lenguaje (afecta el parser)
 
-**Ejemplos:**
+**Ejemplo:**
 
 ```bash
-# Mostrar código formateado por stdout
-printscript format -f examples/main.ps
+./gradlew :cli:run --args="format --file=samples/hello.ps --version=1.1"
 
-# Verificar formato (modo CI)
-printscript format -f examples/main.ps --check
-
-# Aplicar formato sobre el archivo
-printscript format -f examples/main.ps --apply
+./gradlew :cli:run --args="format --file=samples/hello.ps --version=1.1 --apply"   
 ```
 
 **Código de salida:**
@@ -152,8 +121,7 @@ printscript format -f examples/main.ps --apply
 {
   "spaceAfterColon": true,
   "spaceAroundEquals": true,
-  "lineJumpAfterSemicolon": true,
-  "braceStyle": "SAME_LINE"
+  "lineJumpAfterSemicolon": true
 }
 ```
 
@@ -161,14 +129,10 @@ printscript format -f examples/main.ps --apply
 
 Ejecuta el linter sobre un archivo y reporta problemas de estilo o semántica.
 
-```bash
-printscript analyze -f <ruta_archivo> [--version 1.0|1.1]
-```
-
 **Ejemplo:**
 
 ```bash
-printscript analyze -f examples/invalid.ps
+./gradlew :cli:run --args="analyze --file=samples/hello.ps --version=1.1"
 ```
 
 **Salida esperada:**
@@ -196,7 +160,7 @@ PrintScript CLI soporta dos versiones del lenguaje:
 El flag `--version` se propaga a `FrontendAdapter` para ajustar el lexer y parser, por ejemplo:
 
 ```bash
-printscript validate -f examples/input.ps --version 1.1
+./gradlew :cli:run --args="validate --file=samples/hello.ps --version=1.1"
 ```
 
 ## 🧰 Códigos de salida (Exit Codes)
@@ -226,28 +190,3 @@ Esto permite integrar el CLI en pipelines de CI/CD, por ejemplo:
 | `CliFailure / LanguageError` | Modelos uniformes para reportar errores en consola. |
 | `ErrorPrinter` | Imprime errores en stderr. |
 | `Root` | Comando raíz que registra los subcomandos de picocli. |
-
-## 🧪 Testing y CI
-
-El CLI está preparado para integrarse con el TCK (Test Compatibility Kit) y pipelines de GitHub Actions.
-
-**Recomendaciones:**
-
-- Usar el flag `--check` en `format` dentro de pipelines para evitar commits mal formateados.
-- Ejecutar `validate` y `analyze` como pasos previos a `execute`.
-- En el entorno de TCK, no modificar archivos (usar siempre `--check`, no `--apply`).
-
-## 🧱 Ejemplos combinados
-
-### Validar y formatear un programa de PrintScript 1.1
-
-```bash
-printscript validate -f program.ps --version 1.1 &&
-printscript format -f program.ps --version 1.1 --check
-```
-
-### Lint + ejecutar
-
-```bash
-printscript analyze -f main.ps && printscript execute -f main.ps
-```

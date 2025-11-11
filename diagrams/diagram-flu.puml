@@ -1,0 +1,27 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam roundcorner 12
+skinparam shadowing false
+skinparam ArrowColor #666
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+title PrintScript – Flujo de uso por comando
+
+[cli] -down-> [lexer]
+[runner] -down-> [lexer]
+[lexer] -down-> [parser]
+
+[parser] -down-> [interpreter] : execute
+[parser] -down-> [formatter] : format
+[parser] -down-> [linter] : analyze
+
+[token] -up-> [lexer]
+[token] -up-> [parser]
+[common] -up-> [parser]
+[common] -up-> [interpreter]
+[common] -up-> [formatter]
+[common] -up-> [linter]
+
+@enduml
