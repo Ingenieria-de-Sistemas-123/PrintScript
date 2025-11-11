@@ -1,0 +1,30 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam roundcorner 12
+skinparam shadowing false
+skinparam ArrowColor #666
+skinparam linetype ortho
+skinparam ranksep 70
+skinparam nodesep 50
+
+title PrintScript – Dependencias por módulos
+
+[common] -up-> [token]
+[token] -up-> [lexer]
+[token] -up-> [parser]
+[common] -up-> [parser]
+[parser] -up-> [interpreter]
+[parser] -up-> [formatter]
+[parser] -up-> [linter]
+[common] -up-> [interpreter]
+[common] -up-> [formatter]
+[common] -up-> [linter]
+
+[cli] -down-> [lexer]
+[runner] -down-> [lexer]
+[cli] .down.> [interpreter] : usa
+[cli] .down.> [formatter] : usa
+[cli] .down.> [linter] : usa
+[runner] .down.> [interpreter] : usa
+
+@enduml

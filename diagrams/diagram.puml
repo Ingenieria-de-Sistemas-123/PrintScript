@@ -1,0 +1,70 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam ArrowColor #888
+skinparam linetype ortho
+
+title PrintScript - Estructura General de Módulos
+
+package "token" {
+  [Define tipos de tokens\n y palabras reservadas]
+}
+
+package "lexer" {
+  [Convierte texto en tokens]
+}
+
+package "parser" {
+  [Convierte tokens en AST]
+}
+
+package "interpreter" {
+  [Ejecuta el AST\n(variables, expresiones, IO)]
+}
+
+package "formatter" {
+  [Formatea el código\nsegún reglas]
+}
+
+package "linter" {
+  [Analiza estilo y\nbuenas prácticas]
+}
+
+package "common" {
+  [Tipos auxiliares y utilidades\n(Position, PSVersion...)]
+}
+
+package "runner" {
+  [Ejecución directa\ntexto → resultado]
+}
+
+package "cli" {
+  [Interfaz de usuario:\nvalidate, execute, format, analyze]
+}
+
+' Relaciones principales
+lexer --> token
+parser --> lexer
+interpreter --> parser
+formatter --> parser
+linter --> parser
+
+token --> common
+parser --> common
+interpreter --> common
+formatter --> common
+linter --> common
+
+runner --> lexer
+runner --> parser
+runner --> interpreter
+
+cli --> lexer
+cli --> parser
+cli --> interpreter
+cli --> formatter
+cli --> linter
+
+@enduml
