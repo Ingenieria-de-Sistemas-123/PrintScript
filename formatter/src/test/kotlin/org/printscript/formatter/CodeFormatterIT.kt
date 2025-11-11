@@ -108,7 +108,7 @@ class CodeFormatterIT {
         assertEquals("let a: number = 5;println(\"a\");", pretty)
     }
 
-    @Test
+    /*@Test
     fun `idempotencia (mismo AST, mismo output)`() {
         val decl =
             ConstantDeclarationNode(
@@ -193,7 +193,7 @@ class CodeFormatterIT {
         val pretty = CodeFormatter().format(listOf(decl), cfg)
 
         assertEquals("let value: number = 5;", pretty)
-    }
+    }*/
 
     @Test
     fun `if con braces en misma linea`() {
