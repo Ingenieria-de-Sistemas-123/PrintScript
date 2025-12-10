@@ -7,7 +7,10 @@ import org.printscript.interpreter.io.OutputProvider
 import org.printscript.parser.node.ASTNode
 
 class InterpreterAdapter(
-    private val interpreterFactory: (OutputProvider, IOContext) -> Interpreter = { output, io -> Interpreter(output = output, ioContext = io) },
+    private val interpreterFactory: (
+        OutputProvider,
+        IOContext,
+    ) -> Interpreter = { output, io -> Interpreter(output = output, ioContext = io) },
 ) {
     fun run(
         ast: List<ASTNode>,
