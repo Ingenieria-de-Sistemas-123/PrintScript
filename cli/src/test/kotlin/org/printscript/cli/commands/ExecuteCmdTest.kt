@@ -108,4 +108,14 @@ class ExecuteCmdTest {
             "Should report missing input file. stderr=${r.stderr}",
         )
     }
+
+    @Test
+    fun `execute fails when program file is missing`() {
+        val missingProgram = temp.resolve("nope.ps")
+
+        val r = CommandRunner.run("execute", "-f", missingProgram.path)
+
+        assertTrue(r.exitCode != 0, "Should fail when program file is missing")
+        assertTrue(r.stderr.contains("Could not read file"), "Should report missing program. stderr=${r.stderr}")
+    }
 }
