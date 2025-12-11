@@ -3,12 +3,13 @@ on:
   push:
     branches:
       - main
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      packages: write  # esto ya está OK
 
     steps:
       - name: Checkout repository
@@ -23,6 +24,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      # Este bloque solo es para hacer push de commits; no afecta Maven.
+      # Podés dejarlo si lo necesitás, pero NO influye en el 401 de publish.
       - name: Set up Git user
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -34,5 +37,5 @@ jobs:
       - name: Publish to GitHub Packages
         run: ./gradlew publish
         env:
-          GITHUB_ACTOR: ${{ secrets.GHCR_USER }}
-          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ github.token }}
