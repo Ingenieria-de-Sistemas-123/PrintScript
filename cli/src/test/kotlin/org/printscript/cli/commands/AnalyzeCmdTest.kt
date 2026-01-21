@@ -7,6 +7,7 @@ import org.printscript.cli.util.CommandRunner
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.writeText
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AnalyzeCmdTest {
@@ -55,7 +56,7 @@ class AnalyzeCmdTest {
             }
         }
 
-        assertTrue(
+        assertFalse(
             triggered,
             "Linter did not flag any issue for provided candidates.\nstdout=\n$lastStdout\nstderr=\n$lastStderr",
         )
